@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>가지마켓</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/gaji.png">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/bootstrap-4.6.2-dist/css/bootstrap.min.css">
+
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=IBM+Plex+Sans+KR&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Optional JavaScript -->
+    <script type="text/javascript" src="/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
+
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+
+ 
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,900);
+
+        span.logo_title {
+            font-family: "Gugi", sans-serif;
+            font-weight: 500;
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+        div#navbarTogglerDemo02 {
+            margin-left: 5%;
+            font-size: 13pt;
+            font-weight: bold;
+        }
+        li.nav-item {
+            padding-right: 30px;
+        }
+
+        div.footer {
+            width: 80%;
+            margin: 0 auto 1% 29%;
+            font-size:10pt;
+        }
+
+        div.footer2{
+
+            font-size: 10pt;
+            text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            direction: ltr;
+            text-align: left;
+            letter-spacing: -0.5px;
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 20px;
+            width: 100%;    
+            display: flex;
+            -webkit-box-pack: center;
+            justify-content: center;
+            border-top: 1px solid rgb(229, 229, 229);
+            border-bottom: 1px solid rgb(229, 229, 229);
+            text-size-adjust: 100%;
+        }
+
+        a {
+         color:darkmagenta;   
+        }
+        
+        /* 메인홈페이지 body 시작 */
+
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
+        
+        .bottom {
+            background: #fff;
+            color: darkmagenta;
+            text-align: center;
+        }
+
+        .bottom a {
+            color: darkmagenta;
+        }
+
+        /* Media Queries */
+        @media (min-width: 768px) {
+            .header,
+            .bottom {
+                padding: 100px 30px;
+            }
+        }
+
+        /* Header and bottom Styles */
+        .header h1 {
+            font-size: 4em;
+            font-weight: 300;
+        }
+
+        .header i.fa,
+        .bottom i.fa {
+            font-size: 4em;
+        }
+
+        .header .bounce,
+        .bottom .bounce {
+            animation-name: bounce;
+            animation-iteration-count: infinite;
+            transform-origin: center bottom;
+        }
+
+        .header .animated,
+        .bottom .animated {
+            animation-duration: 2s;
+            animation-fill-mode: both;
+        }
+
+        .section {
+            width: 100%;
+            position: relative;
+            /* height: 300px; */
+        }
+
+        .left,
+        .middle,
+        .right {
+            width: 100%;
+            display: block;
+            color: black;
+            box-sizing: border-box;
+            left: 0;
+            padding: 30px;
+            text-align: center;
+            overflow: hidden;
+            transition: 0.3s ease-in-out all;
+        }
+
+        .left .content,
+        .middle .content,
+        .right .content {
+            /* Media Query for Small Devices */
+            @media (min-width: 480px) {
+                position: relative; /* vertical-align mixin */
+                top: 50%;
+                transform: translateY(-50%);
+            }
+           
+        }
+
+        @media (min-width: 480px) {
+            .left,
+            .middle,
+            .right {
+                width: 50%;
+                font-size: 0.9em;
+                padding: 10px;
+                left: 0;
+                float: left;
+                position: absolute;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .left,
+            .middle,
+            .right {
+                width: 33.33333%;
+                left: 33.33%;
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .left,
+            .middle,
+            .right {
+                padding: 30px;
+                font-size: 1em;
+            }
+        }
+
+        .section.animate .left {
+            left: 0;
+        }
+
+        .section.animate .left {
+            @media (min-width: 480px) {
+                left: 50%;
+            }
+
+            @media (min-width: 768px) {
+                left: 0;
+            }
+        }
+
+        .section.animate .right {
+            left: 0;
+        }
+
+        .section.animate .right {
+            @media (min-width: 480px) {
+                left: 50%;
+            }
+
+            @media (min-width: 768px) {
+                left: 66.66%;
+            }
+        }
+
+        .title {
+            background: #f2e6ff;
+        }
+
+        .title h2 {
+            margin-top: 0;
+        }
+
+        .title p {
+            line-height: 1.55em;
+            margin-bottom: 0.75em;
+        }
+
+        .tiles {
+            padding: 0;
+            background: #fff;
+            clear: both;
+            display: none;
+            float: none;
+        }
+
+        .tiles img {
+            width: 50%;
+            float: left;
+            height: auto;
+            opacity: 0.7;
+            transition: 0.3s ease-in-out all;
+            filter: grayscale(100%);
+        }
+
+        .tiles img:hover {
+            opacity: 1;
+            filter: grayscale(0%);
+        }
+
+        @media (min-width: 768px) {
+            .tiles {
+                display: block;
+            }
+        }
+
+        .middle {
+            background: slategray;
+            z-index: 2;
+            padding: 0;
+        }
+
+        .middle img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes bounce {
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+
+</style>
+
+
+
+
+<script>
+    $(document).ready(function(){
+
+        var $sm = 480;
+
+        function resizeThis() {
+            $imgH = $('.middle img').width();
+            if ($(window).width() >= $sm) {
+                $('.left,.right,.section').css('height', $imgH);
+            } 
+            else {
+                $('.left,.right,.section').css('height', 'auto');
+            }
+        }
+
+        resizeThis();
+
+        $(window).resize(function(){
+            resizeThis();
+        });
+
+        $(window).scroll(function() {
+            $('.section').each(function(){
+                var $elementPos = $(this).offset().top;
+                var $scrollPos = $(window).scrollTop();
+
+                var $sectionH = $(this).height();
+                var $h = $(window).height();
+                var $sectionVert = (($h/2)-($sectionH/4));
+
+
+                if (($elementPos - $sectionVert) <= $scrollPos && ($elementPos - $sectionVert) + $sectionH > $scrollPos) {
+                    $(this).addClass('animate');
+                } 
+                else {
+                    $(this).removeClass('animate');
+                }
+            });
+        });
+
+        $('.btn-primary').click(function(){
+            alert('중고거래 이동');
+        });
+    });
+
+    $(function() {
+        $('a[href*="#"]:not([href="#"])').click(function() {
+            if (location.pathname.replace(/^\//,'') === this.pathname.replace(/^\//,'') && location.hostname === this.hostname) {
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+                
+                if (target.length) {
+                    $('html, body').animate({scrollTop: target.offset().top}, 1000);
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+
+</head>
+<body>
+    <div class="m-3" id="top">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="d-flex align-items-center navbar-brand">
+                <img class="mr-2" src="/static/images/gaji2.png" width="30">
+                <span class="logo_title">가지마켓</span>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+                <li class="nav-item active">
+                  <a class="nav-link" href="#1">중고거래</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#2">동네알바</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#3">중고차거래</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#4">커뮤니티</a>
+                </li>
+              </ul>
+              <form class="d-flex my-2 my-lg-0">
+                <input class="form-control mr-3" type="search" placeholder="물품을 검색해보세요!" aria-label="Search">
+                <button type="button" class="btn" style="background-color: #580DD2; color:white;">Search</button>
+              </form>
+              <ul style="font-size: small; margin: 2% 0 0 10%;">
+                <ol class="breadcrumb bg-light">
+                    <img src="/static/images/eggplant.png" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;">00님 로그인중</span>
+                    <li class="breadcrumb-item">
+                        <a href="#1">로그아웃</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#2">마이페이지</a>
+                    </li>
+                </ol>
+              </ul>
+            </div>
+          </nav>
+    </div>
+
+    
+    <div class="body m-5">
+         <div class="section animate" >
+            <div class="middle">
+               <img src="https://images.unsplash.com/photo-1623884167468-065c75fe0af3?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+            </div>
+            <div class="left title">
+               <div class="content">
+                  <h1 style="font-weight: bold;">"중고거래"</h1><br>
+                  <p>당신과 상대의 기분좋은 거래😍</p><br>
+                  <p><span style="font-weight:bold; color:purple;">가</span>까운 곳에서 <span style="font-weight:bold; color:purple;">지</span>금 거래하세요!</p><br>
+                  <a href="#" type="button" class="btn" style="background-color: #580DD2; color:white;">이동하기</a>
+               </div>
+            </div>
+            <div class="right tiles">
+               <img src="https://plus.unsplash.com/premium_photo-1680680514086-3a3cb782c30b?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1667525395076-1d234e28c883?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1522115174737-2497162f69ec?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://plus.unsplash.com/premium_photo-1664202526475-8f43ee70166d?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+         </div>
+         
+         <div class="section">
+            <div class="middle">
+               <img src="https://images.unsplash.com/photo-1464655646192-3cb2ace7a67e?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            <div class="right title">
+               <div class="content">
+                <h1 style="font-weight: bold;">"동네알바"</h1><br>
+                  <p>우리 동네의 일자리를 찾아봐요!👔</p><br>
+                  <p><span style="font-weight:bold; color:purple;">가</span>까운 곳에서 <span style="font-weight:bold; color:purple;">지</span>금 알바하세요!</p><br>
+                  <a href="#" type="button" class="btn" style="background-color: #580DD2; color:white;">이동하기</a>
+               </div>
+            </div>
+            
+            <div class="left tiles">
+               <img src="https://plus.unsplash.com/premium_photo-1661723024791-13a151066bac?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://plus.unsplash.com/premium_photo-1705091309202-5838aeedd653?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://plus.unsplash.com/premium_photo-1673830185086-8d54f4c0f3a8?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            
+         </div>
+         
+         <div class="section">
+            <div class="middle">
+               <img src="https://images.unsplash.com/photo-1585503418537-88331351ad99?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            <div class="left title">
+                <div class="content">
+                <h1 style="font-weight: bold;">"중고차거래"</h1><br>
+                  <p>새차 같은 중고차를 찾아봐요!🚗</p><br>
+                  <p><span style="font-weight:bold; color:purple;">가</span>까운 곳에서 <span style="font-weight:bold; color:purple;">지</span>금 안전 거래하세요!</p><br>
+                  <a href="#" type="button" class="btn" style="background-color: #580DD2; color:white;">이동하기</a>
+               </div>
+            </div>
+            
+            <div class="right tiles">
+               <img src="https://images.unsplash.com/photo-1595951280326-8ffa79bdfbc0?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1458408990864-27997f8c2984?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1533127321739-d5dc53c221c8?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            
+         </div>
+         
+         <div class="section">
+            <div class="middle">
+               <img src="https://images.unsplash.com/photo-1507955987999-df4864ee80d4?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            <div class="right title">
+                <div class="content">
+                <h1 style="font-weight: bold;">"커뮤니티"</h1><br>
+                  <p>안전하고 믿을 수 있는 커뮤니티🤝</p><br>
+                  <p><span style="font-weight:bold; color:purple;">가</span>까운 곳에서 <span style="font-weight:bold; color:purple;">지</span>금 소통하세요!</p><br>
+                  <a href="#" type="button" class="btn" style="background-color: #580DD2; color:white;">이동하기</a>
+               </div>
+            </div>
+            
+            <div class="left tiles">
+               <img src="https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://plus.unsplash.com/premium_photo-1679429320552-ec9038ccd550?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1487712010531-65e9aa8b4b1a?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+               <img src="https://images.unsplash.com/photo-1611746869696-d09bce200020?dpr=2&auto=format&crop=entropy&fit=crop&w=250&h=250&q=80" />
+            </div>
+            
+         </div>
+         
+         <div class="bottom">
+            <a href="#top" class="scrollTo"><i class="fa fa-angle-up animated bounce"></i></a>
+            <h3>처음으로</h3>
+
+    </div>
+
+
+    <footer id="myfooter">
+
+        <div class="footer2">
+            <div class="mr-3">
+                <a class="text-dark" href="#">이용약관</a>
+            </div>
+            <div class="mr-3">
+                <a class="text-dark" href="#">개인정보처리방침</a>
+            </div>
+            <div class="mr-3">
+                <a class="text-dark" href="#">운영정책</a>
+            </div>
+            <div class="mr-3">
+                <a class="text-dark" href="#">위치기반서비스 이용약관</a>
+            </div>
+            <div class="mr-3">
+                <a class="text-dark" href="#">이용자보호 비전과 계획</a>
+            </div>
+            <div class="mr-3">
+                <a class="text-dark" href="#">청소년보호정책</a>
+            </div>
+        </div>
+
+        <div class="footer m-3">
+            <div class="footer">
+                <span class="mr-3"><b>대표</b> 가지마켓</span>
+                <span class="mr-3"><b>사업자번호</b> 123-45-67890</span>
+                <span class="mr-3"><b>직업정보제공사업 신고번호</b> 123456789</span>
+                <span class="mr-3"><b>통신판매업 신고번호</b> 2024-가지가지-0821</span>
+            </div>
+            <div class="footer">     
+                <span class="mr-3"><b>주소</b> 서울특별시 가지구 가지대로 245-12 (가지서비스)</span>
+                <span class="mr-3"><b>전화</b> 9292-8282</span>
+                <span class="mr-3"><b>고객문의</b> cs@gajiservice.com</span>
+            </div>
+    
+        </div>
+    </footer>
+</body>
+</html>
