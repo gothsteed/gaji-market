@@ -1,0 +1,65 @@
+spring:
+  profiles: #실행환경(local(로컬),dev(개발),real(운영))  https://bepoz-study-diary.tistory.com/371 참조
+    active: local
+
+  datasource: #DB 접속
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@ec2-13-125-235-49.ap-northeast-2.compute.amazonaws.com:1521/xe  # oracle 12c 이후부터는 이렇게 하라고 함.
+    username: gaji_dev
+    password: 1234
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari: #커넥션풀
+      connection-timeout : 30000 #클라이언트가 pool에 connection을 요청하는데 기다리는 최대시간을 설정 30초
+      maximum-pool-size : 10 #최대 커넥션 개수 설정
+      max-lifetime: 1800000  #커넥션 풀에서 살아있을 수 있는 커넥션의 최대 수명시간 1,800초(30분)
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+        #ddl-auto: create  # 테이블이나 시퀀스 자동 생성이다. 테이블이나 시퀀스가 존재하지 않는 경우 최초실행시 에러발생함. 무시해도 됨. 테이블을 생성을 해야할 맨처음에만 create 하고 테이블과 관련된 DDL 작업이 없을 때는 none 으로 변경하자.
+        # create      -> 기존 테이블이나 시퀀스를 drop 한 후 다시 생성한다.                 [개발초기단계]
+        # create-drop -> SessionFactory 가 시작될 때 테이블이나 시퀀스를 drop 및 생성한다.  [개발초기단계]
+        #                SessionFactory 가 종료될 때 테이블을 테이블이나 시퀀스를 drop 한다.
+        #                in-memory DB인 H2 Database 의 기본값이다.
+        # update      -> 테이블의 내용이 변경된 경우 자동으로 변경된 것만 DDL 을 실행해준다.     [개발초기단계]
+        # validate    -> 엔티티와 테이블이 정상 매핑되었는지만 확인.                         [개발초기단계] 또는 [테스터서버]
+        # none        -> 아무것도 실행하지 않는다.                                       [배포운영단계]
+        # !!!! 실제 배포운영시에는 ddl-auto: none 으로만 해야 한다.
+      # !!!! 실제 배포운영시에는 절대로 crate, create-drop, update, validate 를 사용하면 안된다. !!!!
+    properties:
+      hibernate:
+        '[show_sql]': true
+        '[format_sql]': true
+        '[use_sql_comments]': true
+    # '[show_sql]': true 는 사용되는 SQL문(JPQL)을 콘솔에 출력 해줌
+    # '[format_sql]': true 는 가독성이 좋도록 1줄로 되어진 SQL문(JPQL)을 탭이나 줄바꿈을 하여 보여줌
+    # '[use_sql_comments]': true 는 사용자 주석문을 보여줌
+    open-in-view: false
+    database-platform: org.hibernate.dialect.OracleDialect
+
+  data:
+    mongodb:
+      host: ec2-13-125-235-49.ap-northeast-2.compute.amazonaws.com
+      port: 27017
+      database: gaji
+      username: devuser
+      password: 1234
+      authentication-database: gaji
+
+  security:
+    user:
+      name: admin
+      password: admin
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: your_client_id
+#            client-secret: your_client_secret
+
+  thymeleaf:
+    cache: false
+
+# You can add server configuration here if needed
+server:
+  port: 8080
