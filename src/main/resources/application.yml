@@ -5,3 +5,5 @@ spring:
 # You can add server configuration here if needed
 server:
   port: 8080
+  servlet:
+    context-path: /gaji
