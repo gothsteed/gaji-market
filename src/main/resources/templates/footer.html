@@ -1,63 +1,64 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>가지마켓</title>
-    <link rel="icon" type="image/x-icon" href="src\main\webapp\resources\images\gaji.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<!-- Bootstrap CSS -->
+<!-- 소스위치 resources/static/bootstrap-4.6.0-dist/css/bootstrap.min.css -->
+<link rel="stylesheet" type="text/css" th:href="@{/bootstrap-4.6.0-dist/css/bootstrap.min.css}">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/bootstrap-4.6.2-dist/css/bootstrap.min.css">
+<!-- Optional JavaScript -->
+<!-- 소스위치 resources/static/js/jquery-3.6.0.min.js -->
+<script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<script type="text/javascript" th:src="@{/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js}" ></script>
 
-    <!-- Font Awesome 6 Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=IBM+Plex+Sans+KR&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+<!-- Font Awesome 6 Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=IBM+Plex+Sans+KR&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
-    <!-- Optional JavaScript -->
-    <script type="text/javascript" src="/js/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
 
-    <!-- google font -->
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
 
- 
-    <style type="text/css">
 
-        div.footer {
-            width: 80%;
-            margin: 0 auto 1% 29%;
-            font-size:10pt;
-        }
+<title>가지마켓</title>
+<link rel="icon" type="image/x-icon" href="/static/images/gaji.png">
 
-        div.footer2{
+<style type="text/css">
 
-            font-size: 10pt;
-            text-size-adjust: 100%;
-            -webkit-font-smoothing: antialiased;
-            direction: ltr;
-            text-align: left;
-            letter-spacing: -0.5px;
-            box-sizing: border-box;
-            margin: 0px;
-            padding: 20px;
-            width: 100%;    
-            display: flex;
-            -webkit-box-pack: center;
-            justify-content: center;
-            border-top: 1px solid rgb(229, 229, 229);
-            border-bottom: 1px solid rgb(229, 229, 229);
-            text-size-adjust: 100%;
-        }
+    div.footer {
+        width: 80%;
+        margin: 0 auto 1% 29%;
+        font-size:10pt;
+    }
 
-        a {
-         color:darkmagenta;   
-        }
+    div.footer2{
+
+        font-size: 10pt;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        direction: ltr;
+        text-align: left;
+        letter-spacing: -0.5px;
+        box-sizing: border-box;
+        margin: 0px;
+        padding: 20px;
+        width: 100%;
+        display: flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        border-top: 1px solid rgb(229, 229, 229);
+        border-bottom: 1px solid rgb(229, 229, 229);
+        text-size-adjust: 100%;
+    }
+
+    a {
+     color:darkmagenta;
+    }
         
 </style>
 
