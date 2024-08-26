@@ -23,7 +23,12 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated()
         ).formLogin(
-                AbstractAuthenticationFilterConfigurer::permitAll
+                form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/perform_login")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
         ).csrf(csrf ->
                 csrf.ignoringRequestMatchers("/login"));
 
