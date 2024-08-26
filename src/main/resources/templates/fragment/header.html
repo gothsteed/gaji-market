@@ -4,14 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- Bootstrap CSS -->
+<!-- CSS -->
 <!-- 소스위치 resources/static/bootstrap-4.6.2-dist/css/bootstrap.min.css -->
 <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
 
 <!-- Optional JavaScript -->
 <!-- 소스위치 resources/static/js/jquery-3.7.1.min.js -->
 <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}" ></script>
+<script type="text/javascript" th:src="@{/js/header.js}"></script>
 
 <!-- Font Awesome 6 Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -26,30 +28,7 @@
 
 
 <title>가지마켓</title>
-<link rel="icon" type="image/x-icon" href="/images/gaji.png">
-
-
-<style>
-    span.logo_title {
-        font-family: "Gugi", sans-serif;
-        font-weight: 500;
-        font-style: normal;
-        font-size: 1.2rem;
-    }
-    div#navbarTogglerDemo02 {
-        margin-left: 5%;
-        font-size: 13pt;
-        font-weight: bold;
-    }
-    li.nav-item {
-        padding-right: 30px;
-    }
-
-    a {
-     color:darkmagenta;
-    }
-
-</style>
+<link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
 
 </head>
 <body>
@@ -65,8 +44,8 @@
 
             <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                 <ul class="navbar-nav me-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#1">중고거래</a>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/productList}">중고거래</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#2">동네알바</a>
