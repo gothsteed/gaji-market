@@ -27,5 +27,6 @@ public class MainConfig {
         hikariDataSource.setMaxLifetime(1800000);
         return hikariDataSource;
     }
+
 }
 

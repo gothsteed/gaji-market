@@ -6,12 +6,12 @@
 
 <!-- Bootstrap CSS -->
 <!-- 소스위치 resources/static/bootstrap-4.6.2-dist/css/bootstrap.min.css -->
-<link rel="stylesheet" type="text/css" th:href="@{/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
 
 <!-- Optional JavaScript -->
 <!-- 소스위치 resources/static/js/jquery-3.7.1.min.js -->
 <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
-<script type="text/javascript" th:src="@{/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}" ></script>
+<script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}" ></script>
 
 <!-- Font Awesome 6 Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -26,7 +26,7 @@
 
 
 <title>가지마켓</title>
-<link rel="icon" type="image/x-icon" href="/static/images/gaji.png">
+<link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
 
 <style>
     @import url(https://fonts.googleapis.com/css?family=Roboto:300,900);
@@ -362,7 +362,7 @@
     <div class="m-3" id="top">
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="d-flex align-items-center navbar-brand">
-                <img class="mr-2" src="/static/images/gaji2.png" width="30">
+                <img class="mr-2" th:src="@{/images/gaji2.png}" width="30">
                 <span class="logo_title">가지마켓</span>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
@@ -390,7 +390,7 @@
               </form>
               <ul style="font-size: small; margin: 2% 0 0 10%;">
                 <ol class="breadcrumb bg-light">
-                    <img src="/static/images/eggplant.png" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;">00님 로그인중</span>
+                    <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;">00님 로그인중</span>
                     <li class="breadcrumb-item">
                         <a href="#1">로그아웃</a>
                     </li>
