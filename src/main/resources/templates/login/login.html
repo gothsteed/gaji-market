@@ -6,7 +6,7 @@
     <title>가지마켓</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
 
     <!-- Google font, Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -18,9 +18,16 @@
 
     <!-- Optional JavaScript -->
     <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
-    <script type="text/javascript" th:src="@{/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
 
-    <style>
+    <style th:inline="css">
+        :root {
+            --login-bg-image: url([[@{/images/loginbg.jpg}]]);
+        }
+    </style>
+
+    <style >
+
         body {
             margin: 0;
             font-family: "Noto Sans KR", sans-serif;
@@ -41,7 +48,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url("/static/images/loginbg.jpg"); /* 이미지 URL */
+            background-image: var(--login-bg-image);
             background-size: cover; /* 이미지가 div를 가득 채우도록 */
             background-position: center; /* 이미지 중앙 정렬 */
             opacity: 1; /* 투명도 조절 */
