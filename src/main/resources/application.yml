@@ -2,6 +2,7 @@ spring:
   profiles: #실행환경(local(로컬),dev(개발),real(운영))  https://bepoz-study-diary.tistory.com/371 참조
     active: local
 
+
 # You can add server configuration here if needed
 server:
   port: 8080

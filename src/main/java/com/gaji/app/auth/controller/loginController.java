@@ -1,4 +1,4 @@
-package com.gaji.app.login.controller;
+package com.gaji.app.auth.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,4 +10,7 @@ public class loginController {
     public String login() {
         return "login/login";
     }
+
+
+
 }
