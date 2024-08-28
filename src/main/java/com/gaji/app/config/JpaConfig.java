@@ -7,16 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Configuration
-@EntityScan(basePackages = {"com.gaji.app.member.domain"})
-@EnableJpaRepositories(basePackages = {"com.gaji.app.member.repository"})
+@EntityScan(basePackages = {"com.gaji.app.member.domain", "com.gaji.app.product.domain"})
+@EnableJpaRepositories(basePackages = {"com.gaji.app.member.repository", "com.gaji.app.product.repository"})
 @EnableTransactionManagement
 public class JpaConfig {
 
