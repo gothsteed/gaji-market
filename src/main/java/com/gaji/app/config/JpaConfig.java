@@ -1,8 +1,10 @@
 package com.gaji.app.config;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -13,17 +15,20 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@EntityScan(basePackages = {"com.gaji.app.member.domain"})
+@EnableJpaRepositories(basePackages = {"com.gaji.app.member.repository"})
 @EnableTransactionManagement
 public class JpaConfig {
 
-    @Bean
+/*    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("your.entity.package");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
+
+        em.setPackagesToScan("com.gaji.app.member.domain");
 
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
@@ -34,7 +39,7 @@ public class JpaConfig {
         em.setJpaProperties(properties);
 
         return em;
-    }
+    }*/
 
     @Bean
     public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {

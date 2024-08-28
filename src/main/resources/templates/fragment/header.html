@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -84,7 +84,7 @@
                 </form>
                 <ul style="font-size: small; margin: 2% 0 0 10%;">
                     <ol class="breadcrumb bg-light">
-                        <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;">00님 로그인중</span>
+                        <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;"><span sec:authentication="name">Username</span>님 로그인중</span>
                         <li class="breadcrumb-item">
                             <a href="#1">로그아웃</a>
                         </li>
