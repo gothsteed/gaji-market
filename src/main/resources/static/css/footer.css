@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+div.footer {
+    width: 80%;
+    margin: 1% auto;
+    font-size:10pt;
+}
+
+div.footer2{
+
+    font-size: 10pt;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    direction: ltr;
+    text-align: left;
+    letter-spacing: -0.5px;
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    border-top: 1px solid rgb(229, 229, 229);
+    border-bottom: 1px solid rgb(229, 229, 229);
+    text-size-adjust: 100%;
+}
+
+a {
+    color:darkmagenta;
+}

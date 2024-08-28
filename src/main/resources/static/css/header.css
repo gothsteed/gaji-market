@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+div.navbar-brand:hover {
+    cursor: pointer;
+}
+
+span.logo_title {
+    font-family: "Gugi", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 1.2rem;
+}
+div#navbarTogglerDemo02 {
+    margin-left: 5%;
+    font-size: 13pt;
+    font-weight: bold;
+}
+li.nav-item {
+    padding-right: 30px;
+}
+
+a {
+    color:darkmagenta;
+}

@@ -11,4 +11,9 @@ public class productController {
     public String productList() {
         return "product/productpage";
     }
+
+    @GetMapping("productRegister")
+    public String productRegister() {
+        return "product/productregister";
+    }
 }
