@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -317,51 +317,6 @@
 
 </head>
 <body>
-<!--    <div class="m-3" id="top">
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="d-flex align-items-center navbar-brand">
-                <img class="mr-2" th:src="@{/images/gaji2.png}" width="30">
-                <span class="logo_title">가지마켓</span>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-          
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-              <ul class="navbar-nav me-auto mt-2 mt-lg-0">
-                <li class="nav-item active">
-                  <a class="nav-link" href="#1">중고거래</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#2">동네알바</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#3">중고차거래</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#4">커뮤니티</a>
-                </li>
-              </ul>
-              <form class="d-flex my-2 my-lg-0">
-                <input class="form-control mr-3" type="search" placeholder="물품을 검색해보세요!" aria-label="Search">
-                <button type="button" class="btn" style="background-color: #580DD2; color:white;">Search</button>
-              </form>
-              <ul style="font-size: small; margin: 2% 0 0 10%;">
-                <ol class="breadcrumb bg-light">
-                    <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;">00님 로그인중</span>
-                    <li class="breadcrumb-item">
-                        <a href="#1">로그아웃</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="#2">마이페이지</a>
-                    </li>
-                </ol>
-              </ul>
-            </div>
-          </nav>
-    </div>-->
-
-
     <div th:replace="~{/fragment/header :: main_header}"></div>
 
     
@@ -460,44 +415,5 @@
 
     <footer th:replace="~{fragment/footer :: footer}"></footer>
 
-
-<!--    <footer id="myfooter">
-
-        <div class="footer2">
-            <div class="mr-3">
-                <a class="text-dark" href="#">이용약관</a>
-            </div>
-            <div class="mr-3">
-                <a class="text-dark" href="#">개인정보처리방침</a>
-            </div>
-            <div class="mr-3">
-                <a class="text-dark" href="#">운영정책</a>
-            </div>
-            <div class="mr-3">
-                <a class="text-dark" href="#">위치기반서비스 이용약관</a>
-            </div>
-            <div class="mr-3">
-                <a class="text-dark" href="#">이용자보호 비전과 계획</a>
-            </div>
-            <div class="mr-3">
-                <a class="text-dark" href="#">청소년보호정책</a>
-            </div>
-        </div>
-
-        <div class="footer m-3">
-            <div class="footer">
-                <span class="mr-3"><b>대표</b> 가지마켓</span>
-                <span class="mr-3"><b>사업자번호</b> 123-45-67890</span>
-                <span class="mr-3"><b>직업정보제공사업 신고번호</b> 123456789</span>
-                <span class="mr-3"><b>통신판매업 신고번호</b> 2024-가지가지-0821</span>
-            </div>
-            <div class="footer">     
-                <span class="mr-3"><b>주소</b> 서울특별시 가지구 가지대로 245-12 (가지서비스)</span>
-                <span class="mr-3"><b>전화</b> 9292-8282</span>
-                <span class="mr-3"><b>고객문의</b> cs@gajiservice.com</span>
-            </div>
-    
-        </div>
-    </footer>-->
 </body>
 </html>

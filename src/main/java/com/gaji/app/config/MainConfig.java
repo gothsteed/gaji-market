@@ -22,9 +22,17 @@ public class MainConfig {
                 .username("gaji_dev")
                 .password("gclass")
                 .build();
-        hikariDataSource.setConnectionTimeout(30000);
         hikariDataSource.setMaximumPoolSize(10);
-        hikariDataSource.setMaxLifetime(1800000);
+        hikariDataSource.setMinimumIdle(5);
+        hikariDataSource.setIdleTimeout(300000); // 5 minutes
+        hikariDataSource.setMaxLifetime(1800000); // 30 minutes
+        hikariDataSource.setConnectionTimeout(30000); // 30 seconds
+
+        hikariDataSource.setConnectionTestQuery("SELECT 1 FROM DUAL");
+
+        // Add connection init SQL to set session parameters
+        hikariDataSource.setConnectionInitSql("ALTER SESSION SET CURRENT_SCHEMA = gaji_dev");
+
         return hikariDataSource;
     }
 

@@ -2,6 +2,7 @@ package com.gaji.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -23,6 +24,7 @@ public class ThymeleafConfig {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
         springTemplateEngine.addTemplateResolver(templateResolver());
+        springTemplateEngine.addDialect(new SpringSecurityDialect()); // Add this line
         return springTemplateEngine;
     }
 
@@ -33,5 +35,11 @@ public class ThymeleafConfig {
         viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setOrder(1);
         return viewResolver;
+    }
+
+
+    @Bean
+    public SpringSecurityDialect springSecurityDialect(){
+        return new SpringSecurityDialect();
     }
 }

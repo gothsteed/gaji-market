@@ -61,17 +61,22 @@
                     <input class="form-control mr-3" type="search" placeholder="물품을 검색해보세요!" aria-label="Search">
                     <button type="button" class="btn" style="background-color: #580DD2; color:white;">Search</button>
                 </form>
+
                 <ul style="font-size: small; margin: 2% 0 0 10%;">
                     <ol class="breadcrumb bg-light">
-                        <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;"><span sec:authentication="name">Username</span>님 로그인중</span>
+                        <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;"><span sec:authentication="principal.username"></span>님 로그인중</span>
                         <li class="breadcrumb-item">
-                            <a href="#1">로그아웃</a>
+                            <form th:action="@{/logout}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-link p-0" id="logoutButton"><a>로그아웃</a></button>
+                            </form>
                         </li>
                         <li class="breadcrumb-item">
                             <a href="#2">마이페이지</a>
                         </li>
                     </ol>
                 </ul>
+
+
             </div>
         </nav>
     </div>
