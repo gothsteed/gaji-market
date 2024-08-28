@@ -20,26 +20,27 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class JpaConfig {
 
-/*    @Bean
+    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        vendorAdapter.setDatabasePlatform("org.hibernate.dialect.OracleDialect");
         em.setJpaVendorAdapter(vendorAdapter);
 
         em.setPackagesToScan("com.gaji.app.member.domain");
 
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.OracleDialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", "none");
         properties.setProperty("hibernate.show_sql", "true");
         properties.setProperty("hibernate.format_sql", "true");
         properties.setProperty("hibernate.use_sql_comments", "true");
+        properties.setProperty("spring.jpa.open-in-view", "false");
         em.setJpaProperties(properties);
 
         return em;
-    }*/
+    }
 
     @Bean
     public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
