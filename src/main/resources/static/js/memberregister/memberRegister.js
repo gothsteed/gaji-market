@@ -124,7 +124,7 @@ $(document).ready(function(){
 
             //  $(e.target).next().hide();
             //  또는
-            $(e.target).parent().find("span.error").hide();
+            $(e.target).parent().next().next().find("span.error").hide();
         }
 
     });// 아이디가 email 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다.       
