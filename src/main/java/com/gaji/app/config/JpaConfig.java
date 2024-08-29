@@ -29,7 +29,7 @@ public class JpaConfig {
         vendorAdapter.setDatabasePlatform("org.hibernate.dialect.OracleDialect");
         em.setJpaVendorAdapter(vendorAdapter);
 
-        em.setPackagesToScan("com.gaji.app.member.domain");
+        em.setPackagesToScan("com.gaji.app.member.domain", "com.gaji.app.product.domain");
 
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "none");
