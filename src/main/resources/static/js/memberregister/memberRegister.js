@@ -368,17 +368,23 @@ $(document).ready(function(){
 });// end of $(document).ready(function(){})----------------
 
 //"이메일중복확인"을 클릭했을 때 이벤트 처리하기 시작 //
-function emailcheck(ctxPath) {
+function emailcheck() {
     b_emailcheck_click = true; // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도  
-    
+	
+	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const csrfHeader = 'X-CSRF-TOKEN';
+	
     $.ajax({
-        url : ctxPath + "/admin/emailDuplicateCheck.lms",
+        url : 'http://localhost:8080/gaji/emailDuplicateCheck',
+		headers: {
+		    [csrfHeader]: csrfToken
+		},
         data : {"email" : $( "input#email" ).val()},
         type : "post",
         dataType : "json",  
         success : function(json){
             console.log(JSON.stringify(json));
-            if(json.emailDuplicateCheck != null) {
+            if(json.emailDuplicateCheck != "Optional.empty") {
                 // 입력한 email이 이미 사용중이라면 
                 $("span#emailCheckResult").html( $("input#email").val() + " 은 이미 사용중 이므로 다른 이메일을 입력하세요").css({"color":"red"});
                 $("input#email").val("");
