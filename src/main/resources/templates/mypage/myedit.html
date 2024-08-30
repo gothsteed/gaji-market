@@ -82,8 +82,8 @@
 <div th:replace="~{/fragment/header :: main_header}"></div>
 
 
-<div class="d-flex justify-content-center" style="border: solid 1px #ccc; border-radius: 20px; width: 98%; margin: auto;">
-    <div class="container">
+<div class="d-flex justify-content-center" style="border: solid 1px #ccc; border-radius: 20px; width: 98%; margin: auto; background-image: url('/images/loginbg.jpg'); background-size: cover; background-position: center;">
+    <div class="container ml-0" style="margin-top: 4%;">
         <div class="card mb-3 shadow p-3 mb-5 bg-body-tertiary rounded" style="max-width: 1000px;">
             <div class="myInfo row g-0 ">
 
@@ -104,10 +104,10 @@
                     <div class="card-body">
                         <div class="row" style="width:100%; padding-bottom: 5%;">
                             <!-- 이름 -->
-                            <div class="col-sm-6 m-b30 mb-3" style="padding-left: 10px;">
+                            <div class="col-sm-6 m-b30 mb-3">
                                 <i class="fa-solid fa-user"></i>
                                 <label class="form-label">성명</label>
-                                <input type="text" id="profName" disabled name="name" class="form-control" style="margin-left: 31px;" value="김다영">
+                                <input type="text" id="profName" disabled name="name" class="form-control" value="김다영">
                             </div>
                             <br>
                             <!-- 비밀번호 -->
@@ -127,7 +127,7 @@
                                 <i class="fa-solid fa-phone"></i>
                                 <label class="form-label">연락처</label>
 
-                                <input type="text" id="profTel" name="tel" class="form-control" style="margin-left: 15px;" value="010-1111-1111">
+                                <input type="text" id="profTel" name="tel" class="form-control" value="010-1111-1111">
                                 <!-- 연락처중복체크 -->
                                 <span id="telcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">연락처 중복확인</button></span><br>
                                 <span id="telCheckResult"></span>
@@ -139,7 +139,7 @@
                                 <i class="fa-regular fa-envelope"></i>
                                 <label class="form-label">이메일</label>
 
-                                <input type="text" id="profEmail" name="email" class="form-control" style="margin-left: 15px;" value="qwer@gmail.com">
+                                <input type="text" id="profEmail" name="email" class="form-control" value="qwer@gmail.com">
                                 <!-- 이메일중복체크 -->
                                 <span id="emailcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">이메일 중복확인</button></span><br>
                                 <span id="emailCheckResult"></span>
@@ -150,8 +150,8 @@
                     </div>
 
                     <!-- 수정 -->
-                    <div class="card-footer" style="padding-left:20px; padding-bottom: 10px;">
-                        <button type="button" class="btn btn-success" id="editBtn" onclick="goEdit()">수정하기</button>
+                    <div style="padding-left:20px; padding-bottom: 10px;">
+                        <button type="button" class="btn" style="background-color: #580DD2; color:white;" id="editBtn" onclick="goEdit()">수정하기</button>
                     </div>
                 </form>
                 </div>
