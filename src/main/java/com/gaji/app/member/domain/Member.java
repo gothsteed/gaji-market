@@ -2,7 +2,9 @@ package com.gaji.app.member.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 @Entity
 @Table(name = "TBL_MEMBER")
@@ -26,6 +28,9 @@ public class Member {
     @Column(name = "NAME", nullable = false, length = 10)
     private String name;
 
+    @Column(name = "NICKNAME", nullable = false, length = 20)
+    private String nickname;
+
     @Column(name = "PASSWORD", nullable = false, length = 200)
     private String password;
 
@@ -40,4 +45,15 @@ public class Member {
 
     @Column(name = "MANNERTEMP", nullable = false)
     private Double mannerTemp;
+
+    public Member(String userId, String name, String nickname, String password, String email, String tel, String profilepic) {
+        this.userId = userId;
+        this.name = name;
+        this.nickname = nickname;
+        this.password = password;
+        this.email = email;
+        this.tel = tel;
+        this.profilePic = profilepic;
+    }
+
 }

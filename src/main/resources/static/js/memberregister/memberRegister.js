@@ -1,14 +1,37 @@
 let b_emailcheck_click = false;
 // "이메일중복확인" 을 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
 
+let b_idcheck_click = false;
+// "이메일중복확인" 을 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
+
 let b_zipcodeSearch_click = false;
 // "우편번호찾기" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
 
 $(document).ready(function(){
    
     $("span.error").hide();
-    $("input#name").focus();
+    $("input#userid").focus();
 
+    $("input#userid").blur( (e) => {
+
+        const name = $(e.target).val().trim();
+        if(name == "") {
+            // 입력하지 않거나 공백만 입력했을 경우 
+            $("form[action='#'] input").prop("disabled", true);
+            $(e.target).prop("disabled", false);
+            $(e.target).val("").focus();
+        
+            $(e.target).parent().next().next().find("span.error").show();
+        }
+        else {
+            // 공백이 아닌 글자를 입력했을 경우
+            $("form[action='#'] input").prop("disabled", false);
+
+            $(e.target).parent().next().next().find("span.error").hide();
+        }
+
+    });// 아이디가 userid 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다.
+	
     $("input#name").blur( (e) => {
 
         const name = $(e.target).val().trim();
@@ -51,7 +74,7 @@ $(document).ready(function(){
     
 	
 	
-    $("input#pwd").blur( (e) => { 
+    $("input#password").blur( (e) => { 
 
         const regExp_pwd = new RegExp(/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).*$/g); 
         // 숫자/문자/특수문자 포함 형태의 8~15자리 이내의 암호 정규표현식 객체 생성
@@ -78,13 +101,13 @@ $(document).ready(function(){
 
     $("input#pwdcheck").blur( (e) => {
 
-        if( $("input#pwd").val() != $(e.target).val() ) {
+        if( $("input#password").val() != $(e.target).val() ) {
             // 암호와 암호확인값이 틀린 경우 
             
             $("form[action='#'] input").prop("disabled", true);
-            $("input#pwd").prop("disabled", false);
+            $("input#password").prop("disabled", false);
             $(e.target).prop("disabled", false);
-            $("input#pwd").val("").focus();
+            $("input#password").val("").focus();
             $(e.target).val("");
         
             $(e.target).next().show();
@@ -177,72 +200,6 @@ $(document).ready(function(){
         }
     });// 아이디가 hp3 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다.
 
-    $("input#jubun").blur((e) => {
-        const jubunValue = $(e.target).val(); // 입력값 얻기
-        
-        // jubun 유효성 검사
-        let isValidJubun = true;
-    
-        // jubun의 길이는 13자리여야 함
-        if (jubunValue.length !== 13) {
-            isValidJubun = false;
-            alert("주민등록번호는 13자리여야 합니다.");
-        }
-        
-        // 7번째 자리의 값은 "1", "2", "3", "4" 중 하나여야 함
-        if (!(jubunValue.charAt(6) === '1' || jubunValue.charAt(6) === '2' || jubunValue.charAt(6) === '3' || jubunValue.charAt(6) === '4')) {
-            isValidJubun = false;
-            alert("주민등록번호의 7번째 자리가 올바르지 않습니다.");
-        }
-        
-        // 생년월일 추출
-        let strBirthday = '';
-        if (jubunValue.charAt(6) === '1' || jubunValue.charAt(6) === '2') {
-            strBirthday = '19' + jubunValue.substring(0, 6);
-        } else {
-            strBirthday = '20' + jubunValue.substring(0, 6);
-        }
-        
-        // 날짜 형식 확인
-        const sdformat = /^(\d{4})(\d{2})(\d{2})$/;
-        if (!sdformat.test(strBirthday)) {
-            isValidJubun = false;
-            alert("주민등록번호의 생년월일 형식이 올바르지 않습니다.");
-        }
-    
-        // 실제로 존재하는 날짜인지 확인
-        const year = parseInt(strBirthday.substring(0, 4), 10);
-        const month = parseInt(strBirthday.substring(4, 6), 10) - 1; // 월은 0부터 시작하므로 -1 처리
-        const day = parseInt(strBirthday.substring(6, 8), 10);
-        const birthday = new Date(year, month, day);
-    
-        // 날짜가 실제로 존재하는지 확인
-        if (birthday.getFullYear() !== year || birthday.getMonth() !== month || birthday.getDate() !== day) {
-            isValidJubun = false;
-            alert("주민등록번호의 생년월일이 올바르지 않습니다.");
-        }
-    
-        // 현재 날짜와 비교하여 생일이 미래인지 확인
-        const now = new Date();
-        now.setHours(0, 0, 0, 0); // 현재 시간을 00:00:00으로 설정하여 정확한 비교를 위해 시간 부분을 제거
-        
-        if (birthday.getTime() > now.getTime()) {
-            isValidJubun = false;
-            alert("주민등록번호의 생년월일은 현재 날짜보다 미래일 수 없습니다.");
-        }
-    
-        // 유효성에 따라 입력란 활성화/비활성화
-        if (!isValidJubun) {
-            // 유효하지 않으면 모든 입력란 비활성화
-            $('form[action="#"] input').prop('disabled', true);
-            $(e.target).parent().find("span.error").show();
-            $(e.target).prop("disabled", false); 
-        } else {
-            // 유효하면 모든 입력란 활성화
-            $('form[action="#"] input').prop('disabled', false);
-            $(e.target).parent().find("span.error").hide();
-        }
-    });
 
     $("input#postcode").blur( (e) => {
     
@@ -367,6 +324,39 @@ $(document).ready(function(){
 	   
 });// end of $(document).ready(function(){})----------------
 
+//"아이디 중복확인"을 클릭했을 때 이벤트 처리하기 시작 //
+function idcheck() {
+    b_idcheck_click = true; // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도  
+	
+	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const csrfHeader = 'X-CSRF-TOKEN';
+	
+    $.ajax({
+        url : 'http://localhost:8080/gaji/idDuplicateCheck',
+		headers: {
+		    [csrfHeader]: csrfToken
+		},
+        data : {"id" : $( "input#userid" ).val()},
+        type : "post",
+        dataType : "json",  
+        success : function(json){
+            console.log(JSON.stringify(json));
+            if(json.idDuplicateCheck != "Optional.empty") {
+                // 입력한 email이 이미 사용중이라면 
+                $("span#idCheckResult").html( $("input#userid").val() + " 은 이미 사용중 이므로 다른 이메일을 입력하세요").css({"color":"red"});
+                $("input#userid").val("");
+            } 
+            else {
+                // 입력한 userid 가 존재하지 않는 경우라면
+                $("span#idCheckResult").html( $("input#userid").val() + " 은 사용가능 합니다.").css({"color":"navy"});
+            }
+        },
+        error: function(request, status, error){
+            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+        }
+    });
+};
+
 //"이메일중복확인"을 클릭했을 때 이벤트 처리하기 시작 //
 function emailcheck() {
     b_emailcheck_click = true; // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도  
@@ -402,7 +392,7 @@ function emailcheck() {
 
 // Function Declaration
 // "등록하기" 버튼 클릭시 호출되는 함수
-function goRegister(ctxPath) {
+function goRegister() {
 
     // *** 필수입력사항에 모두 입력이 되었는지 검사하기 시작 *** //
     let b_requiredInfo = true;
@@ -430,6 +420,14 @@ function goRegister(ctxPath) {
         return; // goRegister() 함수를 종료한다.
     }
     // *** "이메일중복확인" 을 클릭했는지 검사하기 끝 *** //
+	
+    // *** "아이디중복확인" 을 클릭했는지 검사하기 시작 *** //
+    if( !b_idcheck_click ) {
+        // "이메일중복확인" 을 클릭 안 했을 경우 
+        alert("아이디 중복확인을 클릭하셔야 합니다.");
+        return; // goRegister() 함수를 종료한다.
+    }
+    // *** "아이디중복확인" 을 클릭했는지 검사하기 끝 *** //
 
     // *** "우편번호찾기" 를 클릭했는지 검사하기 시작 *** //
     if(!b_zipcodeSearch_click) {
@@ -452,7 +450,7 @@ function goRegister(ctxPath) {
    // *** 우편번호 및 주소에 값을 입력했는지 검사하기 끝 *** //
 
       const frm = document.registerFrm;
-      frm.action = ctxPath+"/admin/memberRegister_end.lms";
+      frm.action = "/gaji/memberRegisterEnd";
       frm.method = "post";
       frm.submit();
 

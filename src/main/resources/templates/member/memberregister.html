@@ -88,8 +88,24 @@
                 <div class="card-body">
                     <form action="#" name="registerFrm" method="post" enctype="multipart/form-data">
                         <!-- text, form-control -->
-                    
-                        <div class="form-group row">
+						<div class="form-group row">
+						    <label for="userid" class="col-sm-3 text-sm-left">아이디</label>
+						    <div class="col-sm-8 d-flex justify-content-between align-items-center">
+						        <input type="text" name="userid" id="userid" class="form-control requiredInfo" style="width:70%;">
+						        <div>
+						            <button type="button" class="btn btn-light" onclick="idcheck()">중복확인</button>
+						        </div>
+						    </div>
+						    <div class="col-sm-3">
+						    </div>
+						    <div class="col-sm-8 justify-content-between align-items-center">
+						        <span class="error">아이디를 입력하세요.</span>
+						        <span id="idCheckResult"></span>
+						    </div>
+						</div>
+						<hr>
+
+						<div class="form-group row">
                             <label for="name" class="col-sm-3 text-sm-left">이름</label>
                             <div class="col-sm-8">
                                 <input type="text" name="name" id="name" class="form-control requiredInfo">
@@ -109,9 +125,9 @@
                         
                         <!-- password, form-control -->
                         <div class="form-group row">
-                            <label for="pwd" class="col-sm-3 text-sm-left">비밀번호</label>
+                            <label for="password" class="col-sm-3 text-sm-left">비밀번호</label>
                             <div class="col-sm-8">
-                                <input type="password" name="pwd" id="pwd" class="form-control mb-1">
+                                <input type="password" name="password" id="password" class="form-control mb-1">
                                 <span class="error">영문자,숫자,특수기호가 혼합된 8~15 글자로 입력하세요.</span>
                                 <input type="password" id="pwdcheck" class="form-control requiredInfo">
                                 <span class="error">암호가 일치하지 않습니다.</span>
@@ -124,7 +140,7 @@
                             <div class="col-sm-8 d-flex justify-content-between align-items-center">
                                 <input type="text" name="email" id="email" class="form-control requiredInfo" style="width:70%;">
                                 <div>
-                                    <button type="button" class="btn btn-light" onclick="emailcheck('<%=ctxPath%>')">중복확인</button>
+                                    <button type="button" class="btn btn-light" onclick="emailcheck()">중복확인</button>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -135,16 +151,8 @@
                             </div>
                         </div>
                         <hr>
-                        
-                        <div class="form-group row">
-                            <label for="jubun" class="col-sm-3 text-sm-left">주민번호</label>
-                            <div class="col-sm-8">
-                                <input type="text" name="jubun" id="jubun" class="form-control requiredInfo">
-                                <span class="error" style="margin-right: 5px;">주민번호 형식에 맞지 않습니다.</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
+
+						<div class="form-group row">
                             <label for="hp2" class="col-sm-3 text-sm-left">전화번호</label>
                             <div class="col-sm-8 d-flex">
                                 <input type="text" name="a2" id="a2" class="form-control" style="width:26%" value="010" readonly> &nbsp;&nbsp;-&nbsp;&nbsp; 
@@ -183,7 +191,7 @@
 						
                     </form>
                     <!-- <button type="button" class="btn btn-primary" onclick="goRegister('<%=ctxPath%>')">등록하기</button> -->
-					<button type="button" class="btn" id="registerBtn" onclick="goRegister('<%=ctxPath%>')">등록하기</button>
+					<button type="button" class="btn" id="registerBtn" onclick="goRegister()">등록하기</button>
                 </div>
             </div>
         </div>
