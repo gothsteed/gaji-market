@@ -1,6 +1,7 @@
 package com.gaji.app.product.controller;
 
 import com.gaji.app.product.domain.Product;
+import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ public class ProductController {
     public String productList(Model model) {
 
         try {
-            List<Product> productList = productService.getProductList();
+            List<ProductImage> productList = productService.getProductList();
 
             model.addAttribute("productList", productList);
 

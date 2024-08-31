@@ -48,8 +48,6 @@
         box-sizing: border-box;
         padding: 0;
         margin: 0 auto;
-        display: flex;
-        flex-flow: row wrap;
         justify-content: space-between;
         align-content: flex-start;
     }
@@ -86,7 +84,7 @@
 
     .imgBox img {
         width: 100%;
-        height: 100%;
+        /* height: 100%; */
         /* 사진이나 비디오의 규격 맞출 때 object-fit 이용하기. */
         object-fit: cover;
         z-index: 1;
@@ -198,126 +196,19 @@
         </div>
 
         <div class="container" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="탁상용 조명" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">탁상용 조명</p>
-                <p class="textBox__price">260,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
+            <div style="display: flex; flex-flow: row wrap;">
+                <div class="item" th:each="vo, status : ${productList}">
+                  <div class="imgBox">
+                    <img th:src="@{'/images/productImg/' + ${vo.filename}}" />
+                  </div>
+                  <div class="textBox">
+                    <p class="textBox__name" th:text="${vo.product.title}"></p>
+                    <p class="textBox__price" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + '원'"></p>
+                    <p class="textBox__heart">❤️20</p>
+                  </div>
+                </div>
             </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1542556398-95fb5b9f9b48?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="머그컵" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">머그컵</p>
-                <p class="textBox__price">32,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1601233216647-4fb22eb08425" alt="거실용 슬리퍼" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">거실용 슬리퍼</p>
-                <p class="textBox__price">28,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1719937206341-38a6392dfdef" alt="삼성 노트북" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">삼성 노트북</p>
-                <p class="textBox__price">860,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="머그컵" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">머그컵</p>
-                <p class="textBox__price">32,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="거실용 슬리퍼" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">거실용 슬리퍼</p>
-                <p class="textBox__price">28,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="탁상용 조명" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">탁상용 조명</p>
-                <p class="textBox__price">260,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="머그컵" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">머그컵</p>
-                <p class="textBox__price">32,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://plus.unsplash.com/premium_photo-1681470950973-3898bbcc3056" alt="탁상용 조명" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">탁상용 조명</p>
-                <p class="textBox__price">260,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1542556398-95fb5b9f9b48?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="머그컵" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">머그컵</p>
-                <p class="textBox__price">32,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1601233216647-4fb22eb08425" alt="거실용 슬리퍼" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">거실용 슬리퍼</p>
-                <p class="textBox__price">28,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
-            <div class="item">
-              <div class="imgBox">
-                <img src="https://images.unsplash.com/photo-1719937206341-38a6392dfdef" alt="삼성 노트북" />
-              </div>
-              <div class="textBox">
-                <p class="textBox__name">삼성 노트북</p>
-                <p class="textBox__price">860,000 원</p>
-                <p class="textBox__heart">❤️20</p>
-              </div>
-            </div>
+
 
             <nav aria-label="Page navigation" id="pagenav" class="mt-5" style="margin: 0 auto;">
                 <ul class="pagination justify-content-center">
