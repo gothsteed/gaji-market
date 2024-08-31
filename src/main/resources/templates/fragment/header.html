@@ -63,15 +63,15 @@
                 </form>
 
                 <ul style="font-size: small; margin: 2% 0 0 10%;">
-                    <ol class="breadcrumb bg-light">
+                    <ol class="breadcrumb bg-light d-flex align-items-center">
                         <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;"><span sec:authentication="principal.username"></span>님 로그인중</span>
                         <li class="breadcrumb-item">
                             <form th:action="@{/logout}" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-link p-0" id="logoutButton"><a>로그아웃</a></button>
+                                <button type="submit" class="btn btn-link p-0 darkmagenta" id="logoutButton">로그아웃</button>
                             </form>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="#2">마이페이지</a>
+                            <a id="mypage" class="darkmagenta" href="myPage">마이페이지</a>
                         </li>
                     </ol>
                 </ul>

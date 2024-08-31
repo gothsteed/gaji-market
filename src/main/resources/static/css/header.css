@@ -19,7 +19,20 @@ li.nav-item {
     padding-right: 30px;
 }
 
-a {
-    color:darkmagenta;
+.darkmagenta {
+    color: darkmagenta;
+}
+
+button#logoutButton {
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+button#logoutButton:hover {
+    color: darkmagenta;
+}
+
+a#mypage:hover {
+    color: darkmagenta;
 }
 
