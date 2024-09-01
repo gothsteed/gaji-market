@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,4 +34,6 @@ public class DefaultUserDetailService implements UserDetailsService {
                 .orElseThrow( () -> new UsernameNotFoundException("존재하지 않는 아이디 입니다: " + userid));
         return new User(member.getUserId(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("MEMBER")));
     }
+
+
 }
