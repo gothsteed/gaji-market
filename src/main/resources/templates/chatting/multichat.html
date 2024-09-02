@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>가지마켓</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+
+  <!-- Google font, Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+
+  <!-- Optional JavaScript -->
+  <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/header.js}" ></script>
+
+  <style>
+    body {
+  		margin: 0;
+      	font-family: "Noto Sans KR", sans-serif;
+    }
+	a {
+		text-decoration: none;
+	}
+	li {
+		list-style: none;
+	}
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		border-left: 1px solid #0017580d;
+		border-right: 1px solid #0017580d;
+		padding: 20px 13px;
+		width: 70px;
+		max-width: 70px;
+		background-color: #eaebee;
+	}
+	.profile_image {
+		box-shadow: 0px 0px 0 2px #eaebee, 0px 0px 0 4px #b287f7;
+		border: 1px solid #dcdee3;
+		border-radius: 50%;
+		width: 100%;
+		height: 100%;
+	}
+	.message_list {
+		display: flex;
+		background: #fff;
+		border-right: 1px solid #eaebee;
+		width: 310px;
+		min-width: 310px;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.nickname {
+		display: flex;
+		height: 65px;
+		min-height: 65px;
+		border-bottom: 1px solid #eaebee;
+		padding: 0 20px;
+		align-items: center;
+	}
+	.nickname_area {
+		font-weight: bold;
+		font-size: 16pt;
+		line-height: 150%;
+	}
+	.unread {
+		display: flex;
+		flex-direction: row-reverse;
+		height: 45px;
+		min-height: 45px;
+		padding: 0 6px;
+		border-bottom: 1px solid #eaebee;
+		font-size: 12pt;
+		align-items: center;
+	}
+	.unread_label {
+		display: flex;
+		padding: 5px;
+		border-radius: 5px;
+		color: #868b94;
+		cursor: pointer;
+	}
+	.unread_label:hover {
+		background: #eaebee radial-gradient(circle, transparent 1%, #eaebee 1%) center / 15000%;
+		color: #868b94;
+	}
+	.checkbox {
+		margin-left: 5px;
+	}
+	.channel_list {
+		position: relative;
+		margin: 0;
+		padding: 0;
+		height: calc(100% - 55px);
+		overflow: hidden auto;
+	}
+	.selected {
+		background: #f2f3f6;
+	}
+	.channel {
+		display: flex;
+		padding: 15px;
+		height: 72px;
+		border-bottom: 1px solid #eaebee;
+		align-items: center;
+		overflow: hidden;
+	}
+	.more_btn {
+		display: block;
+		width: 100%;
+		height: 45px;
+		border: none;
+		background: #fff;
+		font-size: 14pt;
+		line-height: 150%;
+		color: #b287f7;
+		cursor: pointer;
+	}
+	.faq_container {
+		display: flex;
+		align-items: center;
+		border-top: 1px solid #eaebee;
+		padding-left: 10px;
+		height: 55px;
+		min-height: 55px;
+	}
+	.faq_content {
+		display: inline-flex;
+		align-items: center;
+		padding: 5px;
+		border-radius: 5px;
+		font-size: 14pt;
+		color: #868b94;
+		text-decoration: none !important;
+	}
+	.faq_content:hover {
+		background: #eaebee radial-gradient(circle, transparent 1%, #eaebee 1%) center / 15000%;
+		color: #868b94;
+	} 
+	.chatting {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		border-right: 1px solid #eaebee;
+		min-width: 810px;
+		max-width: 810px;
+		background: #fff;
+	}
+  </style>
+</head>
+<body>
+	<div th:replace="~{/fragment/header :: main_header}"></div>
+	
+	<div style="background: #f2f3f6; display: flex; justify-content: center; flex-direction: column; height: calc(100vh - 143px);">
+		<div style="display: flex; position: relative; margin: 0 auto; height: 100%;">
+			<div style="border: 1px solid red; display: flex;">
+				<nav class="sidebar">
+					<a href="#" style="display: inline-block; width: 45px; height: 45px;">
+						<img class="profile_image" th:src="@{/images/mypage/nyang.jpg}">
+					</a>
+				</nav>
+				<nav class="message_list">
+					<div class="nickname">
+						<div class="nickname_area">예린</div>
+					</div>
+					<div class="unread">
+						<div class="unread_label">
+							<span>안읽은 메시지만 보기</span>
+							<input class="checkbox" type="checkbox">
+						</div>
+					</div>
+					<ul class="channel_list">
+						<li>
+							<a class="selected channel" href="#">
+								<div class="profile_wrapper" style="margin-right: 10px; height: 40px;">
+									<img class="profile_image" th:src="@{/images/mypage/basicimg.png}">
+								</div>
+								<div style="flex: 1 0 0%; width: 0px;">
+									
+								</div>
+							</a>
+						</li>
+						<button class="more_btn">더보기</button>
+					</ul>
+					<div class="faq_container">
+						<a class="faq_content" href="#" target="_blank">
+							<span style="margin-right: 5px;">자주묻는질문</span>
+							<i class="fa-regular fa-circle-question" style="color: #c4cad4;"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+			<div class="chatting" style="border: 1px solid blue;">
+							
+							
+			</div>
+		</div>
+	</div>  	
+</body>
+</html>
