@@ -10,4 +10,10 @@ public class MemberController {
     public String myPage() {
         return "member/mypage";
     }
+    
+    @GetMapping("chatting")
+    public String multichat() {
+        return "chatting/multichat";
+    }
+    
 }
