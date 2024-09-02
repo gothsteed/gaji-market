@@ -327,22 +327,16 @@ $(document).ready(function(){
 //"아이디 중복확인"을 클릭했을 때 이벤트 처리하기 시작 //
 function idcheck() {
     b_idcheck_click = true; // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도  
-	
-	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const csrfHeader = 'X-CSRF-TOKEN';
-	
-    $.ajax({
-        url : 'http://localhost:8080/gaji/idDuplicateCheck',
-		headers: {
-		    [csrfHeader]: csrfToken
-		},
+
+	    $.ajax({
+        url : 'http://localhost:8080/gaji/memberregister/idDuplicateCheck',
         data : {"id" : $( "input#userid" ).val()},
         type : "post",
         dataType : "json",  
         success : function(json){
             console.log(JSON.stringify(json));
             if(json.idDuplicateCheck != "Optional.empty") {
-                // 입력한 email이 이미 사용중이라면 
+                // 입력한 id가 이미 사용중이라면 
                 $("span#idCheckResult").html( $("input#userid").val() + " 은 이미 사용중 이므로 다른 이메일을 입력하세요").css({"color":"red"});
                 $("input#userid").val("");
             } 
@@ -361,14 +355,8 @@ function idcheck() {
 function emailcheck() {
     b_emailcheck_click = true; // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도  
 	
-	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const csrfHeader = 'X-CSRF-TOKEN';
-	
     $.ajax({
-        url : 'http://localhost:8080/gaji/emailDuplicateCheck',
-		headers: {
-		    [csrfHeader]: csrfToken
-		},
+        url : 'http://localhost:8080/gaji/memberregister/emailDuplicateCheck',
         data : {"email" : $( "input#email" ).val()},
         type : "post",
         dataType : "json",  
@@ -450,7 +438,7 @@ function goRegister() {
    // *** 우편번호 및 주소에 값을 입력했는지 검사하기 끝 *** //
 
       const frm = document.registerFrm;
-      frm.action = "/gaji/memberRegisterEnd";
+      frm.action = "http://localhost:8080/gaji/memberregister/end";
       frm.method = "post";
       frm.submit();
 

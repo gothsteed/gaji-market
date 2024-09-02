@@ -44,7 +44,7 @@ public class Member {
     private String profilePic;
 
     @Column(name = "MANNERTEMP", nullable = false)
-    private Double mannerTemp;
+    private Double mannerTemp = 36.5;
 
     public Member(String userId, String name, String nickname, String password, String email, String tel, String profilepic) {
         this.userId = userId;

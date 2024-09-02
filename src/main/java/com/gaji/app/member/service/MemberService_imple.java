@@ -3,6 +3,8 @@ package com.gaji.app.member.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gaji.app.member.domain.Member;
@@ -25,8 +27,10 @@ public class MemberService_imple implements MemberService {
 
     @Override
     public int memberRegister_end(MemberDTO mdto) throws Exception {
+    	PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    	
         // MemberDTO를 Member 엔티티로 변환
-        Member member = new Member(mdto.getUserId(), mdto.getName(), mdto.getNickname(), mdto.getPassword(), mdto.getEmail(), mdto.getTel(), mdto.getProfilepic());
+        Member member = new Member(mdto.getUserId(), mdto.getName(), mdto.getNickname(), passwordEncoder.encode(mdto.getPassword()), mdto.getEmail(), mdto.getTel(), mdto.getProfilepic());
         
         try {
             // Member 엔티티 저장

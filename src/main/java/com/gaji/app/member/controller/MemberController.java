@@ -28,13 +28,13 @@ public class MemberController {
 	@Autowired
 	private FileManager fileManager;
     
-    @GetMapping("memberregister")
+    @GetMapping("/memberregister")
     public String memberregister() {
         return "member/memberregister";
     }
     
     @ResponseBody
-    @PostMapping(value="idDuplicateCheck", produces="text/plain;charset=UTF-8")
+    @PostMapping(value="/memberregister/idDuplicateCheck", produces="text/plain;charset=UTF-8")
     public String idDuplicateCheck(String id) {
     	
     	String idDuplicateCheck = null;
@@ -54,7 +54,7 @@ public class MemberController {
     }
     
     @ResponseBody
-	@PostMapping(value="emailDuplicateCheck", produces="text/plain;charset=UTF-8")
+	@PostMapping(value="/memberregister/emailDuplicateCheck", produces="text/plain;charset=UTF-8")
 	public String emailDuplicateCheck(String email) {
 		
 		String emailDuplicateCheck = null;
@@ -73,7 +73,7 @@ public class MemberController {
 		return jsonObj.toString();
 	}
     
-	@PostMapping(value = "/memberRegisterEnd")
+	@PostMapping(value = "/memberregister/end")
 	public ModelAndView memberRegister_end(HttpServletRequest request, ModelAndView mav, MemberDTO mdto, MultipartHttpServletRequest mrequest) {
 		
 		String tel = request.getParameter("a2") + request.getParameter("hp2") + request.getParameter("hp3"); // 전화번호
@@ -91,7 +91,7 @@ public class MemberController {
 	     
 	    byte[] bytes = null;
 	    // 첨부 파일의 내용물을 담은 것
-	     
+	    
 	    try {
 			bytes = attach.getBytes();
 			// 첨부파일의 내용물을 읽어오는 것
@@ -115,12 +115,16 @@ public class MemberController {
 		
 		if(n == 1) {
 			mav.addObject("message", "회원가입에 성공하였습니다!");
-			mav.addObject("loc", "/home");
+			mav.addObject("loc", "http://localhost:8080/gaji/login");
 			mav.setViewName("msg");
+			/*
+			System.out.println("Message: " + mav.getModel().get("message"));
+			System.out.println("Location: " + mav.getModel().get("loc"));
+			*/
 		}
 		else {
 			mav.addObject("message", "회원가입에 실패하였습니다!");
-			mav.addObject("loc", "/home");
+			mav.addObject("loc", "http://localhost:8080/gaji/login");
 			mav.setViewName("msg");
 		}
 		
