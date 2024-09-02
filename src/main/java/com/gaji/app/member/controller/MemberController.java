@@ -26,7 +26,7 @@ public class MemberController {
     public String myPage() {
         return "member/mypage";
     }
-}
+
     @Autowired
     private MemberService memberService;
 	
