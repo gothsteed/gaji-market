@@ -1,6 +1,5 @@
 package com.gaji.app.product.controller;
 
-import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +34,24 @@ public class ProductController {
     public String productRegister() {
         return "product/productregister";
     }
+
+
+    @GetMapping("productDetail")
+    public String productDetail(Model model) {
+        try {
+            List<ProductImage> productList = productService.getProductList();
+
+            model.addAttribute("productList", productList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "product/productdetail";
+    }
+
+
+
+
+
+
 }
