@@ -27,6 +27,11 @@ public class MemberController {
         return "member/mypage";
     }
 
+		@GetMapping("chatting")
+    public String multichat() {
+        return "chatting/multichat";
+    }
+
     @Autowired
     private MemberService memberService;
 	
@@ -135,4 +140,5 @@ public class MemberController {
 		
 		return mav;
 	}
+    
 }
