@@ -135,4 +135,10 @@ public class MemberController {
 		
 		return mav;
 	}
+	
+    @GetMapping("/likeproduct")
+    public String likeproduct() {
+        return "member/likeproduct";
+    }
+	
 }
