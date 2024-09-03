@@ -8,7 +8,7 @@ import lombok.Setter;
 public class MyPageDto {
 
     private String name;
-    private int mannerTemp;
+    private double mannerTemp;
     private int onSaleCount;
     private int soldCount;
     private int likedProductCount;

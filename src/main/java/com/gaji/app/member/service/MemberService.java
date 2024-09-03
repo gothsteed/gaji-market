@@ -50,7 +50,7 @@ public class MemberService {
         return myPageDto;
     }
 
-    
+
     public String emailDuplicateCheck(String email) throws Exception {
 
         Optional<Member> emailCheck = memberRepository.findByEmail(email);

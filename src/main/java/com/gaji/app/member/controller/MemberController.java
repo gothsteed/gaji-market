@@ -25,10 +25,13 @@ import net.minidev.json.JSONObject;
 public class MemberController {
 
     private MemberService memberService;
+	private FileManager fileManager;
+
 
     @Autowired
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, FileManager fileManager) {
         this.memberService = memberService;
+		this.fileManager = fileManager;
     }
 
     @GetMapping("/myPage")
@@ -42,11 +45,6 @@ public class MemberController {
         return "chatting/multichat";
     }
 
-    @Autowired
-    private MemberService memberService;
-	
-	@Autowired
-	private FileManager fileManager;
     
     @GetMapping("/memberregister")
     public String memberregister() {
