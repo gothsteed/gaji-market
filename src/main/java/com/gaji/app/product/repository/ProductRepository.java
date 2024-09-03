@@ -21,6 +21,8 @@ public interface ProductRepository extends JpaRepository<ProductImage, Long> {
 
     @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
     int countSoldProductsByMemberSeq(@Param("userid") String userid);
+
+
     // 상품당 상품이미지 1개씩 가져오기
     @Query(value = "SELECT t1.* " +
                    "FROM tbl_product_image t1 " +
@@ -31,5 +33,7 @@ public interface ProductRepository extends JpaRepository<ProductImage, Long> {
                    ") ", nativeQuery = true)
     List<ProductImage> findMinProductImages();
 
+    // 상품번호에 대한 상품이미지 가져오기
+    List<ProductImage> findByFkproductseq(Long seq);
 }
 

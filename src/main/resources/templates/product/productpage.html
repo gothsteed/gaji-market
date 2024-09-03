@@ -176,7 +176,8 @@
 
     $(document).ready(function() {
         $('.item').click(function () {
-            location.href='productDetail';
+            var seq = $(this).data('seq');
+            location.href = 'productDetail?seq=' + seq;
         });
     });
 </script>
@@ -203,7 +204,7 @@
 
         <div class="container" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
             <div style="display: flex; flex-flow: row wrap;">
-                <div class="item" th:each="vo, status : ${productList}">
+                <div class="item" th:each="vo, status : ${productList}" th:data-seq="${vo.product.productseq}">
                   <div class="imgBox">
                     <img th:src="@{'/images/productImg/' + ${vo.filename}}"  alt=""/>
                   </div>
@@ -212,6 +213,7 @@
                     <p class="textBox__price" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + '원'"></p>
                     <p class="textBox__heart">❤️20</p>
                   </div>
+
                 </div>
             </div>
 
