@@ -94,7 +94,7 @@
                             <div class="col-sm-6 m-b30 mb-3">
                                 <i class="fa-solid fa-user"></i>
                                 <label class="form-label">성명</label>
-                                <input type="text" id="profName" disabled name="name" class="form-control" th:value="${member.name}">
+                                <input type="text" id="memberName" disabled name="name" class="form-control" th:value="${member.name}">
                             </div>
                             <br>
                             <!-- 비밀번호 -->
@@ -102,11 +102,10 @@
                                 <i class="fa-solid fa-key"></i>
                                 <label class="form-label">비밀번호</label>
 
-                                <input type="password" id="profPwd" name="pwd" class="form-control"/>
+                                <input type="password" id="memberPwd" name="pwd" class="form-control"/>
                                 <!-- 비밀번호중복체크 -->
                                 <span id="pwdcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">비밀번호 중복확인</button></span><br>
                                 <span id="pwdCheckResult"></span>
-                                <span class="error">숫자/문자/특수문자 포함 형태의 8~15자리로 입력해주세요.</span>
                             </div>
                             <br>
                             <!-- 연락처 -->
@@ -114,7 +113,7 @@
                                 <i class="fa-solid fa-phone"></i>
                                 <label class="form-label">연락처</label>
 
-                                <input type="text" id="profTel" name="tel" class="form-control" th:value="${member.tel}">
+                                <input type="text" id="memberTel" name="tel" class="form-control" th:value="${member.tel}">
                                 <!-- 연락처중복체크 -->
                                 <span id="telcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">연락처 중복확인</button></span><br>
                                 <span id="telCheckResult"></span>
@@ -126,7 +125,7 @@
                                 <i class="fa-regular fa-envelope"></i>
                                 <label class="form-label">이메일</label>
 
-                                <input type="text" id="profEmail" name="email" class="form-control" th:value="${member.email}">
+                                <input type="text" id="memberEmail" name="email" class="form-control" th:value="${member.email}">
                                 <!-- 이메일중복체크 -->
                                 <span id="emailcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">이메일 중복확인</button></span><br>
                                 <span id="emailCheckResult"></span>

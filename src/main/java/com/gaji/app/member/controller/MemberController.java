@@ -166,4 +166,15 @@ public class MemberController {
 		return mav;
 	}
 
+	@ResponseBody
+	@PostMapping(value="/myedit/pwdDuplicateCheck", produces="text/plain;charset=UTF-8")
+	public String pwdDuplicateCheck (String pwd){
+
+		JSONObject json = professorService.pwdDuplicateCheck(request);
+
+		return json.toString();
+
+		return "";
+	}
+
 }
