@@ -74,8 +74,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="fkmemberseq", referencedColumnName = "memberseq", insertable = false, updatable = false)
     private Member member;
-    // insertable = false => insert 되는 것이 아니라 select 용이기 때문에
-    // updatable = false => update 되는 것이 아니라 select 용이기 때문에
+
 
     @PrePersist // insert 전에 호출
     public void prePersist() {

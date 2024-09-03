@@ -39,5 +39,5 @@ public class Member {
     private String profilePic;
 
     @Column(name = "MANNERTEMP", nullable = false)
-    private Double mannerTemp;
+    private Integer mannerTemp;
 }
