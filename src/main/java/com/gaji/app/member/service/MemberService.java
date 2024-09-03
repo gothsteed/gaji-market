@@ -45,6 +45,7 @@ public class MemberService {
         myPageDto.setSoldCount(soldCount);
         myPageDto.setReviewCount(reviewCount);
         myPageDto.setLikedProductCount(likeCount);
+        myPageDto.setAddress(member.getAddress().getAddress());
 
 
         return myPageDto;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -66,8 +66,8 @@
 
           <!-- 이름 -->
           <div style="margin-bottom: 5%;">
-            <span style="font-size: 1.2rem;"><span class="font-weight-bold" style="color: #580DD2;">김다영</span> 님</span>
-            <span class="d-block" style="color: #b3b3b3;">주안3동</span>
+            <span style="font-size: 1.2rem;"><span class="font-weight-bold" style="color: #580DD2;" data-mypage="name"></span> 님</span>
+            <span class="d-block" style="color: #b3b3b3; " data-mypage="address"></span>
           </div>
 
           <!-- 영양지수 -->
@@ -75,9 +75,9 @@
             <span>영양지수</span>
             <i class="fa-solid fa-circle-info" style="color: #ccc;" title="영양지수는 가지마켓 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서 만든 매너 지표입니다."></i>
             <div>
-              <span style="font-size: 1rem; display: block; text-align: right;">75%</span> <!-- 퍼센트 표시 -->
+              <span style="font-size: 1rem; display: block; text-align: right;" data-mypage="mannerTemp"></span> <!-- 퍼센트 표시 -->
               <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-                <div style="width: 75%; height: 10px; background-color: #580DD2; border-radius: 5px;"></div> <!-- 퍼센트 바 -->
+                <div data-mypage="mannerTempBar" style="height: 10px; background-color: #580DD2; border-radius: 5px;"></div>
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
           </div>
 
           <div>
-            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;">로그아웃</div>
+            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;" th:onclick="'window.location.href=\'' + @{/logout} + '\''">로그아웃</div>
           </div>
 
         </div>
@@ -100,17 +100,17 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="width: 33%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-handshake mb-2" style="font-size: 1.2rem;"></i>
               <span class="d-block text-center">판매목록</span>
-              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;">8</span>&nbsp;개</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="onSaleCount"></span>&nbsp;개</span>
             </div>
             <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 33%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-credit-card mb-2" style="font-size: 1.2rem;"></i>
               <span class="d-block text-center">구매목록</span>
-              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;">5</span>&nbsp;개</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="soldCount"></span>&nbsp;개</span>
             </div>
             <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 33%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-heart mb-2" style="font-size: 1.2rem;"></i>
               <span class="d-block text-center">찜한상품</span>
-              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;" th:onclick="'window.location.href=\'' + @{/likeproduct} + '\''"><span style="color: #580DD2; font-size: 1.5rem;">3</span>&nbsp;개</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;" th:onclick="'window.location.href=\'' + @{/likeproduct} + '\''"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="likedProductCount"></span>&nbsp;개</span>
             </div>
           </div>
 
@@ -134,7 +134,7 @@
                   <span>거래리뷰</span>
                 </div>
                 <div>
-                  <span class="font-weight-bold" style="color:#580DD2;">8개</span>
+                  <span class="font-weight-bold" style="color:#580DD2;" data-mypage="reviewCount"></span>
                   <i class="fa-solid fa-angle-right ml-2" style="color: #ccc;"></i>
                 </div>
               </div>
@@ -168,6 +168,35 @@
       </div>
     </div>
   </div>
+
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      const contextPath = '[[@{/}]]';
+      fetch(contextPath + 'api/v1/users/me/my-page-info')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                // Update the page with the fetched data
+                document.querySelector('[data-mypage="name"]').textContent = data.name;
+                document.querySelector('[data-mypage="mannerTemp"]').textContent = data.mannerTemp + '%';
+                document.querySelector('[data-mypage="mannerTempBar"]').style.width = data.mannerTemp + '%';
+                document.querySelector('[data-mypage="onSaleCount"]').textContent = data.onSaleCount;
+                document.querySelector('[data-mypage="soldCount"]').textContent = data.soldCount;
+                document.querySelector('[data-mypage="likedProductCount"]').textContent = data.likedProductCount;
+                document.querySelector('[data-mypage="reviewCount"]').textContent = data.reviewCount + '개';
+                document.querySelector('[data-mypage="address"]').textContent = data.address;
+              })
+              .catch(error => {
+                console.error('There was a problem with the fetch operation:', error.message);
+                // Optionally, update the UI to show an error message
+              });
+    });
+  </script>
 
   <div th:replace="~{/fragment/footer :: footer}"></div>
 </body>
