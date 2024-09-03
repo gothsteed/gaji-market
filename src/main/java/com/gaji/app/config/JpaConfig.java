@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EntityScan(basePackages = {"com.gaji.app.member.domain", "com.gaji.app.product.domain"})
+//@EntityScan(basePackages = {"com.gaji.app.member.domain", "com.gaji.app.product.domain"})
 @EnableJpaRepositories(basePackages = {"com.gaji.app.member.repository", "com.gaji.app.product.repository"})
 @EnableTransactionManagement
 public class JpaConfig {

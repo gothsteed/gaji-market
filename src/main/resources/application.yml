@@ -1,6 +1,22 @@
 spring:
   profiles: #실행환경(local(로컬),dev(개발),real(운영))  https://bepoz-study-diary.tistory.com/371 참조
     active: local
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          kakao:
+#            client-id: 7c27a381ebd55bf96ab7741ce9d9b819
+#            redirect-uri: "{baseUrl}/login/kakao"
+#            authorization-grant-type: authorization_code
+#            client-authentication-method: client_secret_post
+#            client-name: Kakao
+#        provider:
+#          kakao:
+#            authorization-uri: https://kauth.kakao.com/oauth/authorize
+#            token-uri: https://kauth.kakao.com/oauth/token
+#            user-info-uri: https://kapi.kakao.com/v2/user/me
+#            user-name-attribute: id
 
 
 # You can add server configuration here if needed
@@ -8,3 +24,9 @@ server:
   port: 8080
   servlet:
     context-path: /gaji
+
+logging:
+  level:
+    root: DEBUG  # Set the default log level to DEBUG
+    # Example of setting specific package to DEBUG level
+    org.springframework.security: DEBUG

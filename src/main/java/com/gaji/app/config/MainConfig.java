@@ -1,11 +1,13 @@
 package com.gaji.app.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
@@ -34,6 +36,11 @@ public class MainConfig {
         hikariDataSource.setConnectionInitSql("ALTER SESSION SET CURRENT_SCHEMA = gaji_dev");
 
         return hikariDataSource;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
 }
