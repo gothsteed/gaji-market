@@ -1,6 +1,5 @@
 package com.gaji.app.product.controller;
 
-import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
