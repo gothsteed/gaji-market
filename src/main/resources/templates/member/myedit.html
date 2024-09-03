@@ -19,6 +19,7 @@
     <!-- Optional JavaScript -->
     <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/memberEdit/memberEdit.js}"></script>
 
     <style>
         body {
@@ -56,33 +57,12 @@
         }
 
     </style>
-
-    <script>
-
-        let b_emailcheck_click = false;
-        // "이메일중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
-
-        let b_pwdcheck_click = false;
-        // "비밀번호중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
-
-        let b_telcheck_click = false;
-        // "연락처중복확인" 를 클릭했는지 클릭을 안했는지 여부를 알아오기 위한 용도
-
-        $(document).ready(function() {
-
-            $("span.error").hide();
-
-        });
-
-
-    </script>
-
 </head>
 <body>
 <div th:replace="~{/fragment/header :: main_header}"></div>
 
 
-<div class="d-flex justify-content-center" style="border: solid 1px #ccc; border-radius: 20px; width: 98%; margin: auto; background-image: url('/images/loginbg.jpg'); background-size: cover; background-position: center;">
+<div class="d-flex justify-content-center" th:style="'border: solid 1px #ccc; border-radius: 20px; width: 98%; margin: auto; background-image: url(' + @{/images/loginbg.jpg} + '); background-size: cover; background-position: center;'">
     <div class="container ml-0" style="margin-top: 4%;">
         <div class="card mb-3 shadow p-3 mb-5 bg-body-tertiary rounded" style="max-width: 1000px;">
             <div class="myInfo row g-0 ">
@@ -93,10 +73,17 @@
 
                 <div class="card-body">
 
-                <form class="profile-frm" name="professorFrm" enctype="multipart/form-data">
+                <form class="profile-frm" name="memberFrm" enctype="multipart/form-data">
                     <!-- 프로필 사진 -->
                     <div class="d-flex" style="padding-left: 10px;">
-                        <img class="img-fluid rounded-start" id="previewImg" style="width:15%; margin-left:5%;" src="/static/images/mypage/nyang.jpg" />
+                        <!-- profilePic이 null인 경우 기본 이미지를 표시 -->
+                        <img class="img-fluid rounded-start" id="defaultImg" style="width:15%; margin-left:5%;"
+                             th:src="@{/images/mypage/nyang.jpg}" th:if="${member.profilePic == null}" />
+
+                        <!-- profilePic이 null이 아닌 경우 사용자의 프로필 사진을 표시 -->
+                        <img class="img-fluid rounded-start" id="memberImg" style="width:15%; margin-left:5%;"
+                             th:src="@{'/images/mypage/' + ${member.profilePic}}" th:if="${member.profilePic != null}" />
+
                         <div class="prodInputName" style="width:25%; padding-bottom: 10px; margin-left:5%;">이미지파일 미리보기</div>
                         <input class="form-control img_file" type="file" name="attach" style="width:30%; margin-top: 10%;">
                     </div>
@@ -107,7 +94,7 @@
                             <div class="col-sm-6 m-b30 mb-3">
                                 <i class="fa-solid fa-user"></i>
                                 <label class="form-label">성명</label>
-                                <input type="text" id="profName" disabled name="name" class="form-control" value="김다영">
+                                <input type="text" id="profName" disabled name="name" class="form-control" th:value="${member.name}">
                             </div>
                             <br>
                             <!-- 비밀번호 -->
@@ -127,7 +114,7 @@
                                 <i class="fa-solid fa-phone"></i>
                                 <label class="form-label">연락처</label>
 
-                                <input type="text" id="profTel" name="tel" class="form-control" value="010-1111-1111">
+                                <input type="text" id="profTel" name="tel" class="form-control" th:value="${member.tel}">
                                 <!-- 연락처중복체크 -->
                                 <span id="telcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">연락처 중복확인</button></span><br>
                                 <span id="telCheckResult"></span>
@@ -139,7 +126,7 @@
                                 <i class="fa-regular fa-envelope"></i>
                                 <label class="form-label">이메일</label>
 
-                                <input type="text" id="profEmail" name="email" class="form-control" value="qwer@gmail.com">
+                                <input type="text" id="profEmail" name="email" class="form-control" th:value="${member.email}">
                                 <!-- 이메일중복체크 -->
                                 <span id="emailcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">이메일 중복확인</button></span><br>
                                 <span id="emailCheckResult"></span>

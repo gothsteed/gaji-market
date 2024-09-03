@@ -2,7 +2,11 @@ package com.gaji.app.member.controller;
 
 import java.io.File;
 
+import com.gaji.app.member.domain.Member;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,8 +41,8 @@ public class MemberController {
 	
 	@Autowired
 	private FileManager fileManager;
-    
-    @GetMapping("/memberregister")
+
+	@GetMapping("/memberregister")
     public String memberregister() {
         return "member/memberregister";
     }
@@ -145,5 +149,21 @@ public class MemberController {
     public String likeproduct() {
         return "member/likeproduct";
     }
-	
+
+
+	@GetMapping("/myedit")
+	public ModelAndView myedit(@AuthenticationPrincipal UserDetails userDetails, ModelAndView mav, Member member) {
+
+		String userId = userDetails.getUsername();
+		// System.out.println("확인용 이름 : " + userId);
+
+		member = memberService.getInfo(userId);
+
+
+
+		mav.addObject("member", member);
+		mav.setViewName("member/myedit");
+		return mav;
+	}
+
 }

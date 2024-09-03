@@ -1,5 +1,6 @@
 package com.gaji.app.member.service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,14 @@ public class MemberService_imple implements MemberService {
 		Optional<Member> idCheck = memberRepository.findByUserId(id);
 		
 		return idCheck.toString();
+	}
+
+	@Override
+	public Member getInfo(String userId) {
+
+		Optional<Member> getInfo = memberRepository.findByUserId(userId);
+
+		return getInfo.orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없습니다."));
 	}
 
 }
