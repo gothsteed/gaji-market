@@ -1,6 +1,5 @@
 package com.gaji.app.product.repository;
 
-import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,14 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductImage, Long> {
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
+    int countOnSaleProductsByMemberSeq(@Param("userid") String userid);
 
+    @Query("SELECT COUNT(p) FROM LikeProduct p WHERE p.member.userId = :userid")
+    int countLikedProductByUserid(@Param("userid") String userid);
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
+    int countSoldProductsByMemberSeq(@Param("userid") String userid);
     // 상품당 상품이미지 1개씩 가져오기
     @Query(value = "SELECT * " +
             "FROM ( " +
@@ -35,3 +41,4 @@ public interface ProductRepository extends JpaRepository<ProductImage, Long> {
     @Query(value = "SELECT COUNT(*) FROM tbl_product", nativeQuery = true)
     long countProduct();
 }
+

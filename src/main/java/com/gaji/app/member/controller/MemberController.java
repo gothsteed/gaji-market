@@ -1,5 +1,7 @@
 package com.gaji.app.member.controller;
 
+import com.gaji.app.member.dto.MyPageDto;
+import com.gaji.app.member.service.MemberService;
 import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,19 @@ import net.minidev.json.JSONObject;
 @Controller
 public class MemberController {
 
-    @GetMapping("myPage")
+    private MemberService memberService;
+	private FileManager fileManager;
+
+
+    @Autowired
+    public MemberController(MemberService memberService, FileManager fileManager) {
+        this.memberService = memberService;
+		this.fileManager = fileManager;
+    }
+
+    @GetMapping("/myPage")
     public String myPage() {
+
         return "member/mypage";
     }
 
@@ -32,11 +45,6 @@ public class MemberController {
         return "chatting/multichat";
     }
 
-    @Autowired
-    private MemberService memberService;
-	
-	@Autowired
-	private FileManager fileManager;
     
     @GetMapping("/memberregister")
     public String memberregister() {

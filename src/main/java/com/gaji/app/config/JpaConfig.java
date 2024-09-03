@@ -16,7 +16,11 @@ import java.util.Properties;
 
 @Configuration
 //@EntityScan(basePackages = {"com.gaji.app.member.domain", "com.gaji.app.product.domain"})
-@EnableJpaRepositories(basePackages = {"com.gaji.app.member.repository", "com.gaji.app.product.repository"})
+@EnableJpaRepositories(basePackages = {
+        "com.gaji.app.member.repository"
+        , "com.gaji.app.product.repository"
+        , "com.gaji.app.review.repository"
+})
 @EnableTransactionManagement
 public class JpaConfig {
 
@@ -29,7 +33,7 @@ public class JpaConfig {
         vendorAdapter.setDatabasePlatform("org.hibernate.dialect.OracleDialect");
         em.setJpaVendorAdapter(vendorAdapter);
 
-        em.setPackagesToScan("com.gaji.app.member.domain", "com.gaji.app.product.domain");
+        em.setPackagesToScan("com.gaji.app.member.domain", "com.gaji.app.product.domain", "com.gaji.app.review.domain");
 
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "none");
