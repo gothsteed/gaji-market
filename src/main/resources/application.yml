@@ -17,6 +17,30 @@ spring:
 #            token-uri: https://kauth.kakao.com/oauth/token
 #            user-info-uri: https://kapi.kakao.com/v2/user/me
 #            user-name-attribute: id
+#  datasource:
+#    url: jdbc:oracle:thin:@ec2-13-125-235-49.ap-northeast-2.compute.amazonaws.com:1521/xe
+#    username: gaji_dev
+#    password: gclass
+#    driver-class-name: oracle.jdbc.OracleDriver
+#    jpa:
+#      show-sql: true
+#      hibernate:
+#        ddl-auto: none
+#      properties:
+#        hibernate:
+#          format_sql: true
+#          dialect: org.hibernate.dialect.OracleDialect
+#      open-in-view: false
+#    type: com.zaxxer.hikari.HikariDataSource
+#    hikari:
+#      maximum-pool-size: 10
+#      minimum-idle: 5
+#      idle-timeout: 300000
+#      max-lifetime: 1800000
+#      connection-timeout: 30000
+#      connection-test-query: select 1 from dual
+#      connection-init-sql: ALTER SESSION SET CURRENT_SCHEMA = gaji_dev
+
 
 
 # You can add server configuration here if needed
