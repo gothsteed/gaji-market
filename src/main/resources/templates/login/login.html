@@ -153,7 +153,7 @@
                             <button type="submit" class="btn" id="loginBtn">로그인</button>
                             <div class="d-flex justify-content-between">
                                 <button type="button" class="btn otherBtn">아이디 / 비밀번호 찾기</button>
-                                <button type="button" class="btn otherBtn">회원가입</button>
+                                <button type="button" class="btn otherBtn" th:onclick="'window.location.href=\'' + @{/memberregister} + '\''">회원가입</button>
                             </div>
                         </div>
                     </form>

@@ -34,4 +34,24 @@ public class ProductController {
     public String productRegister() {
         return "product/productregister";
     }
+
+
+    @GetMapping("productDetail")
+    public String productDetail(Model model) {
+        try {
+            List<ProductImage> productList = productService.getProductList();
+
+            model.addAttribute("productList", productList);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "product/productdetail";
+    }
+
+
+
+
+
+
 }
