@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -88,7 +88,7 @@
           </div>
 
           <div>
-            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;">로그아웃</div>
+            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;" th:onclick="'window.location.href=\'' + @{/logout} + '\''">로그아웃</div>
           </div>
 
         </div>
