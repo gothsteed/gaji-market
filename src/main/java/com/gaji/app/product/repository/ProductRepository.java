@@ -16,13 +16,22 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<ProductImage, Long> {
 
     // 상품당 상품이미지 1개씩 가져오기
-    @Query(value = "SELECT t1.* " +
-                   "FROM tbl_product_image t1 " +
-                   "WHERE productimageseq = ( " +
-                   "    SELECT MIN(t2.productimageseq) " +
-                   "    FROM tbl_product_image t2 " +
-                   "    WHERE t2.fkproductseq = t1.fkproductseq " +
-                   ") ", nativeQuery = true)
-    List<ProductImage> findMinProductImages();
+    @Query(value = "SELECT * " +
+            "FROM ( " +
+            "    SELECT T.*, ROW_NUMBER() over (order by T.fkproductseq desc) as RNUM " +
+            "    FROM ( " +
+            "        SELECT t1.* " +
+            "        FROM tbl_product_image t1 " +
+            "        WHERE productimageseq = ( " +
+            "            SELECT MIN(t2.productimageseq) " +
+            "            FROM tbl_product_image t2 " +
+            "            WHERE t2.fkproductseq = t1.fkproductseq " +
+            "        ) " +
+            "    ) T " +
+            ") " +
+            "WHERE rnum BETWEEN :start and :end ", nativeQuery = true)
+    List<ProductImage> findMinProductImages(@Param("start") int start, @Param("end") int end);
 
+    @Query(value = "SELECT COUNT(*) FROM tbl_product", nativeQuery = true)
+    long countProduct();
 }

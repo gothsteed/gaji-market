@@ -171,12 +171,11 @@
 </style>
 
 <script type="text/javascript">
-    const productList = /*[[${productList}]]*/ [];
-    console.log("상품 리스트 : ", productList);
 
     $(document).ready(function() {
         $('.item').click(function () {
-            location.href='productDetail';
+            var seq = $(this).data('seq');
+            location.href = 'productDetail?seq=' + seq;
         });
     });
 </script>
@@ -201,9 +200,9 @@
             <button type="button" class="btn" id="productRegisterBtn" onclick="location.href='productRegister'">상품 등록</button>
         </div>
 
-        <div class="container" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
+        <div class="container" th:if="${productList != null} and ${#lists.isEmpty(productList) == false}">
             <div style="display: flex; flex-flow: row wrap;">
-                <div class="item" th:each="vo, status : ${productList}">
+                <div class="item" th:each="vo, status : ${productList}" th:data-seq="${vo.product.productseq}">
                   <div class="imgBox">
                     <img th:src="@{'/images/productImg/' + ${vo.filename}}"  alt=""/>
                   </div>
@@ -218,14 +217,25 @@
 
             <nav aria-label="Page navigation" id="pagenav" class="mt-5" style="margin: 0 auto;">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a class="page-link" href="#">◀</a>
+
+                    <li class="page-item" th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">◀</span>
+                        </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">▶</a>
+
+                    <li class="page-item" th:each="i : ${pageNumbers}">
+                        <a class="page-link"
+                           th:href="@{/productList(pageNumber=${i})}"
+                           th:text="${i}"
+                           th:class="${i == currentPage ? 'page-link active' : 'page-link'}">
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">▶</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
