@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+<body>
+    <script type="text/javascript" th:inline="javascript">
+        var message = /*[[${message}]]*/ 'null';  // message 변수를 문자열로 치환
+        var loc = /*[[${loc}]]*/ 'null';          // loc 변수를 문자열로 치환
+
+        console.log(message);
+        console.log(loc);
+        
+        if (message !== 'null') {  // 'null' 문자열과 비교
+            alert(message);
+        }
+
+        if (loc !== 'null') {  // 'null' 문자열과 비교
+            location.href = loc;
+        }
+    </script>
+</body>
+</html>

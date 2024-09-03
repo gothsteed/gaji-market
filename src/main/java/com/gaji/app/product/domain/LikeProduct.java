@@ -1,29 +1,51 @@
 package com.gaji.app.product.domain;
 
 import com.gaji.app.member.domain.Member;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
-@Setter
 @Entity
-@Table(name = "TBL_LIKE_PRODUCT")
-public class LikeProduct {
-    @Id
-    @Column(name = "LIKESEQ", nullable = false)
-    private Long id;
+@Table(name = "tbl_like_product")
+@SequenceGenerator(
+        name = "LIKESEQ",
+        sequenceName = "LIKESEQ",
+        allocationSize = 1
+)
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "FKMEMBERSEQ", nullable = false)
+public class LikeProduct {
+
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE
+            , generator = "LIKESEQ"
+    )
+    @Column(columnDefinition="NUMBER")
+    private Long likeseq;
+
+    @Column(nullable = false, columnDefinition="NUMBER")
+    private Long fkproductseq;
+
+    @Column(nullable = false, columnDefinition="NUMBER")
+    private Long fkmemberseq;
+    
+    // 연관 관계 정의
+    @ManyToOne
+    @JoinColumn(name="fkmemberseq", referencedColumnName = "memberseq", insertable = false, updatable = false)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "FKPRODUCTSEQ", nullable = false)
+    // 연관 관계 정의
+    @ManyToOne
+    @JoinColumn(name="fkproductseq", referencedColumnName = "productseq", insertable = false, updatable = false)
     private Product product;
 
 }

@@ -1,6 +1,5 @@
 package com.gaji.app.product.domain;
 
-import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
