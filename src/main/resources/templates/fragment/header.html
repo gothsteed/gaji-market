@@ -76,7 +76,7 @@
                             </form>
                         </li>
                         <li class="breadcrumb-item">
-                            <a id="mypage" class="darkmagenta" href="myPage">마이페이지</a>
+                            <a id="mypage" class="darkmagenta" th:href="@{/myPage(userId=${#authentication.principal.id})}">마이페이지</a>
                         </li>
                     </ol>
                 </ul>

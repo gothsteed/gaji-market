@@ -46,6 +46,11 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
+    public List<ProductImage> getUserOnSaleItem(String userid) {
+
+        //List<ProductImage> productImageList = productRepository.find(userid);
+        return null;
+    }
     // 해당 상품 정보 가져오기
     public Optional<ProductImage> getProductById(Long seq) {
         return productRepository.findById(seq);

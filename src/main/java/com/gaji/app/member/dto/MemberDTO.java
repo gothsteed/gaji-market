@@ -14,10 +14,6 @@ public class MemberDTO {
 	private String nickname;
 	private String password;
 	private String tel;
-	private String postcode;
-	private String address;
-    private String detailAddress;
-    private String extraAddress;
 	private String email;
 	private String profilepic;
 	
