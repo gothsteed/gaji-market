@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MemberController {
 
     private MemberService memberService;
-	private FileManager fileManager;
 
 
     @Autowired
-    public MemberController(MemberService memberService, FileManager fileManager) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-		this.fileManager = fileManager;
     }
 
 
