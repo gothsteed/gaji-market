@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT COUNT(r) FROM Review r WHERE r.member.userId = :userid")
-    int countReviewByUserid(@Param("userid") String userid);
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.member.memberSeq = :memberSeq")
+    int countReviewByUserid(@Param("memberSeq") Long memberSeq);
 }

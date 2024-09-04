@@ -1,8 +1,11 @@
 package com.gaji.app.member.domain;
 
+import com.gaji.app.address.domain.Address;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @NoArgsConstructor
 @Getter
@@ -46,6 +49,12 @@ public class Member {
     @Column(name = "MANNERTEMP", nullable = false)
     private Double mannerTemp = 36.5;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "FKADDRESSSEQ")
+    private Address address;
+
+
     public Member(String userId, String name, String nickname, String password, String email, String tel, String profilepic) {
         this.userId = userId;
         this.name = name;
@@ -54,6 +63,10 @@ public class Member {
         this.email = email;
         this.tel = tel;
         this.profilePic = profilepic;
+    }
+    
+    public void defaultSetAddressseq(Address addressseq) {
+    	address = addressseq;
     }
 
     public void UpdateMember(){

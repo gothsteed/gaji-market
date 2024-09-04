@@ -62,6 +62,10 @@
         margin-top:5%;
     }
 
+    .item:hover {
+        cursor: pointer;
+    }
+
     .item:after {
         /* block & content */
         display: block;
@@ -171,12 +175,21 @@
 </style>
 
 <script type="text/javascript">
-    const productList = /*[[${productList}]]*/ [];
-    console.log("상품 리스트 : ", productList);
-
     $(document).ready(function() {
+
+        $("select[name='sortType']").val("[[${sortType}]]");
+
+        /* 상품 목록 정렬 */
+        $("select[name='sortType']").change(function () {
+            const frm = document.sortFrm;
+            frm.action = "productList";
+            frm.submit();
+        });
+
+        /* 상품 상세페이지 이동 */
         $('.item').click(function () {
-            location.href='productDetail';
+            var seq = $(this).data('seq');
+            location.href = 'productDetail?seq=' + seq;
         });
     });
 </script>
@@ -190,42 +203,54 @@
         <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;">중고거래 물품</span>
         <hr style="width:80%;">
         <div class="d-flex justify-content-between" style="width: 80%; margin: 0 auto;">
-            <form class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
-                <select class="form-select" style="margin-left: 10%;" aria-label="Default select example">
-                    <option selected>최신순</option>
-                    <option value="1">인기순</option>
-                    <option value="2">조회순</option>
+            <form name="sortFrm" class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
+                <select class="form-select" name="sortType" style="margin-left: 10%;" aria-label="Default select example">
+                    <option value="productseq" selected>최신순</option>
+                    <option value="popular">인기순</option>
+                    <option value="viewcount">조회순</option>
                 </select>
             </form>
             <div></div>
             <button type="button" class="btn" id="productRegisterBtn" onclick="location.href='productRegister'">상품 등록</button>
         </div>
 
-        <div class="container" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
+        <div class="container" th:if="${productList != null} and not ${#lists.isEmpty(productList)}">
             <div style="display: flex; flex-flow: row wrap;">
-                <div class="item" th:each="vo, status : ${productList}">
+                <div class="item" th:each="vo, status : ${productList}" th:data-seq="${vo.product.productseq}">
                   <div class="imgBox">
                     <img th:src="@{'/images/productImg/' + ${vo.filename}}"  alt=""/>
                   </div>
                   <div class="textBox">
                     <p class="textBox__name" th:text="${vo.product.title}"></p>
                     <p class="textBox__price" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + '원'"></p>
-                    <p class="textBox__heart">❤️20</p>
+                    <p class="textBox__heart" th:text="'❤ ' + ${vo.product.likeCount}" style="color: #ff3385;"></p>
                   </div>
+
                 </div>
             </div>
 
 
             <nav aria-label="Page navigation" id="pagenav" class="mt-5" style="margin: 0 auto;">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a class="page-link" href="#">◀</a>
+
+                    <li class="page-item" th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">◀</span>
+                        </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">▶</a>
+
+                    <li class="page-item" th:each="i : ${pageNumbers}">
+                        <a class="page-link"
+                           th:href="@{/productList(pageNumber=${i})}"
+                           th:text="${i}"
+                           th:class="${i == currentPage ? 'page-link active' : 'page-link'}">
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">▶</span>
+                        </a>
                     </li>
                 </ul>
             </nav>

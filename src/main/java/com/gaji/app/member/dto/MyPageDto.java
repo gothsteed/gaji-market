@@ -13,5 +13,6 @@ public class MyPageDto {
     private int soldCount;
     private int likedProductCount;
     private int reviewCount;
+    private String address;
 
 }
