@@ -70,14 +70,22 @@ public class Product {
     private LocalDateTime enddatetime;
 
 
+    // 좋아요 개수를 저장할 필드
+    @Transient // 데이터베이스와 매핑하지 않음
+    private Long likeCount;
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
     // 연관 관계 정의
     @ManyToOne
     @JoinColumn(name="fkmemberseq", referencedColumnName = "memberseq", insertable = false, updatable = false)
     private Member member;
 
-
     @PrePersist // insert 전에 호출
     public void prePersist() {
         this.writedate = this.writedate == null ? LocalDateTime.now() : this.writedate; // 설정한 날짜가 null(default) 이면 현재 시간 설정, null이 아니면 설정되어있는 날짜를 넣어준다.
     }
+
 }
