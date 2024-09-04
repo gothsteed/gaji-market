@@ -6,6 +6,9 @@
     <title>가지마켓</title>
     <link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
 
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
@@ -38,6 +41,11 @@
             font-size: 0.8rem;
             color: #888;
         }
+		
+		span.delete{display:inline-block; width: 20px; color: #ff5353; text-align: center;} 
+		div.oneFileInfo:hover{background-color: rgb(250, 215, 205); color: #fff; cursor: pointer;}
+		span.fileName{padding-left: 10px;}
+
     </style>
 </head>
 
@@ -56,7 +64,80 @@
             var charCount = $(this).val().length;
             $('#titlecharCount').text(charCount + '/40');
         });
-    });
+		
+		let file_arr = []; // 첨부되어진 파일 정보를 담아둘 배열 
+		
+		document.getElementById('imageUpload').addEventListener('change', function(event) {
+			
+			const imgListPreview = document.getElementById('imgListPreview');
+			imgListPreview.innerHTML = ''; // 이전 파일 목록 리스트 없애기
+			
+			const files = event.target.files; // 사용자가 선택하 파일의 목록(fileList객체)
+			
+			if(files !=null && files != undefined && files.length > 0){// 파일이 하나 이상 선택되었는지
+				
+				let isValid = true; // 파일 유효성 검사 상태
+				
+				let html = "";
+				
+				for(let i=0; i<files.length; i++){
+					const f = files[i];
+		          	let fileSize = f.size/1024/1024;  /* 파일의 크기는 MB로 나타내기 위하여 /1024/1024 하였음 */
+		           
+		           	if( !(f.type == 'image/jpeg' || f.type == 'image/png') ) {
+		               alert("jpg 또는 png 파일만 가능합니다.");
+					   isValid = false; // 파일이 유효하지 않음
+					   break; // 반복문 종료
+		           	}
+		          	if(fileSize >= 10) {
+		              	alert("10MB 이상인 파일은 업로드할 수 없습니다.!!");
+						isValid = false; // 파일이 유효하지 않음
+						break; // 반복문 종료
+		          	}
+					else{
+						file_arr.push(f);
+						const fileName = f.name; // 파일명
+						fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
+						// fileSize 가 1MB 보다 작으면 소수부는 반올림하여 소수점 3자리까지 나타내며, 
+						// fileSize 가 1MB 이상이면 소수부는 반올림하여 소수점 1자리까지 나타낸다. 만약에 소수부가 없으면 소수점은 0 으로 표시한다.
+						
+						html += "<div class='oneFileInfo'><span class='fileName'>"+fileName+"</span>" +
+							    "<span class='fileSize'>("+fileSize+" MB)</span>" +
+							    "<span class='delete'><i class='far fa-minus-square'></i></span>" +
+							    "<span class='clear'></span></div>";
+						            
+					}	
+				}// end of for----------------------
+				
+				
+				if (!isValid) {
+				// 파일이 유효하지 않으면 입력 필드를 리셋
+					document.getElementById('imageUpload').value = ''; // 파일 입력 필드 리셋
+					return; // 함수 종료
+				} else{
+					$('#imgListPreview').append(html);
+				}
+				
+			}// end of if----------------
+			
+		});	
+		
+		$(document).on("click", "span.delete", function(e){
+				
+				let delSpan = $(e.target).closest("span.delete");
+				let idx = $("span.delete").index(delSpan);
+				//alert("인덱스 : " +idx);
+				
+				file_arr.splice(idx, 1);// 드롭대상인 박스 안에 첨부파일을 드롭하면 파일들을 담아둘 배열인 file_arr 에서 파일을 제거시키도록 한다. 
+			//	console.log(file_arr);
+				
+		    	$(delSpan).closest("div.oneFileInfo").remove();
+		 //   	console.log("file_arr2"+file_arr);
+		});	    
+		
+	});
+	
+	
 </script>
 
 <body>
@@ -71,6 +152,7 @@
                 <div class="form-group">
                     <label for="imageUpload">상품 이미지</label>
                     <input type="file" class="form-control-file" id="imageUpload" multiple>
+					<div id="imgListPreview" style="border: solid 1px red;"></div>
                 </div>
 
                 <hr>
@@ -130,7 +212,7 @@
                     <input type="text" class="form-control" style="width: 70%;" id="location" placeholder="거래 희망 장소를 입력하세요" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">등록</button>
+                <button type="button" class="btn btn-primary" id="submit">등록</button>
             </form>
         </div>
     </div>
