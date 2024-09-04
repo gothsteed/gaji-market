@@ -18,14 +18,18 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // 상품 리스트 가져오기
-    public Page<ProductImage> getProductList(int pageNumber) throws Exception {
+    public Page<ProductImage> getProductList(int pageNumber, String sortType) throws Exception {
 
         int pageSize = 16;
         int start = (pageNumber - 1) * pageSize + 1; // 시작 인덱스
         int end = start + pageSize - 1; // 종료 인덱스
 
         // 페이징된 결과를 가져옴
-        List<ProductImage> pagingProductList = productRepository.findMinProductImages(start, end);
+        List<ProductImage> pagingProductList = null;
+
+        if(!"popular".equals(sortType)) {
+            pagingProductList = productRepository.findMinProductImages(start, end, sortType);
+        }
 
         for (ProductImage productImage : pagingProductList) {
             // 좋아요 수를 계산하여 설정
