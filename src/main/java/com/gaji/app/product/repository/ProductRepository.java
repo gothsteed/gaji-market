@@ -13,14 +13,14 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductImage, Long> {
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
-    int countOnSaleProductsByMemberSeq(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.memberSeq = :memberSeq and p.completestatus='ONSALE'")
+    int countOnSaleProductsByMemberSeq(@Param("memberSeq") Long memberSeq);
 
-    @Query("SELECT COUNT(p) FROM LikeProduct p WHERE p.member.userId = :userid")
-    int countLikedProductByUserid(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM LikeProduct p WHERE p.member.memberSeq = :memberSeq")
+    int countLikedProductByUserid(@Param("memberSeq") Long memberSeq);
 
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
-    int countSoldProductsByMemberSeq(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.memberSeq = :memberSeq and p.completestatus='ONSALE'")
+    int countSoldProductsByMemberSeq(@Param("memberSeq") Long memberSeq);
 
 
     // 상품번호에 대한 상품이미지 가져오기

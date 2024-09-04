@@ -5,6 +5,7 @@ import com.gaji.app.member.service.MemberService;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +24,19 @@ public class MyPageController {
     }
 
     @GetMapping("/myPage")
-    public String myPage(@RequestParam String userid, Model model) {
-        model.addAttribute("userid", userid);
+    public String myPage(@RequestParam Long memberSeq, Model model) {
+/*        if(memberSeq == null) {
+            memberSeq = SecurityContextHolder.getContext().getAuthentication().getDetails()
+        }*/
+        model.addAttribute("memberSeq", memberSeq);
         return "member/mypage";
     }
 
 
     @GetMapping("/myPage/onSale")
-    public String productList(Model model, @RequestParam String userid) {
+    public String productList(Model model, @RequestParam Long memberSeq) {
         try {
-            List<ProductImage> productList = productService.getUserOnSaleItem(userid);
+            List<ProductImage> productList = productService.getUserOnSaleItem(memberSeq);
 
             model.addAttribute("productList", productList);
 

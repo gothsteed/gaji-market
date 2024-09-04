@@ -33,28 +33,6 @@ public class MemberService {
         this.addressRepository = addressRepository;
     }
 
-    public MyPageDto getMyPageInfo(String userid) {
-
-        Member member = memberRepository.findByUserId(userid).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디 입니다: " + userid));
-        int productCount = productRepository.countOnSaleProductsByMemberSeq(userid);
-        int reviewCount = reviewRepository.countReviewByUserid(userid);
-        int likeCount = productRepository.countLikedProductByUserid(userid);
-        int soldCount = productRepository.countSoldProductsByMemberSeq(userid);
-
-        MyPageDto myPageDto = new MyPageDto();
-        myPageDto.setName(member.getName());
-        myPageDto.setMannerTemp(member.getMannerTemp());
-        myPageDto.setOnSaleCount(productCount);
-        myPageDto.setSoldCount(soldCount);
-        myPageDto.setReviewCount(reviewCount);
-        myPageDto.setLikedProductCount(likeCount);
-        myPageDto.setAddress(member.getAddress().getAddress());
-
-
-        return myPageDto;
-    }
-
-
     public String emailDuplicateCheck(String email) throws Exception {
 
         Optional<Member> emailCheck = memberRepository.findByEmail(email);

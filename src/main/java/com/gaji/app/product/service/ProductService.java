@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +41,7 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
-    public List<ProductImage> getUserOnSaleItem(String userid) {
+    public List<ProductImage> getUserOnSaleItem(Long userid) {
 
         //List<ProductImage> productImageList = productRepository.find(userid);
         return null;

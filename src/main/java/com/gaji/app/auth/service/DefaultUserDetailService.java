@@ -1,5 +1,6 @@
 package com.gaji.app.auth.service;
 
+import com.gaji.app.auth.dto.MemberUserDetail;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class DefaultUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userid) throws UsernameNotFoundException {
         Member member = memberRepository.findByUserId(userid)
                 .orElseThrow( () -> new UsernameNotFoundException("존재하지 않는 아이디 입니다: " + userid));
-        return new User(member.getUserId(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("MEMBER")));
+
+        UserDetails memberUserDetails  = new MemberUserDetail(member.getName(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("MEMBER")), member.getMemberSeq(), member.getUserId());
+
+        return memberUserDetails;
     }
 
 

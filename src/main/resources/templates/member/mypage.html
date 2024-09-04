@@ -172,8 +172,9 @@
 
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      const memberSeq = '[[${memberSeq}]]';
       const contextPath = '[[@{/}]]';
-      fetch(contextPath + 'api/v1/users/me/my-page-info')
+      fetch(contextPath + 'api/v1/users/my-page-info?memberSeq=' + memberSeq)
               .then(response => {
                 if (!response.ok) {
                   throw new Error('Network response was not ok');
