@@ -56,4 +56,10 @@ public class Member {
         this.profilePic = profilepic;
     }
 
+    public void UpdateMember(){
+
+
+
+    }
+
 }

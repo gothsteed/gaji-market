@@ -159,30 +159,4 @@ public class MemberController {
     }
 
 
-	@GetMapping("/myedit")
-	public ModelAndView myedit(@AuthenticationPrincipal UserDetails userDetails, ModelAndView mav, Member member) {
-
-		String userId = userDetails.getUsername();
-		// System.out.println("확인용 이름 : " + userId);
-
-		member = memberService.getInfo(userId);
-
-
-
-		mav.addObject("member", member);
-		mav.setViewName("member/myedit");
-		return mav;
-	}
-
-	@ResponseBody
-	@PostMapping(value="/myedit/pwdDuplicateCheck", produces="text/plain;charset=UTF-8")
-	public String pwdDuplicateCheck (String pwd){
-
-		JSONObject json = professorService.pwdDuplicateCheck(request);
-
-		return json.toString();
-
-		return "";
-	}
-
 }

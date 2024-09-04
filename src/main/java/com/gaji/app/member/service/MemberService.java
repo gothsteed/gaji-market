@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -21,11 +22,14 @@ public class MemberService {
     private MemberRepository memberRepository;
     private ProductRepository productRepository;
     private ReviewRepository reviewRepository;
+    private PasswordEncoder passwordEncoder;
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     public MyPageDto getMyPageInfo() {
@@ -84,4 +88,69 @@ public class MemberService {
 
         return idCheck.toString();
     }
+    
+    // 수정을 위해 개인정보 가져오기
+    public Member getInfo(String userId) {
+
+        Optional<Member> getInfo = memberRepository.findByUserId(userId);
+
+        return getInfo.orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없습니다."));
+    }
+
+    // 수정시 별명 중복 체크
+    public String nicDuplicateCheck(String id, String nic) {
+
+        Optional<Member> nicCheck = memberRepository.findByUserIdAndNickname(id, nic);
+
+        return nicCheck.toString();
+    }
+
+    // 수정시 비밀번호 중복 체크
+    public String pwdDuplicateCheckEdit(String id, String pwd){
+
+        pwd = passwordEncoder.encode(pwd);
+
+        // System.out.println("확인용 id : " + id);
+        // System.out.println("확인용 pwd : " + pwd);
+
+        Optional<Member> pwdCheck = memberRepository.findByUserIdAndPassword(id, pwd);
+
+        return pwdCheck.toString();
+    }
+
+    public String telDuplicateCheckEdit(String id, String tel) {
+
+        Optional<Member> pwdCheck = memberRepository.findByUserIdAndTel(id, tel);
+
+        return pwdCheck.toString();
+    }
+
+
+    public String emailDuplicateCheckEdit(String id, String email) {
+
+        Optional<Member> pwdCheck = memberRepository.findByUserIdAndEmail(id, email);
+
+        return pwdCheck.toString();
+    }
+
+
+    public int memberEdit_end(MemberDTO mdto) {
+
+        // MemberDTO를 Member 엔티티로 변환
+        Member member = new Member(mdto.getUserId(), mdto.getName(), mdto.getNickname(), passwordEncoder.encode(mdto.getPassword()), mdto.getEmail(), mdto.getTel(), mdto.getProfilepic());
+
+        try {
+            // Member 엔티티 저장
+            Member savedMember = memberRepository.save(member);
+
+            // 저장된 엔티티의 ID를 반환 (성공적으로 저장되었음을 나타냄)
+            return savedMember.getMemberSeq() != null ? 1 : 0;
+        } catch (Exception e) {
+            // 예외가 발생하면 실패를 나타내는 0을 반환
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
 }
