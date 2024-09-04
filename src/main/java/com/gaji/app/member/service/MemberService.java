@@ -83,8 +83,6 @@ public class MemberService {
             }
             Address savedAddress = addressRepository.save(address);
             
-            System.out.println("savedAddress => "+ savedAddress);
-            
             // 저장된 엔티티의 ID를 반환 (성공적으로 저장되었음을 나타냄)
             return savedAddress.getAddressseq() != null ? 1 : 0;
         } catch (Exception e) {

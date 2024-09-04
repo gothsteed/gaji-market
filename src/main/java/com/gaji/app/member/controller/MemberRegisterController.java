@@ -82,12 +82,12 @@ public class MemberRegisterController {
     
 	@PostMapping(value = "/memberregister/end")
 	public ModelAndView memberRegister_end(HttpServletRequest request, ModelAndView mav, MemberDTO mdto, AddressDTO adto,MultipartHttpServletRequest mrequest) {
-		
-		System.out.println("@@@@@@@@ adto.getAddress() =>" + adto.getAddress());
-		System.out.println("@@@@@@@@ adto.getAddressdetail() =>" + adto.getAddressdetail());
-		System.out.println("@@@@@@@@ adto.getAddressextra() =>" + adto.getAddressextra());
-		System.out.println("@@@@@@@@ adto.getPostcode() =>" + adto.getPostcode());
-		
+		/*
+			System.out.println("@@@@@@@@ adto.getAddress() =>" + adto.getAddress());
+			System.out.println("@@@@@@@@ adto.getAddressdetail() =>" + adto.getAddressdetail());
+			System.out.println("@@@@@@@@ adto.getAddressextra() =>" + adto.getAddressextra());
+			System.out.println("@@@@@@@@ adto.getPostcode() =>" + adto.getPostcode());
+		*/
 		String tel = request.getParameter("a2") + request.getParameter("hp2") + request.getParameter("hp3"); // 전화번호
 		mdto.setTel(tel);
 		
