@@ -3,6 +3,7 @@ package com.gaji.app.address.domain;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.OnDelete;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 
 @Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "TBL_ADDRESS")
 public class Address {
@@ -48,6 +50,4 @@ public class Address {
         this.addressextra = addressextra;
         this.member = member;
     }
-
-
 }

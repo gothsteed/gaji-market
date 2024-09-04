@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,14 +18,18 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // 상품 리스트 가져오기
-    public Page<ProductImage> getProductList(int pageNumber) throws Exception {
+    public Page<ProductImage> getProductList(int pageNumber, String sortType) throws Exception {
 
         int pageSize = 16;
         int start = (pageNumber - 1) * pageSize + 1; // 시작 인덱스
         int end = start + pageSize - 1; // 종료 인덱스
 
         // 페이징된 결과를 가져옴
-        List<ProductImage> pagingProductList = productRepository.findMinProductImages(start, end);
+        List<ProductImage> pagingProductList = null;
+
+        if(!"popular".equals(sortType)) {
+            pagingProductList = productRepository.findMinProductImages(start, end, sortType);
+        }
 
         for (ProductImage productImage : pagingProductList) {
             // 좋아요 수를 계산하여 설정
@@ -42,6 +45,11 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
+    public List<ProductImage> getUserOnSaleItem(Long userid) {
+
+        //List<ProductImage> productImageList = productRepository.find(userid);
+        return null;
+    }
     // 해당 상품 정보 가져오기
     public Optional<ProductImage> getProductById(Long seq) {
         return productRepository.findById(seq);

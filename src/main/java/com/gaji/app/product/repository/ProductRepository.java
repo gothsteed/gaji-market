@@ -13,14 +13,14 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductImage, Long> {
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
-    int countOnSaleProductsByMemberSeq(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.memberSeq = :memberSeq and p.completestatus='ONSALE'")
+    int countOnSaleProductsByMemberSeq(@Param("memberSeq") Long memberSeq);
 
-    @Query("SELECT COUNT(p) FROM LikeProduct p WHERE p.member.userId = :userid")
-    int countLikedProductByUserid(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM LikeProduct p WHERE p.member.memberSeq = :memberSeq")
+    int countLikedProductByUserid(@Param("memberSeq") Long memberSeq);
 
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.userId = :userid and p.completestatus='ONSALE'")
-    int countSoldProductsByMemberSeq(@Param("userid") String userid);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.member.memberSeq = :memberSeq and p.completestatus='ONSALE'")
+    int countSoldProductsByMemberSeq(@Param("memberSeq") Long memberSeq);
 
 
     // 상품번호에 대한 상품이미지 가져오기
@@ -29,10 +29,17 @@ public interface ProductRepository extends JpaRepository<ProductImage, Long> {
     // 상품당 상품이미지 1개씩 가져오기
     @Query(value = "SELECT * " +
                    "FROM ( " +
-                   "    SELECT T.*, ROW_NUMBER() over (order by T.fkproductseq desc) as RNUM " +
+                   "    SELECT T.*, " +
+                   "           ROW_NUMBER() over (order by " +
+                   "            CASE :sortType " +
+                   "                WHEN 'productseq' THEN T.productseq " +
+                   "                WHEN 'viewcount' THEN T.viewcount " +
+                   "                ELSE T.productseq " +
+                   "            END desc) as RNUM " +
                    "    FROM ( " +
-                   "        SELECT t1.* " +
-                   "        FROM tbl_product_image t1 " +
+                   "        SELECT t1.*, P.* " +
+                   "        FROM tbl_product_image t1 JOIN tbl_product P " +
+                   "        ON t1.fkproductseq = P.productseq " +
                    "        WHERE productimageseq = ( " +
                    "            SELECT MIN(t2.productimageseq) " +
                    "            FROM tbl_product_image t2 " +
@@ -40,9 +47,9 @@ public interface ProductRepository extends JpaRepository<ProductImage, Long> {
                    "        ) " +
                    "    ) T " +
                    ") " +
-                "WHERE rnum BETWEEN :start and :end " +
-                "ORDER BY RNUM ", nativeQuery = true)
-    List<ProductImage> findMinProductImages(@Param("start") int start, @Param("end") int end);
+                   "WHERE rnum BETWEEN :start and :end " +
+                   "ORDER BY RNUM ", nativeQuery = true)
+    List<ProductImage> findMinProductImages(@Param("start") int start, @Param("end") int end, @Param("sortType") String sortType);
 
     // 상품 전체 개수 구하기
     @Query(value = "SELECT COUNT(*) FROM tbl_product", nativeQuery = true)

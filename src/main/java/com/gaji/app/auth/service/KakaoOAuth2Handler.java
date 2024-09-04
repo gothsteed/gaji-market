@@ -2,6 +2,7 @@ package com.gaji.app.auth.service;
 
 import com.gaji.app.auth.dto.KakaoAuthToken;
 import com.gaji.app.auth.dto.KakaoUserInfo;
+import com.gaji.app.auth.dto.MemberUserDetail;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +72,12 @@ public class KakaoOAuth2Handler implements OAuth2Handler {
         return kakaoUserInfo.kakaoAccount.getEmail();
     }
 
+
+    //todo : useDetail 서비스와 authentication provider 분리하기
     @Override
     public Authentication loginByEmail(String email) throws UsernameNotFoundException {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("아직 회원가입을 하지 않았습니다."));
-        UserDetails userDetails = new User(member.getUserId(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("MEMBER")));
+        UserDetails userDetails  = new MemberUserDetail(member.getName(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("MEMBER")), member.getMemberSeq(), member.getUserId());
 
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
     }
