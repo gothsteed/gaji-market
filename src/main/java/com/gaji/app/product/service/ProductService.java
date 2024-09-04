@@ -1,5 +1,6 @@
 package com.gaji.app.product.service;
 
+import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,11 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
+
     // 해당 상품 정보 가져오기
-    public Optional<ProductImage> getProductById(Long seq) {
-        return productRepository.findById(seq);
+    public Product getProductById(Long seq) {
+        return productRepository.findById(seq)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq)).getProduct();
     }
 
     // 해당 상품 이미지 가져오기

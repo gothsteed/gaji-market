@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -74,7 +74,6 @@
 
     <script type="text/javascript">
 
-
     </script>
 
 </head>
@@ -126,14 +125,15 @@
                     <!-- 프로필 사진 -->
                     <div class="mb-2">
                         <div style="border-radius: 50%; overflow: hidden; width: 100px; height: 100px; margin: 0 auto;">
-                            <img th:src="${product.member.ProfilePic}" width="100" alt=""> <!--안나와-->
+                            <img th:src="@{'/resources/files/' + ${product.member.profilePic}}" width="100" height="100" alt="">
+                            <!--C:\git\gaji-market\src\main\webapp\resources\files-->
                         </div>
                     </div>
 
                     <!-- 이름 -->
                     <div style="margin-bottom: 5%;">
-                        <span style="font-size: 1.2rem;"><span class="font-weight-bold" style="color: #580DD2;" th:text="${product.member.nickname}"></span> 님</span>
-                        <span class="d-block" style="color: #b3b3b3;">판매자 주소 넣기</span>
+                        <span style="font-size: 1.2rem;"><span class="font-weight-bold" style="color: #580DD2;" th:text="${product.member.nickname} + '님'"></span></span>
+                        <span class="d-block" style="color: #b3b3b3;" th:text="${product.member.address.address}"></span>
                     </div>
 
                     <!-- 영양지수 -->
@@ -141,9 +141,10 @@
                         <span>영양지수</span>
                         <i class="fa-solid fa-circle-info" style="color: #ccc;" title="영양지수는 가지마켓 사용자로부터 받은 칭찬, 후기, 비매너 평가 등을 종합해서 만든 매너 지표입니다."></i>
                         <div>
-                            <span style="font-size: 1rem; display: block; text-align: right;">75%</span> <!-- 퍼센트 표시 -->
+                            <span style="font-size: 1rem; display: block; text-align: right;" th:text="${product.member.mannerTemp} + '%'"></span> <!-- 퍼센트 표시 -->
+                            <!-- 막대 표시 -->
                             <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-                                <div style="width: 75%; height: 10px; background-color: #580DD2; border-radius: 5px;"></div> <!-- 퍼센트 바 -->
+                                <div th:style="'height: 10px; background-color: #580DD2; border-radius: 5px; width: ' + ${product.member.mannerTemp} + '%;'"></div>
                             </div>
                         </div>
                     </div>
@@ -153,10 +154,10 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <!-- fkcategoryseq, writedate -->
-                <li class="breadcrumb-item"><a href="#">디지털기기</a></li>
-                <li class="breadcrumb-item">등록시간 : 2024/08/31</li>
-                <li class="breadcrumb-item">끌올 0회</li>
-                <li class="breadcrumb-item">조회수 0</li>
+                <li class="breadcrumb-item" th:if="${product.completestatus == '1'}" th:text="디지털기기"></li>
+                <li class="breadcrumb-item" th:text="'등록시간 : ' + ${product.writedate}"></li>
+                <li class="breadcrumb-item" th:text="'끌올 ' + ${product.reuploadcount} + '회'"></li>
+                <li class="breadcrumb-item" th:text="'조회수 ' +${product.viewcount}"></li>
             </ol>
         </nav>
 
@@ -169,20 +170,26 @@
             salestype
             1 : 판매
             2 : 나눔 -->
-        <span class="badge badge-danger">가격제안불가</span>
-        <span class="badge badge-secondary">판매</span>
-        <div class="" style="margin-top:5%; margin-bottom: 10%;">
-            <h2 class="product-title">맥북 에어</h2>
-            <p class="product-price mt-3">희망가격: <strong>1,200,000원</strong></p>
-            <p>이 제품은 최신 기술로 제작된 고성능 노트북입니다. 가볍고 슬림한 디자인으로 휴대성이 뛰어나며, 긴 배터리 수명을 자랑합니다.</p>
+        <span class="badge badge-danger" th:if="${product.negostatus == '1'}" th:text="가격제안불가"></span>
+        <span class="badge badge-success" th:if="${product.negostatus == '2'}" th:text="가격제안받기"></span>
 
-            <p class="product-address">거래희망장소: <strong>서교동</strong></p>
+        <span class="badge badge-secondary" th:if="${product.salestype == '1'}" th:text="판매"></span>
+        <span class="badge badge-info" th:if="${product.salestype == '2'}" th:text="나눔"></span>
+
+        <div class="" style="margin-top:5%; margin-bottom: 10%;">
+            <h2 class="product-title" th:text="${product.title}"></h2>
+            <p class="product-price mt-3">
+                <strong th:text="'희망가격 : ' + ${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></strong>
+            </p>
+            <p class="md-5" th:text="${product.content}"></p>
+
+            <p class="product-address mt-5">거래희망장소: <strong>서교동</strong></p>
 
             <!-- 구글 지도 삽입 -->
             <div style="width: 100%; height: 300px;">
                 <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.957557995988!2d126.9251123150681!3d37.5498489797796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca1f2f8aabf2d%3A0x9f0b8c9d8da0e38f!2z7KCE7J6F7Iuc!5e0!3m2!1sko!2skr!4v1602785235643!5m2!1sko!2skr"
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.957557995988!2d126.9251123150681!3d37.5498489797796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca1f2f8aabf2d%3A0x9f0b8c9d8da0e38f!2z7KCE7J6F7Iuc!5e0!3m2!1sko!2skr!4v1602785235643!5m2!1sko!2skr"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
 
             <div class="d-flex justify-content-between mt-5">
@@ -194,6 +201,7 @@
             </div>
         </div>
     </div>
+
 
     <div th:replace="~{fragment/footer :: footer}"></div>
 </body>
