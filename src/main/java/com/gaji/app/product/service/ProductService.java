@@ -22,4 +22,10 @@ public class ProductService {
 
         return productList;
     }
+
+    public List<ProductImage> getUserOnSaleItem(String userid) {
+
+        //List<ProductImage> productImageList = productRepository.find(userid);
+        return null;
+    }
 }

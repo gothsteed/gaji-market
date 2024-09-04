@@ -3,9 +3,13 @@ package com.gaji.app.member.controller;
 import com.gaji.app.member.dto.MyPageDto;
 import com.gaji.app.member.service.MemberService;
 import java.io.File;
+import java.util.List;
 
+import com.gaji.app.product.domain.ProductImage;
+import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,11 +38,6 @@ public class MemberController {
 		this.fileManager = fileManager;
     }
 
-    @GetMapping("/myPage")
-    public String myPage() {
-
-        return "member/mypage";
-    }
 
 		@GetMapping("chatting")
     public String multichat() {
@@ -153,5 +152,6 @@ public class MemberController {
     public String likeproduct() {
         return "member/likeproduct";
     }
+
 	
 }
