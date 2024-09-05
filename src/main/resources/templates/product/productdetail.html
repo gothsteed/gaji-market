@@ -183,7 +183,7 @@
             </p>
             <p class="md-5" th:text="${product.content}"></p>
 
-            <p class="product-address mt-5">거래희망장소: <strong>서교동</strong></p>
+            <p class="product-address mt-5" th:text="'거래희망장소 : ' + ${product.address}"></p>
 
             <!-- 구글 지도 삽입 -->
             <div style="width: 100%; height: 300px;">
