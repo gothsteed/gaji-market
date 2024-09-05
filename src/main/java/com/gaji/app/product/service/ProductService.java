@@ -73,7 +73,7 @@ public class ProductService {
     // 해당 상품 정보 가져오기
     public Product getProductById(Long seq) {
         return productRepository.findById(seq)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq)).getProduct();
+            .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq));
     }
 
 
