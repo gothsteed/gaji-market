@@ -18,4 +18,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByUserIdAndEmail(String id, String email); // 수정시 이메일 중복 체크
     
+    Optional<Member> findByMemberSeq(Long memberSeq); // 이메일 중복 체크시 사용하려고 추가
 }
