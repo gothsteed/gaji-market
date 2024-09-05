@@ -4,9 +4,11 @@ import com.gaji.app.address.domain.Address;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.dto.AddressDTO;
 import com.gaji.app.member.dto.MemberDTO;
-import com.gaji.app.member.dto.MyPageDto;
 import com.gaji.app.member.repository.AddressRepository;
+import com.gaji.app.member.repository.LikeProductRepository;
 import com.gaji.app.member.repository.MemberRepository;
+import com.gaji.app.product.domain.LikeProduct;
+import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -27,14 +31,16 @@ public class MemberService {
     private ReviewRepository reviewRepository;
     private AddressRepository addressRepository;
     private PasswordEncoder passwordEncoder;
+    private LikeProductRepository likeProductRepository;
     
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.addressRepository = addressRepository;
         this.passwordEncoder = passwordEncoder;
+        this.likeProductRepository = likeProductRepository;
     }
 
     public String emailDuplicateCheck(String email) throws Exception {
@@ -62,8 +68,6 @@ public class MemberService {
             	savedMember.defaultSetAddressseq(address);
             }
             Address savedAddress = addressRepository.save(address);
-            
-            System.out.println("savedAddress => "+ savedAddress);
             
             // 저장된 엔티티의 ID를 반환 (성공적으로 저장되었음을 나타냄)
             return savedAddress.getAddressseq() != null ? 1 : 0;
@@ -148,5 +152,20 @@ public class MemberService {
         }
     }// end of public int memberEdit_end(MemberDTO mdto)
 
+
+	public List<Product> getLikedProductsForCurrentUser(Long memberSeq) {
+		//  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    // String name = authentication.getName();
+	      
+	    // System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@memberSeq => " + memberSeq);  
+		
+	      Member member = memberRepository.findByMemberSeq(memberSeq)
+	          .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다: " + memberSeq));
+	      
+	      List<LikeProduct> likedProducts = likeProductRepository.findByMember(member);
+	      return likedProducts.stream()
+	                          .map(LikeProduct::getProduct)
+	                          .collect(Collectors.toList());
+	}
 
 }

@@ -2,6 +2,7 @@ package com.gaji.app.member.controller;
 
 import com.gaji.app.common.FileManager;
 import com.gaji.app.member.service.MemberService;
+import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ public class MyPageController {
     @GetMapping("/myPage/onSale")
     public String productList(Model model, @RequestParam Long memberSeq) {
         try {
-            List<ProductImage> productList = productService.getUserOnSaleItem(memberSeq);
+
+            List<Product> productList = productService.getUserOnSaleItem(memberSeq);
 
             model.addAttribute("productList", productList);
 
