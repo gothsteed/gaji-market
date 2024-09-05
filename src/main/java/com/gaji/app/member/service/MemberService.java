@@ -4,9 +4,11 @@ import com.gaji.app.address.domain.Address;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.dto.AddressDTO;
 import com.gaji.app.member.dto.MemberDTO;
-import com.gaji.app.member.dto.MyPageDto;
 import com.gaji.app.member.repository.AddressRepository;
+import com.gaji.app.member.repository.LikeProductRepository;
 import com.gaji.app.member.repository.MemberRepository;
+import com.gaji.app.product.domain.LikeProduct;
+import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -25,12 +29,14 @@ public class MemberService {
     private ProductRepository productRepository;
     private ReviewRepository reviewRepository;
     private AddressRepository addressRepository;
+    private LikeProductRepository likeProductRepository;
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, LikeProductRepository likeProductRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.addressRepository = addressRepository;
+        this.likeProductRepository = likeProductRepository;
     }
 
     public String emailDuplicateCheck(String email) throws Exception {
@@ -74,4 +80,20 @@ public class MemberService {
 
         return idCheck.toString();
     }
+
+	public List<Product> getLikedProductsForCurrentUser(Long memberSeq) {
+		//  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    // String name = authentication.getName();
+	      
+	    // System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@memberSeq => " + memberSeq);  
+		
+	      Member member = memberRepository.findByMemberSeq(memberSeq)
+	          .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다: " + memberSeq));
+	      
+	      List<LikeProduct> likedProducts = likeProductRepository.findByMember(member);
+	      return likedProducts.stream()
+	                          .map(LikeProduct::getProduct)
+	                          .collect(Collectors.toList());
+	}
+
 }

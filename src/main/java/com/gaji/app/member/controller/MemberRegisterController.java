@@ -1,6 +1,5 @@
 package com.gaji.app.member.controller;
 
-import com.gaji.app.member.dto.MyPageDto;
 import com.gaji.app.member.service.MemberService;
 import java.io.File;
 
