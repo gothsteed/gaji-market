@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -23,6 +25,9 @@ public class Product {
     )
     @Column(columnDefinition="NUMBER")
     private Long productseq;
+
+    @Column(nullable = false, columnDefinition="fkmemberseq")
+    private Long fkMemberSeq;
 
     @Column(nullable = false, columnDefinition="NUMBER")
     private Long fkcategoryseq;
@@ -70,6 +75,7 @@ public class Product {
     private LocalDateTime enddatetime;
 
 
+
     // 좋아요 개수를 저장할 필드
     @Transient // 데이터베이스와 매핑하지 않음
     private Long likeCount;
@@ -78,10 +84,19 @@ public class Product {
         this.likeCount = likeCount;
     }
 
+    public String getFirstImageName() {
+        return productImages.get(0).getOriginalname();
+    }
+
+
     // 연관 관계 정의
     @ManyToOne
     @JoinColumn(name="fkmemberseq", referencedColumnName = "memberseq", insertable = false, updatable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> productImages = new ArrayList<>();
+
 
     @PrePersist // insert 전에 호출
     public void prePersist() {
