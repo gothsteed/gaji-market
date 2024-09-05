@@ -127,22 +127,26 @@ public class MemberService {
 
 
     public int memberEdit_end(MemberDTO mdto) {
-
-        // MemberDTO를 Member 엔티티로 변환
-        Member member = new Member(mdto.getUserId(), mdto.getName(), mdto.getNickname(), passwordEncoder.encode(mdto.getPassword()), mdto.getEmail(), mdto.getTel(), mdto.getProfilepic());
-
         try {
-            // Member 엔티티 저장
-            Member savedMember = memberRepository.save(member);
 
-            // 저장된 엔티티의 ID를 반환 (성공적으로 저장되었음을 나타냄)
-            return savedMember.getMemberSeq() != null ? 1 : 0;
+            String id = mdto.getUserId();
+
+            // MemberDTO를 Member 엔티티로 변환
+            Member existingMember = memberRepository.findByUserId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+            existingMember.UpdateMember(mdto);
+
+            // 업데이트된 엔티티 저장
+            memberRepository.save(existingMember);
+
+            // 업데이트 성공 시 1 반환
+            return 1;
         } catch (Exception e) {
-            // 예외가 발생하면 실패를 나타내는 0을 반환
-            e.printStackTrace();
+            // 예외 발생 시 실패를 나타내는 0 반환
             return 0;
         }
-    }
+    }// end of public int memberEdit_end(MemberDTO mdto)
 
 
 }

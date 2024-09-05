@@ -135,6 +135,7 @@ public class MyeditController {
         String tel = request.getParameter("tel");
         String email = request.getParameter("email");
 
+        mdto.setUserId(id);
         mdto.setNickname(nic);
         mdto.setPassword(pwd);
         mdto.setTel(tel);
