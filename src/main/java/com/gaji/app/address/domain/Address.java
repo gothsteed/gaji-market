@@ -3,6 +3,7 @@ package com.gaji.app.address.domain;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.OnDelete;
@@ -10,14 +11,16 @@ import org.hibernate.annotations.OnDeleteAction;
 
 
 @Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "TBL_ADDRESS")
 public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TBL_ADDRESS_id_gen")
-    @SequenceGenerator(name = "TBL_ADDRESS_id_gen", sequenceName = "ADDRESSSEQ", allocationSize = 1)
+
+	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ADDRESSSEQ")
+    @SequenceGenerator(name = "ADDRESSSEQ", sequenceName = "ADDRESSSEQ", allocationSize = 1)
     @Column(name = "ADDRESSSEQ", nullable = false)
-    private Long id;
+    private Long addressseq;
 
     @Nationalized
     @Column(name = "POSTCODE", nullable = false, length = 30)
@@ -39,5 +42,12 @@ public class Address {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "FKMEMBERSEQ")
     private Member member;
-
+    
+    public Address(String postcode, String address, String addressdetail, String addressextra, Member member) {
+        this.postcode = postcode;
+        this.address = address;
+        this.addressdetail = addressdetail;
+        this.addressextra = addressextra;
+        this.member = member;
+    }
 }

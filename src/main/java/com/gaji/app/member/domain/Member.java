@@ -64,5 +64,15 @@ public class Member {
         this.tel = tel;
         this.profilePic = profilepic;
     }
+    
+    public void defaultSetAddressseq(Address addressseq) {
+    	address = addressseq;
+    }
+
+    public void UpdateMember(){
+
+
+
+    }
 
 }

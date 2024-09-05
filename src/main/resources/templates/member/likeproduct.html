@@ -76,49 +76,23 @@
     </div>
     
     <!-- 찜한 상품 리스트 -->
-    <div>
+	
+    <div th:each="product : ${likedProducts}">
       <div class="wishlist-item d-flex align-items-center">
         <img src="https://via.placeholder.com/100" alt="상품 이미지">
         <div class="ml-4" style="flex-grow: 1;">
           <div class="d-flex justify-content-between">
-            <span class="product-name">노트북</span>
+            <span class="product-name" th:text="${product.title}"></span>
             <i class="fa-solid fa-heart"></i>
           </div>
           <div class="d-flex justify-content-between mt-2">
             <span class="status">판매중</span>
-            <span class="product-price">₩1,000,000</span>
+            <span class="product-price" th:text="${product.price}"></span>
           </div>
         </div>
       </div>
+	 </div>
 
-      <div class="wishlist-item d-flex align-items-center">
-        <img src="https://via.placeholder.com/100" alt="상품 이미지">
-        <div class="ml-4" style="flex-grow: 1;">
-          <div class="d-flex justify-content-between">
-            <span class="product-name">스마트폰</span>
-            <i class="fa-solid fa-heart"></i>
-          </div>
-          <div class="d-flex justify-content-between mt-2">
-            <span class="status">판매완료</span>
-            <span class="product-price">₩500,000</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="wishlist-item d-flex align-items-center">
-        <img src="https://via.placeholder.com/100" alt="상품 이미지">
-        <div class="ml-4" style="flex-grow: 1;">
-          <div class="d-flex justify-content-between">
-            <span class="product-name">무선 이어폰</span>
-            <i class="fa-solid fa-heart"></i>
-          </div>
-          <div class="d-flex justify-content-between mt-2">
-            <span class="status">판매중</span>
-            <span class="product-price">₩200,000</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div th:replace="~{/fragment/footer :: footer}"></div>

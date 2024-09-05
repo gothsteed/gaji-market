@@ -84,7 +84,7 @@
 
           <!-- 내 정보 수정 & 로그아웃 -->
           <div class="mb-3">
-            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;">내 정보 수정</div>
+            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;"><a th:href="@{/myedit}">내 정보 수정</a></div>
           </div>
 
           <div>
@@ -172,8 +172,9 @@
 
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      const memberSeq = '[[${memberSeq}]]';
       const contextPath = '[[@{/}]]';
-      fetch(contextPath + 'api/v1/users/me/my-page-info')
+      fetch(contextPath + 'api/v1/users/my-page-info?memberSeq=' + memberSeq)
               .then(response => {
                 if (!response.ok) {
                   throw new Error('Network response was not ok');

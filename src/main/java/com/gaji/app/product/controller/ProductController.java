@@ -28,11 +28,12 @@ public class ProductController {
 
     @GetMapping("productList")
     public String productList(Model model,
-                              @RequestParam(defaultValue = "1") int pageNumber) {
+                              @RequestParam(defaultValue = "1") int pageNumber,
+                              @RequestParam(defaultValue = "productseq") String sortType) {
 
         try {
 
-            Page<ProductImage> pagingProductList = productService.getProductList(pageNumber);
+            Page<ProductImage> pagingProductList = productService.getProductList(pageNumber, sortType);
 
             model.addAttribute("productList", pagingProductList.getContent());
             model.addAttribute("currentPage", (pagingProductList.getNumber() + 1)); // 현재 페이지 번호
@@ -43,6 +44,8 @@ public class ProductController {
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
+
+            model.addAttribute("sortType", sortType);
 
         } catch (Exception e) {
             e.printStackTrace();
