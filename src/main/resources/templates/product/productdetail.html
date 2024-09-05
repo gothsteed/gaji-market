@@ -154,7 +154,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <!-- fkcategoryseq, writedate -->
-                <li class="breadcrumb-item" th:if="${product.completestatus == '1'}" th:text="디지털기기"></li>
+                <li class="breadcrumb-item" th:if="${product.fkcategoryseq == 1}" th:text="디지털기기"></li>
                 <li class="breadcrumb-item" th:text="'등록시간 : ' + ${product.writedate}"></li>
                 <li class="breadcrumb-item" th:text="'끌올 ' + ${product.reuploadcount} + '회'"></li>
                 <li class="breadcrumb-item" th:text="'조회수 ' +${product.viewcount}"></li>
@@ -193,7 +193,7 @@
             </div>
 
             <div class="d-flex justify-content-between mt-5">
-                <button class="btn btn-secondary">목록보기</button>
+                <button class="btn btn-secondary" onclick="location.href='http://localhost:8080/gaji/productList';">목록보기</button>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-danger mr-5" type="button">찜하기❤️</button>
                     <button class="btn btn-custom" type="button">채팅하기</button>
