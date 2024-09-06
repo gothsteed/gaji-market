@@ -19,8 +19,40 @@
   <!-- Optional JavaScript -->
   <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
   <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
-  <script type="text/javascript" th:src="@{/js/header.js}" ></script>
+  <script type="text/javascript" th:src="@{/js/header.js}"></script>
+  
+  <script type="text/javascript">
+  $(document).ready(function() {
+      // 좋아요 아이콘 클릭 이벤트
+      $('.like-icon').on('click', function() {
+          var productId = $(this).data('product-id'); // data-product-id에서 값 가져오기
+          var $icon = $(this); // 클릭한 아이콘 저장
 
+          $.ajax({
+              url: 'likeproduct/delete',  // DELETE 요청 보낼 URL
+              type: 'POST',
+              data: { productId: productId }, // productId를 데이터로 전달
+              success: function(result) {
+                  $icon.removeClass('fa-heart').addClass('fa-heart-broken'); // 예시: 좋아요 취소 상태로 변경
+              },
+              error: function(xhr, status, error) {
+                  console.error('Failed to remove like:', error); // 에러 처리
+              }
+          });
+      });
+	  
+      $('.product-image').on('click', function() {
+          var productId = $(this).data('product-id'); // data-product-id에서 값 가져오기
+          location.href = 'http://localhost:8080/gaji/productDetail?seq=' + productId;
+      });
+	  
+	  $('.product-name').on('click', function() {
+	      var productId = $(this).data('product-id'); // 이미지에서 값 가져오기
+	      location.href = 'http://localhost:8080/gaji/productDetail?seq=' + productId;
+	  });
+  });
+  </script>
+	
   <style>
     body {
       margin: 0;
@@ -40,12 +72,14 @@
       width: 100px;
       height: 100px;
       border-radius: 10px;
+      cursor: pointer; /* 클릭 가능하게 설정 */
     }
 
     .wishlist-item .product-name {
       font-size: 1.2rem;
       font-weight: bold;
       color: #333;
+      cursor: pointer; /* 클릭 가능하게 설정 */
     }
 
     .wishlist-item .product-price {
@@ -79,20 +113,23 @@
 	
     <div th:each="product : ${likedProducts}">
       <div class="wishlist-item d-flex align-items-center">
-        <img src="https://via.placeholder.com/100" alt="상품 이미지">
+        <img class="product-image" th:src="@{'/resources/files/' + ${product.firstImageName}}" alt="상품 이미지" th:attrappend="data-product-id=${product.productseq}">
         <div class="ml-4" style="flex-grow: 1;">
           <div class="d-flex justify-content-between">
-            <span class="product-name" th:text="${product.title}"></span>
-            <i class="fa-solid fa-heart"></i>
+            <span class="product-name" th:text="${product.title}" th:attrappend="data-product-id=${product.productseq}"></span>
+            <i class="fa-solid fa-heart like-icon" th:attrappend="data-product-id=${product.productseq}"></i>
           </div>
           <div class="d-flex justify-content-between mt-2">
-            <span class="status">판매중</span>
-            <span class="product-price" th:text="${product.price}"></span>
+            <span class="status" th:switch="${product.completestatus}">
+              <span th:case="1">판매중</span>
+              <span th:case="2">예약중</span>
+              <span th:case="3">거래완료</span>
+            </span>
+            <span class="product-price" th:text="${#numbers.formatInteger(product.price,3,'COMMA')}+' 원'"></span>
           </div>
         </div>
       </div>
-	 </div>
-
+    </div>
   </div>
 
   <div th:replace="~{/fragment/footer :: footer}"></div>
