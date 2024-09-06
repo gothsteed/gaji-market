@@ -1,5 +1,6 @@
 package com.gaji.app.member.controller;
 
+import com.gaji.app.auth.dto.MemberUserDetail;
 import com.gaji.app.common.FileManager;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.dto.MemberDTO;
@@ -10,6 +11,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,21 +27,23 @@ public class MyeditController {
 
     private MemberService memberService;
     private FileManager fileManager;
-
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public MyeditController(MemberService memberService, FileManager fileManager) {
+    public MyeditController(MemberService memberService, FileManager fileManager, PasswordEncoder passwordEncoder) {
         this.memberService = memberService;
         this.fileManager = fileManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/myedit")
-    public ModelAndView myedit(@AuthenticationPrincipal UserDetails userDetails, ModelAndView mav, Member member) {
+    public ModelAndView myedit(@AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
 
-        String userId = userDetails.getUsername();
-        // System.out.println("확인용 이름 : " + userId);
+        Long memberSeq = userDetail.getMemberSeq();
 
-        member = memberService.getInfo(userId);
+        System.out.println("확인용 시퀀스 : " + memberSeq);
+
+        Member member = memberService.getInfo(memberSeq);
 
 
 
@@ -50,13 +54,13 @@ public class MyeditController {
 
     @ResponseBody
     @PostMapping(value="/myedit/nicDuplicateCheck", produces="text/plain;charset=UTF-8")
-    public String nicDuplicateCheck (@AuthenticationPrincipal UserDetails userDetails, String nic){
+    public String nicDuplicateCheck (@AuthenticationPrincipal MemberUserDetail userDetail, String nic){
 
         String nicDuplicateCheck = null;
-        String id = userDetails.getUsername();
+        Long memberSeq = userDetail.getMemberSeq();
 
         try {
-            nicDuplicateCheck = memberService.nicDuplicateCheck(id, nic);
+            nicDuplicateCheck = memberService.nicDuplicateCheck(memberSeq, nic);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,13 +73,13 @@ public class MyeditController {
 
     @ResponseBody
     @PostMapping(value="/myedit/pwdDuplicateCheck", produces="text/plain;charset=UTF-8")
-    public String pwdDuplicateCheck (@AuthenticationPrincipal UserDetails userDetails, String pwd){
+    public String pwdDuplicateCheck (@AuthenticationPrincipal MemberUserDetail userDetail, String pwd){
 
         String pwdDuplicateCheck = null;
-        String id = userDetails.getUsername();
+        Long memberSeq = userDetail.getMemberSeq();
 
         try {
-            pwdDuplicateCheck = memberService.pwdDuplicateCheckEdit(id, pwd);
+            pwdDuplicateCheck = memberService.pwdDuplicateCheckEdit(memberSeq, pwd);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,13 +93,13 @@ public class MyeditController {
     // 연락처 중복체크
     @ResponseBody
     @PostMapping(value="/myedit/telDuplicateCheck", produces="text/plain;charset=UTF-8")
-    public String telDuplicateCheck (@AuthenticationPrincipal UserDetails userDetails, String tel){
+    public String telDuplicateCheck (@AuthenticationPrincipal MemberUserDetail userDetail, String tel){
 
         String telDuplicateCheck = null;
-        String id = userDetails.getUsername();
+        Long memberSeq = userDetail.getMemberSeq();
 
         try {
-            telDuplicateCheck = memberService.telDuplicateCheckEdit(id, tel);
+            telDuplicateCheck = memberService.telDuplicateCheckEdit(memberSeq, tel);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,13 +113,13 @@ public class MyeditController {
     // 이메일 중복체크
     @ResponseBody
     @PostMapping(value="/myedit/emailDuplicateCheck", produces="text/plain;charset=UTF-8")
-    public String emailDuplicateCheck (@AuthenticationPrincipal UserDetails userDetails, String email){
+    public String emailDuplicateCheck (@AuthenticationPrincipal MemberUserDetail userDetail, String email){
 
         String emailDuplicateCheck = null;
-        String id = userDetails.getUsername();
+        Long memberSeq = userDetail.getMemberSeq();
 
         try {
-            emailDuplicateCheck = memberService.emailDuplicateCheckEdit(id, email);
+            emailDuplicateCheck = memberService.emailDuplicateCheckEdit(memberSeq, email);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,11 +131,12 @@ public class MyeditController {
     }
 
     @PostMapping(value="/myedit/editEnd")
-    public ModelAndView editEnd(@AuthenticationPrincipal UserDetails userDetails, ModelAndView mav, MemberDTO mdto, MultipartHttpServletRequest mrequest, HttpServletRequest request){
+    public ModelAndView editEnd(@AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav, MemberDTO mdto, MultipartHttpServletRequest mrequest, HttpServletRequest request){
 
-        String id = userDetails.getUsername();
+        Long memberSeq = userDetail.getMemberSeq();
         String nic = request.getParameter("nic");
         String pwd = request.getParameter("pwd");
+        pwd = passwordEncoder.encode(pwd);
         String tel = request.getParameter("tel");
         String email = request.getParameter("email");
 
@@ -169,14 +174,15 @@ public class MyeditController {
 
         int n = 0;
         try {
-            n = memberService.memberEdit_end(mdto);
+            n = memberService.memberEdit_end(memberSeq, mdto);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if(n == 1) {
+            mav.addObject("memberSeq", memberSeq);
             mav.addObject("message", "정보수정에 성공하였습니다!");
-            mav.addObject("loc", "http://localhost:8080/gaji/myPage");
+            mav.addObject("loc", "http://localhost:8080/gaji/myPage?memberSeq="+memberSeq);
             mav.setViewName("msg");
 			/*
 			System.out.println("Message: " + mav.getModel().get("message"));
@@ -184,6 +190,7 @@ public class MyeditController {
 			*/
         }
         else {
+            mav.addObject("memberSeq", memberSeq);
             mav.addObject("message", "정보수정에 실패하였습니다!");
             mav.addObject("loc", "http://localhost:8080/gaji/myedit");
             mav.setViewName("msg");

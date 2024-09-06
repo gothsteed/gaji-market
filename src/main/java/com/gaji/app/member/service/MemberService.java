@@ -90,67 +90,70 @@ public class MemberService {
     }
     
     // 수정을 위해 개인정보 가져오기
-    public Member getInfo(String userId) {
+    public Member getInfo(Long memberSeq) {
 
-        Optional<Member> getInfo = memberRepository.findByUserId(userId);
+        Optional<Member> getInfo = memberRepository.findByMemberSeq(memberSeq);
 
         return getInfo.orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없습니다."));
     }
 
     // 수정시 별명 중복 체크
-    public String nicDuplicateCheck(String id, String nic) {
+    public String nicDuplicateCheck(Long memberSeq, String nic) {
 
-        Optional<Member> nicCheck = memberRepository.findByUserIdAndNickname(id, nic);
+        Optional<Member> nicCheck = memberRepository.findByMemberSeqAndNickname(memberSeq, nic);
 
         return nicCheck.toString();
     }
 
     // 수정시 비밀번호 중복 체크
-    public String pwdDuplicateCheckEdit(String id, String pwd){
+    public String pwdDuplicateCheckEdit(Long memberSeq, String pwd){
 
         pwd = passwordEncoder.encode(pwd);
 
         // System.out.println("확인용 id : " + id);
         // System.out.println("확인용 pwd : " + pwd);
 
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndPassword(id, pwd);
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndPassword(memberSeq, pwd);
 
         return pwdCheck.toString();
     }
 
-    public String telDuplicateCheckEdit(String id, String tel) {
+    public String telDuplicateCheckEdit(Long memberSeq, String tel) {
 
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndTel(id, tel);
-
-        return pwdCheck.toString();
-    }
-
-
-    public String emailDuplicateCheckEdit(String id, String email) {
-
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndEmail(id, email);
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndTel(memberSeq, tel);
 
         return pwdCheck.toString();
     }
 
 
-    public int memberEdit_end(MemberDTO mdto) {
+    public String emailDuplicateCheckEdit(Long memberSeq, String email) {
 
-        // MemberDTO를 Member 엔티티로 변환
-        Member member = new Member(mdto.getUserId(), mdto.getName(), mdto.getNickname(), passwordEncoder.encode(mdto.getPassword()), mdto.getEmail(), mdto.getTel(), mdto.getProfilepic());
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndEmail(memberSeq, email);
 
+        return pwdCheck.toString();
+    }
+
+
+    public int memberEdit_end(Long memberSeq, MemberDTO mdto) {
         try {
-            // Member 엔티티 저장
-            Member savedMember = memberRepository.save(member);
 
-            // 저장된 엔티티의 ID를 반환 (성공적으로 저장되었음을 나타냄)
-            return savedMember.getMemberSeq() != null ? 1 : 0;
+
+            // MemberDTO를 Member 엔티티로 변환
+            Member existingMember = memberRepository.findByMemberSeq(memberSeq)
+                    .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+            existingMember.UpdateMember(mdto);
+
+            // 업데이트된 엔티티 저장
+            memberRepository.save(existingMember);
+
+            // 업데이트 성공 시 1 반환
+            return 1;
         } catch (Exception e) {
-            // 예외가 발생하면 실패를 나타내는 0을 반환
-            e.printStackTrace();
+            // 예외 발생 시 실패를 나타내는 0 반환
             return 0;
         }
-    }
+    }// end of public int memberEdit_end(MemberDTO mdto)
 
 
 	public List<Product> getLikedProductsForCurrentUser(Long memberSeq) {
@@ -180,4 +183,9 @@ public class MemberService {
     }
 
 
+
+    public String getMemberName(Long memberSeq) {
+        Member member = memberRepository.findById(memberSeq).orElseThrow(() -> new UsernameNotFoundException("존재하지 않은 맴버입니다."));
+        return member.getName();
+    }
 }
