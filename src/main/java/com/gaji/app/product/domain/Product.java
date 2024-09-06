@@ -51,7 +51,8 @@ public class Product {
     private String salestype;
 
     @Column(nullable = false, length = 20)
-    private String completestatus;
+    @Enumerated(EnumType.STRING)
+    private CompleteStatus completestatus;
 
     @Column(nullable = false, columnDefinition="DATE default sysdate")
     private LocalDateTime writedate;

@@ -76,4 +76,9 @@ public class MemberService {
 
         return idCheck.toString();
     }
+
+    public String getMemberName(Long memberSeq) {
+        Member member = memberRepository.findById(memberSeq).orElseThrow(() -> new UsernameNotFoundException("존재하지 않은 맴버입니다."));
+        return member.getName();
+    }
 }

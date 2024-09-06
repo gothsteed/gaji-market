@@ -1,4 +1,4 @@
-package com.gaji.app.product.repository;
+package com.gaji.app.product.domain;
 
 public enum CompleteStatus {
     FOR_SALE,
