@@ -1,11 +1,13 @@
 package com.gaji.app.member.controller;
 
+import com.gaji.app.auth.dto.MemberUserDetail;
 import com.gaji.app.common.FileManager;
 import com.gaji.app.member.service.MemberService;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +27,15 @@ public class MyPageController {
     }
 
     @GetMapping("/myPage")
-    public String myPage(@RequestParam Long memberSeq, Model model) {
-/*        if(memberSeq == null) {
-            memberSeq = SecurityContextHolder.getContext().getAuthentication().getDetails()
-        }*/
+    public String myPage(@RequestParam(required = false) Long memberSeq, Model model) {
+
+        if (memberSeq == null) {
+            // 현재 로그인된 사용자 정보를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            MemberUserDetail userDetail = (MemberUserDetail) authentication.getPrincipal();
+            memberSeq = userDetail.getMemberSeq();
+        }
+
         model.addAttribute("memberSeq", memberSeq);
         return "member/mypage";
     }

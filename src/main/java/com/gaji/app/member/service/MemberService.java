@@ -86,57 +86,56 @@ public class MemberService {
     }
     
     // 수정을 위해 개인정보 가져오기
-    public Member getInfo(String userId) {
+    public Member getInfo(Long memberSeq) {
 
-        Optional<Member> getInfo = memberRepository.findByUserId(userId);
+        Optional<Member> getInfo = memberRepository.findByMemberSeq(memberSeq);
 
         return getInfo.orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없습니다."));
     }
 
     // 수정시 별명 중복 체크
-    public String nicDuplicateCheck(String id, String nic) {
+    public String nicDuplicateCheck(Long memberSeq, String nic) {
 
-        Optional<Member> nicCheck = memberRepository.findByUserIdAndNickname(id, nic);
+        Optional<Member> nicCheck = memberRepository.findByMemberSeqAndNickname(memberSeq, nic);
 
         return nicCheck.toString();
     }
 
     // 수정시 비밀번호 중복 체크
-    public String pwdDuplicateCheckEdit(String id, String pwd){
+    public String pwdDuplicateCheckEdit(Long memberSeq, String pwd){
 
         pwd = passwordEncoder.encode(pwd);
 
         // System.out.println("확인용 id : " + id);
         // System.out.println("확인용 pwd : " + pwd);
 
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndPassword(id, pwd);
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndPassword(memberSeq, pwd);
 
         return pwdCheck.toString();
     }
 
-    public String telDuplicateCheckEdit(String id, String tel) {
+    public String telDuplicateCheckEdit(Long memberSeq, String tel) {
 
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndTel(id, tel);
-
-        return pwdCheck.toString();
-    }
-
-
-    public String emailDuplicateCheckEdit(String id, String email) {
-
-        Optional<Member> pwdCheck = memberRepository.findByUserIdAndEmail(id, email);
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndTel(memberSeq, tel);
 
         return pwdCheck.toString();
     }
 
 
-    public int memberEdit_end(MemberDTO mdto) {
+    public String emailDuplicateCheckEdit(Long memberSeq, String email) {
+
+        Optional<Member> pwdCheck = memberRepository.findByMemberSeqAndEmail(memberSeq, email);
+
+        return pwdCheck.toString();
+    }
+
+
+    public int memberEdit_end(Long memberSeq, MemberDTO mdto) {
         try {
 
-            String id = mdto.getUserId();
 
             // MemberDTO를 Member 엔티티로 변환
-            Member existingMember = memberRepository.findByUserId(id)
+            Member existingMember = memberRepository.findByMemberSeq(memberSeq)
                     .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
 
             existingMember.UpdateMember(mdto);
