@@ -76,9 +76,10 @@
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a76ee334caf87a1587c2f7fcd7b84570&libraries=services"></script>
     <script type="text/javascript">
         function initMap() {
-            const address = "${product.address}"; // 모델에서 상품 주소 가져오기
-            console.log("주소:", address); // 주소 출력
 
+            const address = '[[${product.address}]]'; // 기본값 설정
+
+            console.log("주소:", address); // 주소 출력
 
             const geocoder = new kakao.maps.services.Geocoder();
             geocoder.addressSearch(address, function(results, status) {
