@@ -27,4 +27,6 @@ public class MyPageRestController {
         return ResponseEntity.ok(mypage);
     }
 
+
+
 }
