@@ -64,8 +64,7 @@ public class ProductController {
     public String productDetail(@RequestParam Long seq, Model model) {
 
         // 해당 상품의 정보 가져오기
-        Product product = productService.getProductById(seq)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq)).getProduct();
+        Product product = productService.getProductById(seq);
 
         // 해당 상품의 모든 이미지 가져오기
         List<ProductImage> images = productService.getProductImgById(seq);

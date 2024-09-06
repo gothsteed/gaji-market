@@ -53,6 +53,8 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
+
+
     public List<Product> getUserOnSaleItem(Long memberSeq) {
         List<Product> productList = productRepository.findAllByFkmemberseqAndCompletestatusIn(memberSeq, CompleteStatus.FOR_SALE, CompleteStatus.RESERVED);
 
@@ -66,10 +68,14 @@ public class ProductService {
 
         return null;
     }
+
+
     // 해당 상품 정보 가져오기
-    public Optional<ProductImage> getProductById(Long seq) {
-        return productImageRepository.findById(seq);
+    public Product getProductById(Long seq) {
+        return productRepository.findById(seq)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq));
     }
+
 
     // 해당 상품 이미지 가져오기
     public List<ProductImage> getProductImgById(Long seq) {
