@@ -9,6 +9,8 @@ import com.gaji.app.member.repository.LikeProductRepository;
 import com.gaji.app.member.repository.MemberRepository;
 import com.gaji.app.product.domain.LikeProduct;
 import com.gaji.app.product.domain.Product;
+import com.gaji.app.product.domain.ProductImage;
+import com.gaji.app.product.repository.ProductImageRepository;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +34,17 @@ public class MemberService {
     private AddressRepository addressRepository;
     private PasswordEncoder passwordEncoder;
     private LikeProductRepository likeProductRepository;
+    private ProductImageRepository productImageRepository;
     
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository, ProductImageRepository productImageRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
         this.addressRepository = addressRepository;
         this.passwordEncoder = passwordEncoder;
         this.likeProductRepository = likeProductRepository;
+        this.productImageRepository = productImageRepository;
     }
 
     public String emailDuplicateCheck(String email) throws Exception {
@@ -163,5 +167,17 @@ public class MemberService {
 	                          .map(LikeProduct::getProduct)
 	                          .collect(Collectors.toList());
 	}
+
+	public boolean removeLike(Long memberseq, Long productId) {
+        Optional<LikeProduct> likeProductOpt = likeProductRepository.findByFkmemberseqAndFkproductseq(memberseq, productId);
+        
+        if (likeProductOpt.isPresent()) {
+            likeProductRepository.delete(likeProductOpt.get());
+            return true;
+        }
+        
+        return false;
+    }
+
 
 }

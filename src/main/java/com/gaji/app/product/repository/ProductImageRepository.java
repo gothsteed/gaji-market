@@ -1,5 +1,6 @@
 package com.gaji.app.product.repository;
 
+import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,5 +38,6 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
             "ORDER BY RNUM ", nativeQuery = true)
 
     List<ProductImage> findMinProductImages(@Param("start") int start, @Param("end") int end, @Param("sortType") String sortType);
+    
 
 }
