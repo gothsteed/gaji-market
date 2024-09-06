@@ -72,8 +72,57 @@
 
     </style>
 
+    <!-- 카카오 API 키 입력 -->
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a76ee334caf87a1587c2f7fcd7b84570&libraries=services"></script>
     <script type="text/javascript">
+        function initMap() {
+            const address = "${product.address}"; // 모델에서 상품 주소 가져오기
+            console.log("주소:", address); // 주소 출력
 
+
+            const geocoder = new kakao.maps.services.Geocoder();
+            geocoder.addressSearch(address, function(results, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+                    const mapOptions = {
+                        center: new kakao.maps.LatLng(results[0].y, results[0].x), // 좌표
+                        level: 3 // 확대 레벨
+                    };
+
+                    const map = new kakao.maps.Map(mapContainer, mapOptions); // 지도 생성
+
+                    const marker = new kakao.maps.Marker({
+                        position: new kakao.maps.LatLng(results[0].y, results[0].x) // 마커 위치
+                    });
+
+                    marker.setMap(map); // 지도에 마커 추가
+
+                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+                    console.error('주소 검색 실패: ZERO_RESULT');
+
+                    alert('입력한 주소를 찾을 수 없습니다. 주소를 확인해 주세요.'); // 사용자에게 알림
+
+                    // 대체 위치 설정 (서울 시청)
+                    const mapContainer = document.getElementById('map');
+                    const defaultPosition = new kakao.maps.LatLng(37.5665, 126.978); // 서울 시청 좌표
+                    const mapOptions = {
+                        center: defaultPosition,
+                        level: 3
+                    };
+                    const map = new kakao.maps.Map(mapContainer, mapOptions);
+
+                    const marker = new kakao.maps.Marker({
+                        position: defaultPosition
+                    });
+                    marker.setMap(map);
+                } else {
+                    console.error('주소 검색 실패: ' + status);
+                }
+            });
+        }
+
+        kakao.maps.load(initMap);
     </script>
 
 </head>
@@ -126,7 +175,7 @@
                     <div class="mb-2">
                         <div style="border-radius: 50%; overflow: hidden; width: 100px; height: 100px; margin: 0 auto;">
                             <img th:src="@{'/resources/files/' + ${product.member.profilePic}}" width="100" height="100" alt="">
-                            <!--C:\git\gaji-market\src\main\webapp\resources\files-->
+                            <!-- 이미지 저장 운영 경로 C:\git\gaji-market\src\main\webapp\resources\files-->
                         </div>
                     </div>
 
@@ -153,7 +202,6 @@
 
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <!-- fkcategoryseq, writedate -->
                 <li class="breadcrumb-item" th:if="${product.fkcategoryseq == 1}" th:text="디지털기기"></li>
                 <li class="breadcrumb-item" th:text="'등록시간 : ' + ${product.writedate}"></li>
                 <li class="breadcrumb-item" th:text="'끌올 ' + ${product.reuploadcount} + '회'"></li>
@@ -162,14 +210,6 @@
         </nav>
 
         <!-- 상품 정보 -->
-        <!--
-            negostatus
-            1 : 가격제안불가
-            2 : 가격제안받기
-
-            salestype
-            1 : 판매
-            2 : 나눔 -->
         <span class="badge badge-danger" th:if="${product.negostatus == '1'}" th:text="가격제안불가"></span>
         <span class="badge badge-success" th:if="${product.negostatus == '2'}" th:text="가격제안받기"></span>
 
@@ -183,20 +223,18 @@
             </p>
             <p class="md-5" th:text="${product.content}"></p>
 
-            <p class="product-address mt-5" th:text="'거래희망장소 : ' + ${product.address}"></p>
+            <p class="product-address mt-5">
+                <strong th:text="'거래희망장소 : ' + ${product.address}"></strong>
+            </p>
 
-            <!-- 구글 지도 삽입 -->
-            <div style="width: 100%; height: 300px;">
-                <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.957557995988!2d126.9251123150681!3d37.5498489797796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca1f2f8aabf2d%3A0x9f0b8c9d8da0e38f!2z7KCE7J6F7Iuc!5e0!3m2!1sko!2skr!4v1602785235643!5m2!1sko!2skr"
-                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
+            <!-- 카카오 지도 표시 -->
+            <div id="map" style="height: 500px; width: 100%;"></div>
 
             <div class="d-flex justify-content-between mt-5">
                 <button class="btn btn-secondary" onclick="location.href='http://localhost:8080/gaji/productList';">목록보기</button>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-danger mr-5" type="button">찜하기❤️</button>
-                    <button class="btn btn-custom" type="button">채팅하기</button>
+                    <button class="btn btn-custom" type="button" onclick="location.href='http://localhost:8080/gaji/chatting';">채팅하기</button>
                 </div>
             </div>
         </div>
