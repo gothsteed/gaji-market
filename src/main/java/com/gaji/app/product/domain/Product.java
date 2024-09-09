@@ -75,15 +75,9 @@ public class Product {
     @Column(nullable = false, columnDefinition="DATE")
     private LocalDateTime enddatetime;
 
+    @Column(nullable = false, columnDefinition="NUMBER")
+    private int likecount;
 
-
-    // 좋아요 개수를 저장할 필드
-    @Transient // 데이터베이스와 매핑하지 않음
-    private Long likeCount;
-
-    public void setLikeCount(Long likeCount) {
-        this.likeCount = likeCount;
-    }
 
     public String getFirstImageName() {
         return productImages.get(0).getOriginalname();

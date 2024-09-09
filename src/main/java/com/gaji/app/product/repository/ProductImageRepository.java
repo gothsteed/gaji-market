@@ -20,6 +20,7 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
             "           ROW_NUMBER() over (order by " +
             "            CASE :sortType " +
             "                WHEN 'productseq' THEN T.productseq " +
+            "                WHEN 'likecount' THEN T.likecount " +
             "                WHEN 'viewcount' THEN T.viewcount " +
             "                ELSE T.productseq " +
             "            END desc) as RNUM " +

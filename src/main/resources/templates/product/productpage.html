@@ -203,7 +203,7 @@
             <form name="sortFrm" class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
                 <select class="form-select" name="sortType" style="margin-left: 10%;" aria-label="Default select example">
                     <option value="productseq" selected>최신순</option>
-                    <option value="popular">인기순</option>
+                    <option value="likecount">인기순</option>
                     <option value="viewcount">조회순</option>
                 </select>
             </form>
@@ -220,7 +220,7 @@
                   <div class="textBox">
                     <p class="textBox__name" th:text="${vo.product.title}"></p>
                     <p class="textBox__price" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + '원'"></p>
-                    <p class="textBox__heart" th:text="'❤ ' + ${vo.product.likeCount}" style="color: #ff3385;"></p>
+                    <p class="textBox__heart" th:text="'❤ ' + ${vo.product.likecount}" style="color: #ff3385;"></p>
                   </div>
 
                 </div>

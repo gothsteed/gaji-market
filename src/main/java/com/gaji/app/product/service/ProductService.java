@@ -33,21 +33,8 @@ public class ProductService {
         int start = (pageNumber - 1) * pageSize + 1; // 시작 인덱스
         int end = start + pageSize - 1; // 종료 인덱스
 
-
         // 페이징된 결과를 가져옴
-        List<ProductImage> pagingProductList = null;
-
-        if(!"popular".equals(sortType)) {
-            pagingProductList = productImageRepository.findMinProductImages(start, end, sortType);
-        }
-
-        for (ProductImage productImage : pagingProductList) {
-            // 좋아요 수를 계산하여 설정
-            Long likeCount = Optional.ofNullable(productRepository.countLikesByProductSeq(productImage.getFkproductseq()))
-                            .orElse(0L);
-
-            productImage.getProduct().setLikeCount(likeCount);
-        }
+        List<ProductImage> pagingProductList = productImageRepository.findMinProductImages(start, end, sortType);
 
         // 전체 데이터 수를 가져옴
         long totalCount = productRepository.countProduct();
