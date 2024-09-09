@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>가지마켓</title>
+  <title>채팅하기</title>
 
   <!-- CSS -->
   <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
@@ -21,7 +21,7 @@
   <!-- Optional JavaScript -->
   <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
   <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
-  <script type="text/javascript" th:src="@{/js/header.js}" ></script>
+  <script type="text/javascript" th:src="@{/js/header.js}"></script>
 
   <style type="text/css">
     body {
@@ -118,7 +118,8 @@
 		align-items: center;
 		overflow: hidden;
 	}
-	.preview_nickname {
+	.preview_nickname1,
+	.preview_nickname2 {
 		height: 25px;
 		font-weight: bold;
 		font-size: 13pt;
@@ -264,6 +265,7 @@
  	*/   
 		
 		let messageObj = {}; 
+		const to = $("span.preview_nickname2").text();
 	
 		// 웹소켓에 최초로 연결이 되었을 경우에 실행되어지는 콜백함수 정의하기
 		websocket.onopen = function(){
@@ -271,6 +273,10 @@
 			
 			messageObj = {message : "채팅방에 <span style='color: red;'>입장</span> 했습니다."
 	                     ,type : "one"};
+						 
+		 	if(to != ""){
+ 				messageObj.to = to;
+	 		}
 						 
 			websocket.send(JSON.stringify(messageObj));
 		};
@@ -300,6 +306,10 @@
 			
 				messageObj = {message : messageVal
 		                     ,type : "one"};
+							 
+			 	if(to != ""){
+	  				messageObj.to = to;
+	 	 		}			 
 							 
 		 		websocket.send(JSON.stringify(messageObj));
 				
@@ -350,7 +360,7 @@
 		<div style="display: flex; position: relative; margin: 0 auto; height: 100%;">
 			<div style="border: 0px solid red; display: flex;">
 				<nav class="sidebar">
-					<a href="#" style="display: inline-block; width: 45px; height: 45px;">
+					<a href="#" style="display: inline-block; width: 40px; height: 40px;">
 						<img class="profile_image" th:src="@{/images/mypage/nyang.jpg}">
 					</a>
 				</nav>
@@ -372,7 +382,7 @@
 								</div>
 								<div style="flex: 1 0 0%; width: 0px;">
 									<div class="preview_title" style="display: flex; align-items: center;">
-										<span class="preview_nickname">당근</span>
+										<span class="preview_nickname1">당근</span>
 										<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
 										<div class="preview_time">오전 00:00<span></span></div>
 									</div>
@@ -400,7 +410,7 @@
 								<img class="profile_image" th:src="@{/images/mypage/basicimg.png}">
 							</div>
 							<div class="preview_title" style="display: flex; align-items: center;">
-								<span class="preview_nickname">당근</span>
+								<span class="preview_nickname2">당근</span>
 								<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
 							</div>
 						</div>
@@ -409,7 +419,7 @@
 							<div class="option_container">
 								<div class="option_item common_bg_hover">알림음 끄기</div>
 								<div class="option_item common_bg_hover">대화상대 차단하기</div>
-								<div class="option_item common_bg_hover">채팅방 나가기</div>
+								<div class="option_item common_bg_hover" th:onclick="|location.href='@{/home}'|">채팅방 나가기</div>
 							</div>
 						</div>
 					</div>
