@@ -232,87 +232,95 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadProducts();
 
-            document.getElementById('sortForm').addEventListener('change', function() {
-                loadProducts();
-            });
+            const sortSelect = document.querySelector('select[name="sortType"]');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    loadProducts();
+                });
+            }
         });
 
         function loadProducts(page = 1) {
-            //const sortType = document.querySelector('select[name="sortType"]').value;
+            const sortType = document.querySelector('select[name="sortType"]')?.value || 'productseq';
             const memberSeq = '[[${memberSeq}]]';
-            const url = `api/product/search?page=${page}&size=20&fkMemberSeq=${memberSeq}&completeStatus=FOR_SALE,RESERVED`;
             const contextPath = '[[@{/}]]';
-            fetch(contextPath + url)
+            const url = `${contextPath}api/product/search?page=${page}&size=20&fkMemberSeq=${memberSeq}&completeStatus=FOR_SALE,RESERVED&sortType=${sortType}`;
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    renderProducts(data.products);
-                    renderPagination(data.currentPage, data.totalPages);
+                    console.log(data);
+                    renderProducts(data.productList);
+                    renderPagination(data.page, data.totalPage);
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-        function renderProducts(products) {
+        function renderProducts(data) {
             const container = document.getElementById('productContainer');
-            container.innerHTML = '';
+            if (!container) return;
+            const contextPath = '[[@{/}]]';
 
-            if (products.length === 0) {
+            if (!data || data.length == 0) {
                 container.innerHTML = `
-                    <div class="noData">
-                        <div class="text-center">
-                            <div style="font-size: 1.5rem;">
-                                <span>데이터가 존재하지 않습니다</span>
-                                <i class="fa-regular fa-face-sad-tear ml-1"></i>
-                            </div>
-                            <span class="d-block" style="color: #999;">거래할 상품을 등록해보세요!</span>
+                <div class="noData">
+                    <div class="text-center">
+                        <div style="font-size: 1.5rem;">
+                            <span>데이터가 존재하지 않습니다</span>
+                            <i class="fa-regular fa-face-sad-tear ml-1"></i>
                         </div>
-                    </div>
-                `;
-                return;
-            }
-
-            const productHtml = products.map(product => `
-                <div class="item" data-seq="${product.product.productseq}" onclick="location.href='productDetail?seq=${product.product.productseq}'">
-                    <div class="imgBox">
-                        <img src="/images/productImg/${product.filename}" alt=""/>
-                    </div>
-                    <div class="textBox">
-                        <p class="textBox__name">${product.product.title}</p>
-                        <p class="textBox__price">${new Intl.NumberFormat('ko-KR').format(product.product.price)}원</p>
-                        <p class="textBox__heart" style="color: #ff3385;">❤ ${product.product.likeCount}</p>
+                        <span class="d-block" style="color: #999;">거래할 상품을 등록해보세요!</span>
                     </div>
                 </div>
-            `).join('');
+            `;
+                    return;
+                }
+
+                const productHtml = data.map(product => `
+            <div class="item" data-seq="${product.productseq}" onclick="location.href='productDetail?seq=${product.productseq}'">
+                <div class="imgBox">
+                    <img src="${contextPath}images/productImg/${product.image}" alt=""/>
+                </div>
+                <div class="textBox">
+                    <p class="textBox__name">${product.title}</p>
+                    <p class="textBox__price">${new Intl.NumberFormat('ko-KR').format(product.price)}원</p>
+                    <p class="textBox__heart" style="color: #ff3385;">❤ ${product.likeCount || 0}</p>
+                </div>
+            </div>
+        `).join('');
 
             container.innerHTML = `<div style="display: flex; flex-flow: row wrap;">${productHtml}</div>`;
         }
 
         function renderPagination(currentPage, totalPages) {
             const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+
             let paginationHtml = `
-                <ul class="pagination justify-content-center">
-                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" onclick="loadProducts(${currentPage - 1})" aria-label="Previous">
-                            <span aria-hidden="true">◀</span>
-                        </a>
-                    </li>
-            `;
+        <ul class="pagination justify-content-center">
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage - 1})" aria-label="Previous">
+                    <span aria-hidden="true">◀</span>
+                </a>
+            </li>
+    `;
 
             for (let i = 1; i <= totalPages; i++) {
                 paginationHtml += `
-                    <li class="page-item ${i === currentPage ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="loadProducts(${i})">${i}</a>
-                    </li>
-                `;
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${i})">${i}</a>
+            </li>
+        `;
             }
 
             paginationHtml += `
-                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="#" onclick="loadProducts(${currentPage + 1})" aria-label="Next">
-                            <span aria-hidden="true">▶</span>
-                        </a>
-                    </li>
-                </ul>
-            `;
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage + 1})" aria-label="Next">
+                    <span aria-hidden="true">▶</span>
+                </a>
+            </li>
+        </ul>
+    `;
 
             pagination.innerHTML = paginationHtml;
         }

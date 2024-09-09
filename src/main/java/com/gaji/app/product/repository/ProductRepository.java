@@ -51,6 +51,36 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             int minRow,
             int maxRow
     ) {
+        Specification<Product> spec = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings);
+
+        return findAll(spec)
+                .stream()
+                .skip(minRow)
+                .limit(maxRow - minRow)
+                .collect(Collectors.toList());
+    }
+
+    default long countSearchProducts(
+            String title,
+            Integer minPrice,
+            Integer maxPrice,
+            String category,
+            Long fkMemberSeq,
+            List<String> completeStatusStrings
+    ) {
+        Specification<Product> spec = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings);
+
+        return count(spec);
+    }
+
+    private Specification<Product> createSpecification(
+            String title,
+            Integer minPrice,
+            Integer maxPrice,
+            String category,
+            Long fkMemberSeq,
+            List<String> completeStatusStrings
+    ) {
         Specification<Product> spec = Specification.where(null);
 
         if (title != null && !title.isEmpty()) {
@@ -72,11 +102,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             spec = spec.and((root, query, cb) -> root.get("completestatus").in(completeStatusStrings));
         }
 
-        return findAll(spec)
-                .stream()
-                .skip(minRow)
-                .limit(maxRow - minRow)
-                .collect(Collectors.toList());
+        return spec;
     }
 }
 

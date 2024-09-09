@@ -2,6 +2,7 @@ package com.gaji.app.product.service;
 
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
+import com.gaji.app.product.dto.ProductFirstDto;
 import com.gaji.app.product.dto.ProductListDto;
 import com.gaji.app.product.dto.ProductSearchParamDto;
 import com.gaji.app.product.repository.ProductImageRepository;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class ProductService {
         return new PageImpl<>(pagingProductList, PageRequest.of(pageNumber - 1, pageSize), totalCount);
     }
 
-    
+
 
     // 해당 상품 정보 가져오기
     public Product getProductById(Long seq) {
@@ -69,7 +69,7 @@ public class ProductService {
         return productImageRepository.findByFkproductseq(seq);
     }
 
-    public List<ProductListDto> searchProduct(ProductSearchParamDto paramDto) {
+    public ProductListDto searchProduct(ProductSearchParamDto paramDto) {
         int page = paramDto.getPage();
         int size = paramDto.getSize();
         int minRow = (page - 1) * size;
@@ -88,15 +88,31 @@ public class ProductService {
                 maxRow
         );
 
-        List<ProductListDto> dtos = new ArrayList<>();
+        long totalPage = productRepository.countSearchProducts(
+                paramDto.getTitle(),
+                paramDto.getMinPrice(),
+                paramDto.getMaxPrice(),
+                paramDto.getCategory(),
+                paramDto.getFkMemberSeq(),
+                completeStatusStrings
+        ) / size + 1;
+
+        List<ProductFirstDto> dtos = new ArrayList<>();
         for(Product product : productList) {
-            ProductListDto dto = new ProductListDto();
+            ProductFirstDto dto = new ProductFirstDto();
             dto.setImage(product.getFirstImageName());
             dto.setTitle(product.getTitle());
             dto.setPrice(product.getPrice());
             dtos.add(dto);
         }
 
-        return dtos;
+        ProductListDto productListDto = new ProductListDto();
+        productListDto.setProductList(dtos);
+        productListDto.setSize(size);
+        productListDto.setTotalPage(totalPage);
+        productListDto.setPage(page);
+
+
+        return productListDto;
     }
 }

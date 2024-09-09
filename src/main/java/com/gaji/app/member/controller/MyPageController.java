@@ -1,13 +1,8 @@
 package com.gaji.app.member.controller;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
-import com.gaji.app.common.FileManager;
 import com.gaji.app.member.service.MemberService;
 import com.gaji.app.member.service.MyPageService;
-import com.gaji.app.product.domain.Product;
-import com.gaji.app.product.domain.ProductImage;
-import com.gaji.app.product.dto.ProductListDto;
-import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class MyPageController {
