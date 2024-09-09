@@ -37,7 +37,6 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
             ") " +
             "WHERE rnum BETWEEN :start and :end " +
             "ORDER BY RNUM ", nativeQuery = true)
-
     List<ProductImage> findMinProductImages(@Param("start") int start, @Param("end") int end, @Param("sortType") String sortType);
     
 

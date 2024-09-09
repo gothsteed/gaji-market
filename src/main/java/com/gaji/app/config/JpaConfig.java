@@ -20,6 +20,7 @@ import java.util.Properties;
         "com.gaji.app.member.repository"
         , "com.gaji.app.product.repository"
         , "com.gaji.app.review.repository"
+        , "com.gaji.app.reservation.repository"
 })
 @EnableTransactionManagement
 public class JpaConfig {
@@ -38,6 +39,7 @@ public class JpaConfig {
                 , "com.gaji.app.product.domain"
                 , "com.gaji.app.review.domain"
                 , "com.gaji.app.address.domain"
+                , "com.gaji.app.reservation.domain"
         );
 
         Properties properties = new Properties();
