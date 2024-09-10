@@ -88,6 +88,14 @@ public class ProductController {
     }
 
 
+    @GetMapping("/product/search")
+    public String search(@RequestParam String titleSearch, Model model) {
+        model.addAttribute("titleSearch", titleSearch);
+        model.addAttribute("title", titleSearch + " 검색 결과");
+        return "product/productsearch";
+    }
+
+
 
 
 

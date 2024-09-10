@@ -200,7 +200,7 @@
 
     
     <div class="body m-5">
-        <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;">중고거래 물품</span>
+        <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;" th:text="${title}">중고거래 물품</span>
         <hr style="width:80%;">
         <div class="d-flex justify-content-between" style="width: 80%; margin: 0 auto;">
             <form name="sortFrm" class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
@@ -242,9 +242,9 @@
 
         function loadProducts(page = 1) {
             const sortType = document.querySelector('select[name="sortType"]')?.value || 'productseq';
-            const memberSeq = '[[${memberSeq}]]';
+            const title = '[[${titleSearch}]]';
             const contextPath = '[[@{/}]]';
-            const url = `${contextPath}api/product/search?page=${page}&size=20&fkMemberSeq=${memberSeq}&completeStatus=FOR_SALE,RESERVED&sortType=${sortType}`;
+            const url = `${contextPath}api/product/search?page=${page}&size=20&title=${title}`;
 
             fetch(url)
                 .then(response => response.json())
