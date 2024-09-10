@@ -14,6 +14,7 @@ import com.gaji.app.product.repository.ProductImageRepository;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -188,4 +189,6 @@ public class MemberService {
         Member member = memberRepository.findById(memberSeq).orElseThrow(() -> new UsernameNotFoundException("존재하지 않은 맴버입니다."));
         return member.getName();
     }
+
+
 }

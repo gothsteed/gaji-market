@@ -3,6 +3,7 @@ package com.gaji.app.product.domain;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,14 +61,13 @@ public class Product {
     @Column(nullable = false, columnDefinition = "NUMBER default 0", insertable = false)
     private int reuploadcount;
 
+    @Setter
     @Column(nullable = false, columnDefinition = "NUMBER default 0", insertable = false)
     private int viewcount;
 
     @Column(nullable = false, length = 200)
     private String address;
 
-    @Column(nullable = false, columnDefinition="NUMBER", updatable = false)
-    private Long fkmemberseq;
 
     @Column(nullable = false, columnDefinition="DATE")
     private LocalDateTime startdatetime;

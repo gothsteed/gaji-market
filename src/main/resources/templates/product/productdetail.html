@@ -133,11 +133,9 @@
     <div class="container">
         <div style="display: flex; align-items: center; justify-content: center;">
             <span style="font-weight: bold; font-size: 18pt;" th:text="${product.title}"></span>
-            <span class="badge badge-pill badge-success ml-3" th:if="${product.completestatus == '1'}" th:text="'판매중'"></span>
-            <span class="badge badge-pill badge-warning ml-3" th:if="${product.completestatus == '2'}" th:text="'예약중'"></span>
-            <span class="badge badge-pill badge-secondary ml-3" th:if="${product.completestatus == '3'}" th:text="'거래완료'"></span>
-            <!-- 상태 확인용 배지 (디버깅 용도) -->
-            <span th:if="${product.completestatus == null}" style="color: red;">상태 정보 없음</span>
+            <span class="badge badge-pill badge-success ml-3" th:if="${product.completestatus.name() == 'FOR_SALE'}" th:text="'판매중'"></span>
+            <span class="badge badge-pill badge-warning ml-3" th:if="${product.completestatus.name() == 'RESERVED'}" th:text="'예약중'"></span>
+            <span class="badge badge-pill badge-secondary ml-3" th:if="${product.completestatus.name() == 'SOLD'}" th:text="'거래완료'"></span>
         </div>
 
         <hr>
@@ -234,8 +232,10 @@
             <div class="d-flex justify-content-between mt-5">
                 <button class="btn btn-secondary" onclick="location.href='http://localhost:8080/gaji/productList';">목록보기</button>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-danger mr-5" type="button">찜하기❤️</button>
-                    <button class="btn btn-custom" type="button" onclick="location.href='http://localhost:8080/gaji/chatting';">채팅하기</button>
+                    <button class="btn btn-outline-success mr-5" type="button" th:if="${product.fkMemberSeq == memberSeq}" th:text="'수정하기'"></button>
+                    <button class="btn btn-outline-danger" type="button" th:if="${product.fkMemberSeq == memberSeq}" th:text="'삭제하기'"></button>
+                    <button class="btn btn-outline-danger mr-5" type="button" th:if="${product.fkMemberSeq != memberSeq}" th:text="'찜하기❤️'"></button>
+                    <button class="btn btn-custom" type="button" th:if="${product.fkMemberSeq != memberSeq}" onclick="location.href='http://localhost:8080/gaji/chatting';">채팅하기</button>
                 </div>
             </div>
         </div>

@@ -1,22 +1,19 @@
 package com.gaji.app.product.controller;
 
+import com.gaji.app.auth.dto.MemberUserDetail;
+import com.gaji.app.member.service.MemberService;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -25,6 +22,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("productList")
     public String productList(Model model,
@@ -63,12 +63,24 @@ public class ProductController {
     @GetMapping("productDetail")
     public String productDetail(@RequestParam Long seq, Model model) {
 
+        // 현재 로그인된 사용자 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MemberUserDetail userDetail = (MemberUserDetail) authentication.getPrincipal();
+        Long memberSeq  = userDetail.getMemberSeq();
+
         // 해당 상품의 정보 가져오기
         Product product = productService.getProductById(seq);
+        Long productAuthorId = product.getFkMemberSeq();    // 상품 작성자 seq 가져오기
+
+        // 현재 로그인한 사용자와 상품 작성자가 다를 경우 조회수 증가
+        if (memberSeq != null && !memberSeq.equals(productAuthorId)) {
+            productService.incrementViewCount(seq);
+        }
 
         // 해당 상품의 모든 이미지 가져오기
         List<ProductImage> images = productService.getProductImgById(seq);
 
+        model.addAttribute("memberSeq", memberSeq);
         model.addAttribute("product", product);
         model.addAttribute("images", images);
 

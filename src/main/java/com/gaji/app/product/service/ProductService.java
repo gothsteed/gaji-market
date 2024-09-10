@@ -50,6 +50,13 @@ public class ProductService {
             .orElseThrow(() -> new IllegalArgumentException("Invalid product seq: " + seq));
     }
 
+    // 상품 조회수 증가 메서드
+    public void incrementViewCount(Long seq) {
+        Product product = productRepository.findById(seq)
+            .orElseThrow(() -> new RuntimeException("Product not found"));
+        product.setViewcount(product.getViewcount() + 1); // 조회수 증가
+        productRepository.save(product); // 변경사항 저장
+    }
 
     // 해당 상품 이미지 가져오기
     public List<ProductImage> getProductImgById(Long seq) {
