@@ -41,8 +41,9 @@ public class MyPageController {
     @GetMapping("/myPage/onSale")
     public String productList(Model model, @RequestParam Long memberSeq) {
         String name = memberService.getMemberName(memberSeq);
+        model.addAttribute("title", name + "의 판매 상품");
         model.addAttribute("memberName", name);
         model.addAttribute("memberSeq", memberSeq);
-        return "product/memberOnSalePage";
+        return "product/myPageOnSale";
     }
 }

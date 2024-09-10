@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- CSS -->
+<!-- 소스위치 resources/static/bootstrap-4.6.2-dist/css/bootstrap.min.css -->
+<link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
+<link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+
+<!-- Optional JavaScript -->
+<!-- 소스위치 resources/static/js/jquery-3.7.1.min.js -->
+<script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}" ></script>
+<script type="text/javascript" th:src="@{/js/header.js}" ></script>
+
+<!-- Font Awesome 6 Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=IBM+Plex+Sans+KR&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+
+
+<title>가지마켓</title>
+<link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
+
+<style type="text/css">
+
+    body {
+        font-family: "Noto Sans KR", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+
+    button#productRegisterBtn {
+        background-color: #9357f4;
+        color: white;
+    }
+
+    .container {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0 auto;
+        justify-content: space-between;
+        align-content: flex-start;
+    }
+
+    /* item에 hidden 처리하기. */
+    .item {
+        width: calc(25% - 7px);
+        aspect-ratio: 6/5;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        margin-top:5%;
+    }
+
+    .item:hover {
+        cursor: pointer;
+    }
+
+    .item:after {
+        /* block & content */
+        display: block;
+        content: "";
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        opacity: 0;
+    }
+
+    .imgBox {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    .imgBox img {
+        width: 100%;
+        /* height: 100%; */
+        /* 사진이나 비디오의 규격 맞출 때 object-fit 이용하기. */
+        object-fit: cover;
+        z-index: 1;
+    }
+
+    .textBox {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        padding: 20px;
+        z-index: 3;
+    }
+
+    .textBox p {
+        color: white;
+        margin: 5px 0 0;
+    }
+
+    .textBox__name {
+        font-size: 22px;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    .textBox__price {
+        font-size: 16px;
+        font-weight: 400;
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    /* 마우스 올렸을 때에 기능 추가하기. */
+    .item:hover:after {
+        opacity: 1;
+    }
+
+    /* 기능 1 : 화면 살짝 불투명 + 화면 커지기. */
+    .item:hover .imgBox img {
+        transform: scale(1.1);
+        /* 블러 처리하기. */
+        filter: blur(3px);
+    }
+
+    /* 기능 2 : 상품 정보 보이면서 위로 올라가기. */
+    .item:hover .textBox .textBox__name {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+
+    /* 기능 2 : 상품 정보 보이면서 위로 올라가기. */
+    .item:hover .textBox .textBox__price {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+
+    /* 자연스럽게 트랜지션 적용하기. */
+    .item:after,
+    .item .imgBox img,
+    .item .textBox__name,
+    .item .textBox__price {
+        transition: all 0.4s ease-in-out;
+    }
+
+    /* 페이징 바 */
+    a.page-link {
+      color: black;
+    }
+
+    div.noData {
+        border: solid 0px red;
+        height: 300px;
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("select[name='sortType']").val("[[${sortType}]]");
+
+        /* 상품 목록 정렬 */
+        $("select[name='sortType']").change(function () {
+            const frm = document.sortFrm;
+            frm.action = "productList";
+            frm.submit();
+        });
+
+        /* 상품 상세페이지 이동 */
+        $('.item').click(function () {
+            var seq = $(this).data('seq');
+            location.href = 'productDetail?seq=' + seq;
+        });
+    });
+</script>
+
+</head>
+<body>
+    <div th:replace="~{/fragment/header :: main_header}"></div>
+
+    
+    <div class="body m-5">
+        <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;" th:text="${title}">중고거래 물품</span>
+        <hr style="width:80%;">
+        <div class="d-flex justify-content-between" style="width: 80%; margin: 0 auto;">
+            <form name="sortFrm" class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
+                <select class="form-select" name="sortType" style="margin-left: 10%;" aria-label="Default select example">
+                    <option value="productseq" selected>최신순</option>
+                    <option value="popular">인기순</option>
+                    <option value="viewcount">조회순</option>
+                </select>
+            </form>
+            <div></div>
+            <button type="button" class="btn" id="productRegisterBtn" onclick="location.href='productRegister'">상품 등록</button>
+        </div>
+
+        <div id="productContainer" class="container">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+
+        <nav aria-label="Page navigation" id="pagination" class="mt-5" style="margin: 0 auto;">
+            <!-- Pagination will be dynamically inserted here -->
+        </nav>
+    </div>
+
+
+    <div th:replace="~{fragment/footer :: footer}"></div>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+
+            const sortSelect = document.querySelector('select[name="sortType"]');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    loadProducts();
+                });
+            }
+        });
+
+        function loadProducts(page = 1) {
+            const sortType = document.querySelector('select[name="sortType"]')?.value || 'productseq';
+            const memberSeq = '[[${memberSeq}]]';
+            const contextPath = '[[@{/}]]';
+            const url = `${contextPath}api/product/search?page=${page}&size=20&fkMemberSeq=${memberSeq}&completeStatus=FOR_SALE,RESERVED&sortType=${sortType}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    renderProducts(data.productList);
+                    renderPagination(data.page, data.totalPage);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function renderProducts(data) {
+            const container = document.getElementById('productContainer');
+            if (!container) return;
+            const contextPath = '[[@{/}]]';
+
+            if (!data || data.length == 0) {
+                container.innerHTML = `
+                <div class="noData">
+                    <div class="text-center">
+                        <div style="font-size: 1.5rem;">
+                            <span>데이터가 존재하지 않습니다</span>
+                            <i class="fa-regular fa-face-sad-tear ml-1"></i>
+                        </div>
+                        <span class="d-block" style="color: #999;">거래할 상품을 등록해보세요!</span>
+                    </div>
+                </div>
+            `;
+                    return;
+                }
+
+                const productHtml = data.map(product => `
+            <div class="item" data-seq="${product.productseq}" onclick="location.href='productDetail?seq=${product.productseq}'">
+                <div class="imgBox">
+                    <img src="${contextPath}images/productImg/${product.image}" alt=""/>
+                </div>
+                <div class="textBox">
+                    <p class="textBox__name">${product.title}</p>
+                    <p class="textBox__price">${new Intl.NumberFormat('ko-KR').format(product.price)}원</p>
+                    <p class="textBox__heart" style="color: #ff3385;">❤ ${product.likeCount || 0}</p>
+                </div>
+            </div>
+        `).join('');
+
+            container.innerHTML = `<div style="display: flex; flex-flow: row wrap;">${productHtml}</div>`;
+        }
+
+        function renderPagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+
+            let paginationHtml = `
+        <ul class="pagination justify-content-center">
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage - 1})" aria-label="Previous">
+                    <span aria-hidden="true">◀</span>
+                </a>
+            </li>
+    `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${i})">${i}</a>
+            </li>
+        `;
+            }
+
+            paginationHtml += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage + 1})" aria-label="Next">
+                    <span aria-hidden="true">▶</span>
+                </a>
+            </li>
+        </ul>
+    `;
+
+            pagination.innerHTML = paginationHtml;
+        }
+    </script>
+</body>
+</html>
