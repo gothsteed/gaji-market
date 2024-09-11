@@ -62,9 +62,9 @@
                         <a class="nav-link" th:href="@{/chatting}">채팅하기</a>
                     </li>
                 </ul>
-                <form class="d-flex my-2 my-lg-0">
-                    <input class="form-control mr-3" type="search" placeholder="물품을 검색해보세요!" aria-label="Search">
-                    <button type="button" class="btn" style="background-color: #580DD2; color:white;">Search</button>
+                <form class="d-flex my-2 my-sm-0" method="get" th:action="@{/product/search}">
+                    <input class="form-control mr-3" type="search" name="titleSearch" placeholder="물품을 검색해보세요!" aria-label="Search">
+                    <button type="submit" class="btn" style="background-color: #580DD2; color:white;">Search</button>
                 </form>
 
                 <ul style="font-size: small; margin: 2% 0 0 auto;">
@@ -76,7 +76,7 @@
                             </form>
                         </li>
                         <li class="breadcrumb-item">
-                            <a id="mypage" class="darkmagenta" href="myPage">마이페이지</a>
+                            <a id="mypage" class="darkmagenta" th:href="@{/myPage(memberSeq=${#authentication.principal.memberSeq})}">마이페이지</a>
                         </li>
                     </ol>
                 </ul>

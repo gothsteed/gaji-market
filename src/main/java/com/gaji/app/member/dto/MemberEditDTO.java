@@ -1,16 +1,14 @@
 package com.gaji.app.member.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class MemberDTO {
-	
+public class MemberEditDTO {
+
 	private String userId;
-	private String name;
 	private String nickname;
 	private String password;
 	private String tel;

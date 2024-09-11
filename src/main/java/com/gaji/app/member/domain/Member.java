@@ -1,6 +1,7 @@
 package com.gaji.app.member.domain;
 
 import com.gaji.app.address.domain.Address;
+import com.gaji.app.member.dto.MemberDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -63,6 +64,38 @@ public class Member {
         this.email = email;
         this.tel = tel;
         this.profilePic = profilepic;
+    }
+    
+    public void defaultSetAddressseq(Address addressseq) {
+    	address = addressseq;
+    }
+
+    public void UpdateMember(MemberDTO mdto){
+
+        if (mdto.getUserId() != null) {
+            userId = mdto.getUserId();
+        }
+
+        if (mdto.getName() != null) {
+            name = mdto.getName();
+        }
+        if (mdto.getNickname() != null) {
+            nickname = mdto.getNickname();
+        }
+        if (mdto.getPassword() != null) {
+            password = mdto.getPassword();
+        }
+        if (mdto.getEmail() != null) {
+            email = mdto.getEmail();
+        }
+        if (mdto.getTel() != null) {
+            tel = mdto.getTel();
+        }
+        if (mdto.getProfilepic() != null) {
+            profilePic = mdto.getProfilepic();
+        }
+
+
     }
 
 }

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>가지마켓</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+
+    <!-- Google font, Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+
+    <!-- Optional JavaScript -->
+    <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/memberEdit/memberEdit.js}"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Noto Sans KR", sans-serif;
+        }
+
+        span.logo_title {
+            font-family: "Gugi", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+
+        i.fa-circle-info:hover {
+            color: #b287f7 !important;
+        }
+
+        div.sidebtn:hover {
+            cursor: pointer;
+            border: solid 1px #580DD2 !important;
+            color: #580DD2 !important;
+        }
+
+        span.count:hover {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: #580DD2;
+        }
+
+        span.error {
+            color: red;
+            font-weight: bold;
+            font-size: 9pt;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="~{/fragment/header :: main_header}"></div>
+
+
+<div class="d-flex justify-content-center" th:style="'border: solid 1px #ccc; border-radius: 20px; width: 98%; margin: auto; background-image: url(' + @{/images/loginbg.jpg} + '); background-size: cover; background-position: center;'">
+    <div class="container ml-0" style="margin-top: 4%;">
+        <div class="card mb-3 shadow p-3 mb-5 bg-body-tertiary rounded" style="max-width: 1000px;">
+            <div class="myInfo row g-0 ">
+
+                <div style="margin-top: 5%;">
+                    <h2 class="text-center" style="padding-left: 10px;">내 정보 수정</h2>
+                </div>
+
+                <div class="card-body">
+
+                <form class="profile-frm" name="memberFrm" enctype="multipart/form-data">
+                    <!-- 프로필 사진 -->
+                    <div class="d-flex" style="padding-left: 10px;">
+                        <!-- profilePic이 null인 경우 기본 이미지를 표시 -->
+                        <img class="img-fluid rounded-start memberImg" id="defaultImg" style="width:15%; margin-left:5%;"
+                             th:src="@{/images/mypage/nyang.jpg}" th:if="${member.profilePic == null}" />
+
+                        <!-- profilePic이 null이 아닌 경우 사용자의 프로필 사진을 표시 -->
+                        <img class="img-fluid rounded-start memberImg" id="memberImg" style="width:15%; margin-left:5%;"
+                             th:src="@{'/images/mypage/' + ${member.profilePic}}" th:if="${member.profilePic != null}" />
+
+                        <div class="prodInputName" style="width:25%; padding-bottom: 10px; margin-left:5%;">이미지파일 미리보기</div>
+                        <div style="margin-right:30%;"><img id="previewImg" width="150" style="margin-top: 10%; margin-left:50%;" />
+                            <input class="form-control" type="file" name="attach" id="formFile" style="margin-top: 10%; margin-left:50%;">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card-body">
+                        <div class="row" style="width:100%; padding-bottom: 5%;">
+                            <!-- 이름 -->
+                            <div class="col-sm-6 m-b30 mb-3">
+                                <i class="fa-solid fa-user"></i>
+                                <label class="form-label">성명</label>
+                                <input type="text" id="memberName" disabled name="name" class="form-control" th:value="${member.name}">
+                            </div>
+                            <br>
+                            <!-- 닉네임 -->
+                            <div class="col-sm-6 mb-3" style="padding-left: 10px;">
+                                <i class="fa-solid fa-phone"></i>
+                                <label class="form-label">별명</label>
+
+                                <input type="text" id="memberNic" name="nic" class="form-control" th:value="${member.nickname}">
+                                <!-- 닉네임 중복체크 -->
+                                <span id="nicCheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">별명 중복확인</button></span><br>
+                                <span id="nicCheckResult"></span>
+                                <!--<span class="error">닉네임을 입력해주세요.</span>-->
+                            </div>
+                            <br>
+                            <!-- 비밀번호 -->
+                            <div class="col-sm-6 m-b30" style="padding-left: 10px;">
+                                <i class="fa-solid fa-key"></i>
+                                <label class="form-label">비밀번호</label>
+
+                                <input type="password" id="memberPwd" name="pwd" class="form-control"/>
+                                <!-- 비밀번호중복체크 -->
+                                <span id="pwdcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">비밀번호 중복확인</button></span><br>
+                                <span id="pwdCheckResult"></span>
+                                <span class="error">숫자/문자/특수문자 포함 형태의 8~15자리로 입력해주세요.</span>
+                            </div>
+                            <br>
+                            <!-- 연락처 -->
+                            <div class="col-sm-6 mb-3" style="padding-left: 10px;">
+                                <i class="fa-solid fa-phone"></i>
+                                <label class="form-label">연락처</label>
+
+                                <input type="text" id="memberTel" name="tel" class="form-control" th:value="${member.tel}">
+                                <!-- 연락처중복체크 -->
+                                <span id="telcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">연락처 중복확인</button></span><br>
+                                <span id="telCheckResult"></span>
+                                <span class="error">010으로 시작하는 연락처를 입력해주세요.</span>
+                            </div>
+                            <br>
+                            <!-- 이메일 -->
+                            <div class="col-sm-6 mb-3" style="padding-left: 10px;">
+                                <i class="fa-regular fa-envelope"></i>
+                                <label class="form-label">이메일</label>
+
+                                <input type="text" id="memberEmail" name="email" class="form-control" th:value="${member.email}">
+                                <!-- 이메일중복체크 -->
+                                <span id="emailcheck"><button type="button" class="btn btn-outline-success btn-sm mt-3 mb-4">이메일 중복확인</button></span><br>
+                                <span id="emailCheckResult"></span>
+                                <span class="error">이메일 형식에 맞지 않습니다.</span>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- 수정 -->
+                    <div style="padding-left:20px; padding-bottom: 10px;">
+                        <button type="button" class="btn" style="background-color: #580DD2; color:white;" id="editBtn" onclick="goEdit()">수정하기</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 우측에 이미지 띄울 것 -->
+    <!--<div class="d-flex justify-content-center">
+        <img src="/static/images/mypage/loginbg.jpg">
+    </div>-->
+</div>
+
+
+
+
+<div th:replace="~{/fragment/footer :: footer}"></div>
+</body>
+</html>

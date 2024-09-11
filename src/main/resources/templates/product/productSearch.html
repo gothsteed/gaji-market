@@ -45,8 +45,10 @@
     }
 
     .container {
+        box-sizing: border-box;
         padding: 0;
         margin: 0 auto;
+        justify-content: space-between;
         align-content: flex-start;
     }
 
@@ -86,7 +88,7 @@
 
     .imgBox img {
         width: 100%;
-        height: 100%;
+        /* height: 100%; */
         /* 사진이나 비디오의 규격 맞출 때 object-fit 이용하기. */
         object-fit: cover;
         z-index: 1;
@@ -161,6 +163,7 @@
     }
 
     div.noData {
+        border: solid 0px red;
         height: 300px;
         width: 80%;
         margin: 0 auto;
@@ -197,13 +200,13 @@
 
     
     <div class="body m-5">
-        <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;">중고거래 물품</span>
+        <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;" th:text="${title}">중고거래 물품</span>
         <hr style="width:80%;">
         <div class="d-flex justify-content-between" style="width: 80%; margin: 0 auto;">
             <form name="sortFrm" class="selectform" th:if="${productList != null} and ${!#lists.isEmpty(productList)}">
                 <select class="form-select" name="sortType" style="margin-left: 10%;" aria-label="Default select example">
                     <option value="productseq" selected>최신순</option>
-                    <option value="likecount">인기순</option>
+                    <option value="popular">인기순</option>
                     <option value="viewcount">조회순</option>
                 </select>
             </form>
@@ -211,62 +214,116 @@
             <button type="button" class="btn" id="productRegisterBtn" onclick="location.href='productRegister'">상품 등록</button>
         </div>
 
-        <div class="container" th:if="${productList != null} and not ${#lists.isEmpty(productList)}">
-            <div style="display: flex; justify-content: space-around;">
-                <div class="item" style="justify-content: center;" th:each="vo, status : ${productList}" th:data-seq="${vo.product.productseq}">
-                  <div class="imgBox">
-                    <img th:src="@{'/images/productImg/' + ${vo.filename}}"  alt=""/>
-                  </div>
-                  <div class="textBox">
-                    <p class="textBox__name" th:text="${vo.product.title}"></p>
-                    <p class="textBox__price" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + '원'"></p>
-                    <p class="textBox__heart" th:text="'❤ ' + ${vo.product.likecount}" style="color: #ff3385;"></p>
-                  </div>
-
-                </div>
-            </div>
-
-
-            <nav aria-label="Page navigation" id="pagenav" class="mt-5" style="margin: 0 auto;">
-                <ul class="pagination justify-content-center">
-
-                    <li class="page-item" th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage - 1})}" aria-label="Previous">
-                            <span aria-hidden="true">◀</span>
-                        </a>
-                    </li>
-
-                    <li class="page-item" th:each="i : ${pageNumbers}">
-                        <a class="page-link"
-                           th:href="@{/productList(pageNumber=${i})}"
-                           th:text="${i}"
-                           th:class="${i == currentPage ? 'page-link active' : 'page-link'}">
-                        </a>
-                    </li>
-
-                    <li class="page-item" th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{/productList(pageNumber=${currentPage + 1})}" aria-label="Next">
-                            <span aria-hidden="true">▶</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        <div id="productContainer" class="container">
+            <!-- Products will be dynamically inserted here -->
         </div>
 
-        <div class="container" th:if="${productList == null} or ${#lists.isEmpty(productList)}">
-            <div class="noData">
-                <div class="text-center">
-                    <div style="font-size: 1.5rem;">
-                        <span>데이터가 존재하지 않습니다</span>
-                        <i class="fa-regular fa-face-sad-tear ml-1"></i>
-                    </div>
-                    <span class="d-block" style="color: #999;">거래할 상품을 등록해보세요!</span>
-                </div>
-            </div>
-        </div>
+        <nav aria-label="Page navigation" id="pagination" class="mt-5" style="margin: 0 auto;">
+            <!-- Pagination will be dynamically inserted here -->
+        </nav>
     </div>
 
 
     <div th:replace="~{fragment/footer :: footer}"></div>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+
+            const sortSelect = document.querySelector('select[name="sortType"]');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    loadProducts();
+                });
+            }
+        });
+
+        function loadProducts(page = 1) {
+            const sortType = document.querySelector('select[name="sortType"]')?.value || 'productseq';
+            const title = '[[${titleSearch}]]';
+            const contextPath = '[[@{/}]]';
+            const url = `${contextPath}api/product/search?page=${page}&size=20&title=${title}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    renderProducts(data.productList);
+                    renderPagination(data.page, data.totalPage);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function renderProducts(data) {
+            const container = document.getElementById('productContainer');
+            if (!container) return;
+            const contextPath = '[[@{/}]]';
+
+            if (!data || data.length == 0) {
+                container.innerHTML = `
+                <div class="noData">
+                    <div class="text-center">
+                        <div style="font-size: 1.5rem;">
+                            <span>데이터가 존재하지 않습니다</span>
+                            <i class="fa-regular fa-face-sad-tear ml-1"></i>
+                        </div>
+                        <span class="d-block" style="color: #999;">거래할 상품을 등록해보세요!</span>
+                    </div>
+                </div>
+            `;
+                    return;
+                }
+
+                const productHtml = data.map(product => `
+            <div class="item" data-seq="${product.productseq}" onclick="location.href='productDetail?seq=${product.productseq}'">
+                <div class="imgBox">
+                    <img src="${contextPath}images/productImg/${product.image}" alt=""/>
+                </div>
+                <div class="textBox">
+                    <p class="textBox__name">${product.title}</p>
+                    <p class="textBox__price">${new Intl.NumberFormat('ko-KR').format(product.price)}원</p>
+                    <p class="textBox__heart" style="color: #ff3385;">❤ ${product.likeCount || 0}</p>
+                </div>
+            </div>
+        `).join('');
+
+            container.innerHTML = `<div style="display: flex; flex-flow: row wrap;">${productHtml}</div>`;
+        }
+
+        function renderPagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+
+            let paginationHtml = `
+        <ul class="pagination justify-content-center">
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage - 1})" aria-label="Previous">
+                    <span aria-hidden="true">◀</span>
+                </a>
+            </li>
+    `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${i})">${i}</a>
+            </li>
+        `;
+            }
+
+            paginationHtml += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="loadProducts(${currentPage + 1})" aria-label="Next">
+                    <span aria-hidden="true">▶</span>
+                </a>
+            </li>
+        </ul>
+    `;
+
+            pagination.innerHTML = paginationHtml;
+        }
+    </script>
 </body>
 </html>

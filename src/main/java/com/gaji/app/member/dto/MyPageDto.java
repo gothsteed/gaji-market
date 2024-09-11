@@ -11,6 +11,7 @@ public class MyPageDto {
     private double mannerTemp;
     private int onSaleCount;
     private int soldCount;
+    private int reservationCount;
     private int likedProductCount;
     private int reviewCount;
     private String address;

@@ -84,7 +84,7 @@
 
           <!-- 내 정보 수정 & 로그아웃 -->
           <div class="mb-3">
-            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;">내 정보 수정</div>
+            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;"><a th:href="@{/myedit}">내 정보 수정</a></div>
           </div>
 
           <div>
@@ -97,17 +97,22 @@
         <div style="margin: 3% 5%;">
 
           <div class="d-flex justify-content-center" style="border: solid 1px #ccc; border-radius: 20px;">
-            <div class="d-flex flex-column align-items-center justify-content-center" style="width: 33%; height: 150px; margin: 2% 0;">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="width: 25%; height: 150px; margin: 2% 0;" th:onclick="'window.location.href=\'' + @{/myPage/onSale} + '?memberSeq=' + ${memberSeq} + '\''">
               <i class="fa-regular fa-handshake mb-2" style="font-size: 1.2rem;"></i>
-              <span class="d-block text-center">판매목록</span>
-              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="onSaleCount"></span>&nbsp;개</span>
+              <span class="d-block text-center">판매중인목록</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="onSaleCount" ></span>&nbsp;개</span>
             </div>
-            <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 33%; height: 150px; margin: 2% 0;">
-              <i class="fa-regular fa-credit-card mb-2" style="font-size: 1.2rem;"></i>
-              <span class="d-block text-center">구매목록</span>
+            <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 25%; height: 150px; margin: 2% 0;">
+              <i class="fa-solid fa-check mb-2" style="font-size: 1.2rem;"></i>
+              <span class="d-block text-center">거래완료목록</span>
               <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="soldCount"></span>&nbsp;개</span>
             </div>
-            <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 33%; height: 150px; margin: 2% 0;">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 25%; height: 150px; margin: 2% 0;">
+              <i class="fa-regular fa-credit-card mb-2" style="font-size: 1.2rem;"></i>
+              <span class="d-block text-center">구매예약목록</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="reservationCount"></span>&nbsp;개</span>
+            </div>
+            <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 25%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-heart mb-2" style="font-size: 1.2rem;"></i>
               <span class="d-block text-center">찜한상품</span>
               <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;" th:onclick="'window.location.href=\'' + @{/likeproduct} + '\''"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="likedProductCount"></span>&nbsp;개</span>
@@ -172,8 +177,9 @@
 
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      const memberSeq = '[[${memberSeq}]]';
       const contextPath = '[[@{/}]]';
-      fetch(contextPath + 'api/v1/users/me/my-page-info')
+      fetch(contextPath + 'api/v1/users/my-page-info?memberSeq=' + memberSeq)
               .then(response => {
                 if (!response.ok) {
                   throw new Error('Network response was not ok');
@@ -187,6 +193,7 @@
                 document.querySelector('[data-mypage="mannerTempBar"]').style.width = data.mannerTemp + '%';
                 document.querySelector('[data-mypage="onSaleCount"]').textContent = data.onSaleCount;
                 document.querySelector('[data-mypage="soldCount"]').textContent = data.soldCount;
+                document.querySelector('[data-mypage="reservationCount"]').textContent = data.reservationCount;
                 document.querySelector('[data-mypage="likedProductCount"]').textContent = data.likedProductCount;
                 document.querySelector('[data-mypage="reviewCount"]').textContent = data.reviewCount + '개';
                 document.querySelector('[data-mypage="address"]').textContent = data.address;
