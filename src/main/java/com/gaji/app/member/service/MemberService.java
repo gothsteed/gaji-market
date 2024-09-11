@@ -9,7 +9,6 @@ import com.gaji.app.member.repository.LikeProductRepository;
 import com.gaji.app.member.repository.MemberRepository;
 import com.gaji.app.product.domain.LikeProduct;
 import com.gaji.app.product.domain.Product;
-import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.repository.ProductImageRepository;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
@@ -189,6 +188,50 @@ public class MemberService {
         Member member = memberRepository.findById(memberSeq).orElseThrow(() -> new UsernameNotFoundException("존재하지 않은 맴버입니다."));
         return member.getName();
     }
+
+    // 좋아요를 누르면 LikeProduct 테이블에 인서트 되는 메소드
+    public boolean clickLike(Long memberseq, Long seq) {
+        try {
+            // LikeProduct 엔티티 생성
+            LikeProduct likeproduct = new LikeProduct(seq, memberseq);
+            
+            // LikeProduct 저장
+            likeProductRepository.save(likeproduct);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    // 좋아요를 누르면 Product 테이블에 있는 해당 상품의 likecount가 1 증가되는 메소드
+	public void increscLikeCount(Long seq) {
+        // 해당 상품을 seq로 조회
+        Optional<Product> productOptional = productRepository.findById(seq);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            
+            // likecount 1 증가
+            product.incrementLikeCount();  // likecount를 증가시키는 메서드 추가
+            
+            // 변경된 상품 정보 저장 (Dirty Checking을 통해 likecount만 업데이트)
+            productRepository.save(product);
+        }
+	}
+	
+	// 마이페이지에서 찜한 상품을 찜 취소 했을 경우, product 테이블에 있는 해당 상품의 likecount가 1 감소하는 메소드
+	public void decrescLikeCount(Long seq) {
+		// 해당 상품을 seq로 조회
+		Optional<Product> productOptional = productRepository.findById(seq);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			
+			// likecount 1 증가
+			product.decrementLikeCount();  // likecount를 증가시키는 메서드 추가
+			
+			// 변경된 상품 정보 저장 (Dirty Checking을 통해 likecount만 업데이트)
+			productRepository.save(product);
+		}
+	}
 
 
 }
