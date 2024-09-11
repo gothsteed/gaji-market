@@ -2,6 +2,7 @@ package com.gaji.app.product.repository;
 
 import com.gaji.app.product.domain.CompleteStatus;
 import com.gaji.app.product.domain.Product;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,12 +10,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
+
+
     @Query("SELECT COUNT(p) FROM Product p WHERE p.fkMemberSeq = :memberSeq and p.completestatus IN ('FOR_SALE', 'RESERVED')")
     int countOnSaleProductsByMemberSeq(@Param("memberSeq") Long memberSeq);
 
@@ -46,12 +51,16 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             String category,
             Long fkMemberSeq,
             List<String> completeStatusStrings,
+            String SortType,
             int minRow,
             int maxRow
     ) {
-        Specification<Product> spec = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings);
 
-        return findAll(spec)
+        Map<String, Object> specAndOrder = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings, SortType);
+        Specification<Product> spec = (Specification<Product>) specAndOrder.get("spec");
+        Sort sort = (Sort) specAndOrder.get("sort");
+
+        return findAll(spec, sort)
                 .stream()
                 .skip(minRow)
                 .limit(maxRow - minRow)
@@ -64,20 +73,23 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             Integer maxPrice,
             String category,
             Long fkMemberSeq,
-            List<String> completeStatusStrings
+            List<String> completeStatusStrings,
+            String SortType
     ) {
-        Specification<Product> spec = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings);
+        Map<String, Object> specAndOrder = createSpecification(title, minPrice, maxPrice, category, fkMemberSeq, completeStatusStrings, SortType);
+        Specification<Product> spec = (Specification<Product>) specAndOrder.get("spec");
 
         return count(spec);
     }
 
-    private Specification<Product> createSpecification(
+    private Map<String, Object> createSpecification(
             String title,
             Integer minPrice,
             Integer maxPrice,
             String category,
             Long fkMemberSeq,
-            List<String> completeStatusStrings
+            List<String> completeStatusStrings,
+            String sortType
     ) {
         Specification<Product> spec = Specification.where(null);
 
@@ -100,7 +112,26 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             spec = spec.and((root, query, cb) -> root.get("completestatus").in(completeStatusStrings));
         }
 
-        return spec;
+        Sort sort = Sort.unsorted();
+        if(sortType != null && !sortType.isEmpty()) {
+            switch (sortType.toLowerCase()) {
+                case "productseq":
+                    sort = Sort.by(Sort.Direction.ASC, "productseq");
+                    break;
+                case "likecount":
+                    sort = Sort.by(Sort.Direction.DESC, "likecount");
+                    break;
+                case "viewcount":
+                    sort = Sort.by(Sort.Direction.ASC, "viewcount");
+                    break;
+            }
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("spec" ,spec);
+        map.put("sort", sort);
+
+        return map;
     }
 }
 

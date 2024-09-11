@@ -17,6 +17,7 @@ public class ProductSearchParamDto {
     private String category;
     private Long fkMemberSeq;
     private List<CompleteStatus> completeStatus;
+    private String sortType;
 
 
 }

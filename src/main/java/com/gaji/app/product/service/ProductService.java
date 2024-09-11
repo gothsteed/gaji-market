@@ -78,6 +78,7 @@ public class ProductService {
                 paramDto.getCategory(),
                 paramDto.getFkMemberSeq(),
                 completeStatusStrings,
+                paramDto.getSortType(),
                 minRow,
                 maxRow
         );
@@ -88,12 +89,14 @@ public class ProductService {
                 paramDto.getMaxPrice(),
                 paramDto.getCategory(),
                 paramDto.getFkMemberSeq(),
-                completeStatusStrings
+                completeStatusStrings,
+                paramDto.getSortType()
         ) / size + 1;
 
         List<ProductFirstDto> dtos = new ArrayList<>();
         for(Product product : productList) {
             ProductFirstDto dto = new ProductFirstDto();
+            dto.setSeq(product.getProductseq());
             dto.setImage(product.getFirstImageName());
             dto.setTitle(product.getTitle());
             dto.setPrice(product.getPrice());
