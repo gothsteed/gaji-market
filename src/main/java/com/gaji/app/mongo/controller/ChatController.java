@@ -1,24 +1,30 @@
-package com.gaji.app.member.controller;
+package com.gaji.app.mongo.controller;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
+import com.gaji.app.common.FileManager;
+import com.gaji.app.member.service.MemberService;
 import com.gaji.app.mongo.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
-public class MemberController {
+public class ChatController {
 
     private ChatService chatService;
-	
-	@GetMapping("chatting")
+
+    @Autowired
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
+
+    @GetMapping("chatting")
     public ModelAndView multichat(@AuthenticationPrincipal MemberUserDetail userDetail,
-                            @RequestParam("fkMemberSeq") Long SellerMemberSeq,
-                            @RequestParam("productSeq") Long productSeq,
-                            ModelAndView mav) {
+                                  @RequestParam("fkMemberSeq") Long SellerMemberSeq,
+                                  @RequestParam("productSeq") Long productSeq,
+                                  ModelAndView mav) {
 
         Long BuyerMemberSeq = userDetail.getMemberSeq();
 
@@ -36,5 +42,5 @@ public class MemberController {
 
         return mav;
     }
-	
+
 }
