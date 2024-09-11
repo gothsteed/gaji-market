@@ -233,5 +233,11 @@ public class MemberService {
 		}
 	}
 
+	// 키워드를 등록하면, tbl_keword와 tbl_register_keyword에 인서트하는 메소드
+	public boolean addKeyword(String newKeyword, Long memberseq) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }
