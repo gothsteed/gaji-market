@@ -1,6 +1,5 @@
 package com.gaji.app.product.repository;
 
-import com.gaji.app.product.domain.CompleteStatus;
 import com.gaji.app.product.domain.Product;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,9 +38,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
                    "GROUP BY fkproductseq " +
                    "having fkproductseq = :fkproductseq ", nativeQuery = true)
     Long countLikesByProductSeq(Long fkproductseq);
-
-
-
 
 
     default List<Product> searchProducts(

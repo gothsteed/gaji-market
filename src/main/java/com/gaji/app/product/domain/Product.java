@@ -4,11 +4,13 @@ import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 @Entity
 @Table(name = "tbl_product")
@@ -93,6 +95,24 @@ public class Product {
     private List<ProductImage> productImages = new ArrayList<>();
 
 
+    
+    
+    
+    // public Product(Long productseq, int likecount) {
+    // 	this.productseq = productseq;
+    // 	this.likecount = this.likecount + likecount;
+    // }
+    
+    public void incrementLikeCount() {
+        this.likecount += 1;
+    }
+    
+    public void decrementLikeCount() {
+        this.likecount -= 1;
+    }
+    
+    
+    
     @PrePersist // insert 전에 호출
     public void prePersist() {
         this.writedate = this.writedate == null ? LocalDateTime.now() : this.writedate; // 설정한 날짜가 null(default) 이면 현재 시간 설정, null이 아니면 설정되어있는 날짜를 넣어준다.

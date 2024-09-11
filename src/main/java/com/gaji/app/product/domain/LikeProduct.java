@@ -12,7 +12,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 @Entity
 @Table(name = "tbl_like_product")
@@ -47,5 +49,10 @@ public class LikeProduct {
     @ManyToOne
     @JoinColumn(name="fkproductseq", referencedColumnName = "productseq", insertable = false, updatable = false)
     private Product product;
+    
+    public LikeProduct(Long fkproductseq, Long fkmemberseq) {
+        this.fkproductseq = fkproductseq;
+        this.fkmemberseq = fkmemberseq;
+    }
 
 }
