@@ -198,10 +198,7 @@
         </div>
         <div class="modal-body">
           <h6>현재 설정된 키워드</h6>
-          <ul>
-            <li>노트북</li>
-            <li>중고폰</li>
-            <li>책상</li>
+          <ul id="keywordList">
           </ul>
           <hr>
           <h6>키워드 추가</h6>
@@ -252,14 +249,15 @@
          if (newKeyword.trim()) {
 			
 			$.ajax({
-			    url: 'insertkeyword',
+			    url: '/gaji/insertkeyword',
 			    type: 'POST',
 			    data: { newKeyword: newKeyword }, // productId를 데이터로 전달
 			    success: function(result) {
 		           alert('새 키워드 "' + newKeyword + '"가 추가되었습니다.');
 			    },
 			    error: function(xhr, status, error) {
-			        console.error('Failed to insert keyword:', error); // 에러 처리
+			        alert("이미 등록된 키워드 이거나, 오류가 발생했습니다.")
+					console.error('Failed to insert keyword:', error); // 에러 처리
 			    }
 			});
 			
@@ -269,7 +267,32 @@
            alert('키워드를 입력하세요.');
          }
        });
-     });
+	   
+		$.ajax({
+		    url: '/gaji/keywordlist',
+		    type: 'POST',
+		    success: function(result) {
+				console.log(result)
+		        const keywordList = $('#keywordList');
+
+		        $.each(result, function(index, keyword) {
+		            keywordList.append('<li>' + keyword.keyword + '</li>');
+		        });
+
+		        $('#keywordModal').modal('hide');  // 모달 닫기
+		    },
+		    error: function(xhr, status, error) {
+		        console.error('Failed to load keyword list:', error);
+		    }
+		});
+	   	
+	       // Here you can add the logic to actually save the new keyword to the server
+	       $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
+	   });
+	   
+	   
+	 
+	 
    </script>
 
   <div th:replace="~{/fragment/footer :: footer}"></div>

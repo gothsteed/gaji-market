@@ -3,11 +3,13 @@ package com.gaji.app.keyword.domain;
 import com.gaji.app.keyword.service.AlertObserver;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,4 +27,8 @@ public class Keyword implements AlertObserver {
     public void alert(String message) {
 
     }
+    public Keyword(String word) {
+        this.word = word;
+    }
+    
 }
