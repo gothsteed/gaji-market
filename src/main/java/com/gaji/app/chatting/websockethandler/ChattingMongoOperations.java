@@ -8,13 +8,15 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.gaji.app.mongo.entity.Message;
+
 @Service
 public class ChattingMongoOperations {
 
 	@Autowired
 	private MongoOperations mongo;
 	
-	public void insertMessage(Mongo_message chattingMongoDto) throws Exception {
+	public void insertMessage(Message chattingMongoDto) throws Exception {
 		
 		try {
 			mongo.save(chattingMongoDto, "chatting");
@@ -24,14 +26,14 @@ public class ChattingMongoOperations {
 		}
 	}
 	
-	public List<Mongo_message> listChatting() {
+	public List<Message> listChatting() {
 		
-		List<Mongo_message> list = null;
+		List<Message> list = null;
 		
 		try {
 			Query query = new Query();
 			query.with(Sort.by(Sort.Direction.ASC, "_id"));
-			list = mongo.find(query, Mongo_message.class);
+			list = mongo.find(query, Message.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
