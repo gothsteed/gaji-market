@@ -72,17 +72,4 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 		}
 	}
 	
-	// 클라이언트가 웹소켓 서버로 메시지를 보냈을 때의 Send 이벤트를 처리하기
-	@Override
-	public void handleTextMessage(WebSocketSession wsession, TextMessage textmessage) throws Exception { 
-		
-		MessageDTO message = MessageDTO.convertMessage(textmessage.getPayload());
-		
-		Date now = new Date(); 
-		String currentTime = String.format("%tp %tl:%tM",now,now,now);
-		
-		
-	}
-	
-	
 }
