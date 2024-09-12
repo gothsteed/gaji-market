@@ -1,10 +1,13 @@
 package com.gaji.app.product.domain;
 
+import com.gaji.app.keyword.domain.Keyword;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,8 +38,6 @@ public class Product {
     @Column(nullable = false, columnDefinition="NUMBER")
     private Long fkcategoryseq;
 
-    @Column(nullable = false, columnDefinition="NUMBER")
-    private Long fkkeywordseq;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -79,6 +80,11 @@ public class Product {
 
     @Column(nullable = false, columnDefinition="NUMBER")
     private int likecount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "keyword")
+    private Keyword keyword;
 
 
     public String getFirstImageName() {
