@@ -81,10 +81,10 @@ public class Product {
     @Column(nullable = false, columnDefinition="NUMBER")
     private int likecount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "keyword")
-    private Keyword keyword;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @OnDelete(action = OnDeleteAction.RESTRICT)
+//    @JoinColumn(name = "keyword")
+//    private Keyword keyword;
 
 
     public String getFirstImageName() {
@@ -100,15 +100,11 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name="fkcategoryseq", referencedColumnName = "categoryseq", insertable = false, updatable = false)
+    private Category category;
 
-    
-    
-    
-    // public Product(Long productseq, int likecount) {
-    // 	this.productseq = productseq;
-    // 	this.likecount = this.likecount + likecount;
-    // }
-    
+
     public void incrementLikeCount() {
         this.likecount += 1;
     }

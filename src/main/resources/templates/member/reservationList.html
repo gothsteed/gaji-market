@@ -16,6 +16,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
 
   <!-- Optional JavaScript -->
   <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -27,6 +29,18 @@
     body {
       margin: 0;
       font-family: "Noto Sans KR", sans-serif;
+    }
+
+    div.top-border {
+      border-top: solid 1px #ccc;
+    }
+
+    div.bottom-border {
+      border-bottom: solid 1px #ccc;
+    }
+
+    div.reservationItem:hover {
+      cursor: pointer;
     }
 
     div.noData {
@@ -55,6 +69,11 @@
       $("span#goProductList").click(function() {
         location.href = contextPath + "productList";
       });
+
+      $("div.reservationItem").click(function() {
+        const seq = $(this).data('seq');
+        location.href = contextPath + "productDetail?seq=" + seq;
+      });
     });
   </script>
 </head>
@@ -65,8 +84,58 @@
     <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;">구매 예약 목록</span>
     <hr style="width:80%;">
 
-    <div class="container">
+    <div class="container" th:if="${reservationList != null} and not ${#lists.isEmpty(reservationList)}">
+      <div class="top-border" style="width: 80%; margin: 3% auto;">
+        <div class="reservationItem bottom-border" style="padding: 2% 0;" th:each="vo, status : ${reservationList}" th:data-seq="${vo.product.productseq}">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <div style="width: 15%;">
+                <img th:src="@{'/images/productImg/' + ${vo.product.firstImageName}}" style="width: 100%;">
+              </div>
+              <div style="width: 80%; padding-left: 2%;">
+                <div class="mb-auto d-flex align-items-center" style="width: 100%;">
+                  <span style="border-radius: 20px; background-color: #4d94ff; padding: 0.5% 1%; font-size: 0.8rem; color: white;" th:text="${vo.product.category.name}"></span>
+                  <span class="ml-2" style="font-weight: bold; font-size: 1.2rem;" th:text="${vo.product.title}"></span>
+                </div>
+                <div style="color: #a6a6a6;" th:text="${#numbers.formatInteger(vo.product.price, 0, 'COMMA')} + ' 원'"></div>
+                <div class="mt-3" th:text="'거래희망장소 : ' + ${vo.product.address}"></div>
+              </div>
+            </div>
 
+            <div style="width: 20%;" class="text-right">
+              <span>상세보기</span>
+              <i class="fa-solid fa-chevron-right ml-2 mr-2"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <nav aria-label="Page navigation" id="pagenav" class="mt-5" style="margin: 0 auto;">
+        <ul class="pagination justify-content-center">
+
+          <li class="page-item" th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+            <a class="page-link" th:href="@{/myPage/reservationList(memberSeq=${memberSeq}, pageNumber=${currentPage - 1})}" aria-label="Previous">
+              <span aria-hidden="true">◀</span>
+            </a>
+          </li>
+
+          <li class="page-item" th:each="i : ${pageNumbers}">
+            <a class="page-link"
+               th:href="@{/myPage/reservationList(memberSeq=${memberSeq}, pageNumber=${i})}"
+               th:text="${i}"
+               th:class="${i == currentPage ? 'page-link active' : 'page-link'}">
+            </a>
+          </li>
+
+          <li class="page-item" th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+            <a class="page-link" th:href="@{/myPage/reservationList(memberSeq=${memberSeq}, pageNumber=${currentPage + 1})}" aria-label="Next">
+              <span aria-hidden="true">▶</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <div class="container" th:if="${reservationList == null} or ${#lists.isEmpty(reservationList)}">
