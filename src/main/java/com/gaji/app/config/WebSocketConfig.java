@@ -26,10 +26,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .addInterceptors(new ChatroomHandshakeInterceptor());
     }
 
-    @Bean
-    public ChatWebSocketHandler chatWebSocketHandler() {
-        return new ChatWebSocketHandler(messageRepository);
-    }
+
 
 
 }
