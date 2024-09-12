@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>가지마켓</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+
+  <!-- Google font, Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+  <!-- Optional JavaScript -->
+  <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/header.js}"></script>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", sans-serif;
+    }
+
+    div.noData {
+      border: solid 0px red;
+      height: 300px;
+      width: 80%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    span#goProductList:hover {
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+      const contextPath = '[[@{/}]]';
+
+      $("span#goProductList").click(function() {
+        location.href = contextPath + "productList";
+      });
+    });
+  </script>
+</head>
+<body>
+  <div th:replace="~{/fragment/header :: main_header}"></div>
+
+  <div class="body m-5">
+    <span style="font-weight: bold; font-size:18pt; justify-content: center; align-items: center; display: flex;">구매 예약 목록</span>
+    <hr style="width:80%;">
+
+    <div class="container">
+
+    </div>
+
+    <div class="container" th:if="${reservationList == null} or ${#lists.isEmpty(reservationList)}">
+      <div class="noData">
+        <div class="text-center">
+          <div style="font-size: 1.5rem;">
+            <span>데이터가 존재하지 않습니다</span>
+            <i class="fa-regular fa-face-sad-tear ml-1"></i>
+          </div>
+          <span class="d-block" style="color: #999;">거래할 상품을 찾아보세요!</span>
+        </div>
+
+        <div class="text-center mt-5">
+          <span id="goProductList" style="font-size: 1.2rem; background-color: #f0e7fd;">중고거래 페이지로 이동&nbsp;&nbsp;>></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div th:replace="~{/fragment/footer :: footer}"></div>
+</body>
+</html>

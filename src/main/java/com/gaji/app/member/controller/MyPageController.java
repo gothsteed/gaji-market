@@ -46,4 +46,11 @@ public class MyPageController {
         model.addAttribute("memberSeq", memberSeq);
         return "product/myPageOnSale";
     }
+
+
+    @GetMapping("/myPage/reservationList")
+    public String reservationList(Model model, @RequestParam Long memberSeq) {
+
+        return "member/reservationList";
+    }
 }
