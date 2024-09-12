@@ -2,6 +2,7 @@ package com.gaji.app.config;
 
 import com.gaji.app.chatting.websockethandler.WebsocketEchoHandler;
 
+import com.gaji.app.mongo.controller.ChatWebSocketHandler;
 import com.gaji.app.mongo.handshaker.ChatroomHandshakeInterceptor;
 import com.gaji.app.mongo.repository.MessageRepository;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .addInterceptors(new ChatroomHandshakeInterceptor());
     }
 
-
+    @Bean
+    public ChatWebSocketHandler chatWebSocketHandler() {
+        return new ChatWebSocketHandler(messageRepository);
+    }
 
 
 }

@@ -1,6 +1,10 @@
 package com.gaji.app.member.service;
 
 import com.gaji.app.address.domain.Address;
+import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.domain.KeywordRegister;
+import com.gaji.app.keyword.repository.KeywordRegisterRepository;
+import com.gaji.app.keyword.repository.KeywordRepository;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.dto.AddressDTO;
 import com.gaji.app.member.dto.MemberDTO;
@@ -35,9 +39,11 @@ public class MemberService {
     private PasswordEncoder passwordEncoder;
     private LikeProductRepository likeProductRepository;
     private ProductImageRepository productImageRepository;
+    private KeywordRepository keywordRepository;
+    private KeywordRegisterRepository keywordRegisterRepository;
     
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository, ProductImageRepository productImageRepository) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository, ProductImageRepository productImageRepository, KeywordRepository keywordRepository, KeywordRegisterRepository keywordRegisterRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
@@ -45,6 +51,8 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
         this.likeProductRepository = likeProductRepository;
         this.productImageRepository = productImageRepository;
+        this.keywordRepository = keywordRepository;
+        this.keywordRegisterRepository = keywordRegisterRepository;
     }
 
     public String emailDuplicateCheck(String email) throws Exception {
@@ -235,9 +243,38 @@ public class MemberService {
 
 	// 키워드를 등록하면, tbl_keword와 tbl_register_keyword에 인서트하는 메소드
 	public boolean addKeyword(String newKeyword, Long memberseq) {
-		// TODO Auto-generated method stub
-		return false;
+
+//	    // 1. 키워드가 이미 존재하는지 확인
+//	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
+//
+//	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
+//	    if (keyword.isPresent()) {
+//	        Keyword existingKeyword = keyword.get();
+//	        Member member = memberRepository.findById(memberseq).orElse(null);
+//	        KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
+//	        keywordRegisterRepository.save(keywordRegister);
+//	        return true;
+//	    } 
+//	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
+//	    else {
+	        Keyword newKeywordEntity = new Keyword(newKeyword);
+	        Keyword savedKeyword = keywordRepository.save(newKeywordEntity);
+
+	        if (savedKeyword.getWord() != null) {
+	            Member member = memberRepository.findById(memberseq).orElse(null);
+	            KeywordRegister keywordRegister = new KeywordRegister(savedKeyword, member);
+	            keywordRegisterRepository.save(keywordRegister);
+	            return true;
+	        }
+	   // }
+	    
+	    return false;
 	}
+
+    public List<KeywordRegister> getKeywordListByMemberSeq(Long memberseq) {
+        return keywordRegisterRepository.findByMemberSeq(memberseq);
+    }
+
 
 
 }
