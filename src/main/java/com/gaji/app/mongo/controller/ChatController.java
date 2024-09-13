@@ -23,7 +23,7 @@ public class ChatController {
     public ChatController(ChatService chatService) {
         this.chatService = chatService;
     }
-
+/*
     @GetMapping("chatting")
     public ModelAndView multichat(HttpServletRequest request, HttpServletResponse response,
     							  @AuthenticationPrincipal MemberUserDetail userDetail,
@@ -37,16 +37,25 @@ public class ChatController {
         System.out.println("확인용 샐러 : " + BuyerMemberSeq);
         System.out.println("확인용 상품 : " + productSeq);
 
-        ResponseEntity<String> roomId = chatService.createChatRoom(request, response, SellerMemberSeq, BuyerMemberSeq, productSeq);
+     // chatService.createChatRoom(request, response, SellerMemberSeq, BuyerMemberSeq, productSeq);
 
         mav.addObject("SellerMemberSeq", SellerMemberSeq);
         mav.addObject("BuyerMemberSeq", BuyerMemberSeq);
         mav.addObject("productSeq", productSeq);
-        mav.addObject("roomId", roomId);
 
         mav.setViewName("chatting/multichat");
 
         return mav;
+    }
+*/    
+    @GetMapping("chatting")
+    public ResponseEntity<String> startChat(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal MemberUserDetail userDetail,
+            @RequestParam("fkMemberSeq") Long SellerMemberSeq,
+            @RequestParam("productSeq") Long productSeq) {
+    	
+    	Long BuyerMemberSeq = userDetail.getMemberSeq();
+    	
+        return chatService.createChatRoom(request, response, SellerMemberSeq, BuyerMemberSeq, productSeq);
     }
 
 }
