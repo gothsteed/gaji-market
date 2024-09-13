@@ -274,6 +274,19 @@ public class MemberService {
         return keywordRegisterRepository.findByMemberSeq(memberseq);
     }
 
+	public boolean deleteKeyword(String keywordname, Long memberseq) {
+		
+		Optional<Keyword> keyword = keywordRepository.findByWord(keywordname);
+		
+        Optional<KeywordRegister> deleteKeyword = keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq);
+        
+        if (deleteKeyword.isPresent()) {
+        	keywordRegisterRepository.delete(deleteKeyword.get());
+            return true;
+        }
+        return false;
+	}
+
 
 
 }

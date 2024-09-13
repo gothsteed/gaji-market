@@ -60,6 +60,15 @@
       text-decoration: underline;
       text-decoration-color: #580DD2;
     }
+	
+	li {
+	    cursor: pointer;
+	}
+
+	li:hover {
+	    /* 필요한 경우 호버 시 스타일 추가 */
+	    background-color: #f0f0f0; /* 예: 배경 색상 변경 */
+	}
   </style>
 </head>
 <body>
@@ -283,8 +292,35 @@
 		        const keywordList = $('#keywordList');
 
 		        $.each(result, function(index, keyword) {
-		            keywordList.append('<li>' + keyword.word + '</li>');
-		        });
+		            keywordList.append('<li id="forDelete" data-keywordname="' + keyword.word + '">' + keyword.word + '</li>');
+				});
+				
+					$('li#forDelete').on('click', function() {
+						
+						var keywordname = $(this).data('keywordname'); // data-product-id에서 값 가져오기
+						if(confirm( keywordname + " 키워드를 삭제하시겠습니까?")){
+					  		$.ajax({
+					   		    url: '/gaji/keyword/keyworddelete',
+					   		    type: 'POST',
+					   		    data: { keywordname: keywordname }, // productId를 데이터로 전달
+					   		    success: function(result) {
+								   alert(keywordname + "키워드가 삭제되었습니다.")
+								 
+					   			   location.reload(); // 페이지 새로고침
+					   		    },
+					   		    error: function(xhr, status, error) {
+					   		        alert("이미 등록된 키워드 이거나, 오류가 발생했습니다.")
+					   				console.error('Failed to insert keyword:', error); // 에러 처리
+					   		    }
+					   		});
+						}
+						else{
+							return false;
+						}
+					 		
+					   // Here you can add the logic to actually save the new keyword to the server
+					   $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
+					});
 
 		        $('#keywordModal').modal('hide');  // 모달 닫기
 				
@@ -298,6 +334,7 @@
 	       $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
 	   });
 	   
+
 	   
 	 
 	 

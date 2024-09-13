@@ -56,5 +56,20 @@ public class KeywordController {
 
 	    return ResponseEntity.ok(keywordDTOs);
 	}
+	
+	@ResponseBody
+	@PostMapping("/keyword/keyworddelete")
+	public ResponseEntity<Void> Keyworddelete(@RequestParam String keywordname, @AuthenticationPrincipal MemberUserDetail userDetail) {
+	    Long memberseq = userDetail.getMemberSeq();
+
+	    boolean isDeleted = memberService.deleteKeyword(keywordname, memberseq);
+	    
+	    if (isDeleted) {
+	        return ResponseEntity.ok().build();
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
+
 
 }
