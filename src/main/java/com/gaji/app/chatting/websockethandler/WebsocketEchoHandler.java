@@ -72,7 +72,4 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 		}
 	}
 	
-	
-	
-	
 }
