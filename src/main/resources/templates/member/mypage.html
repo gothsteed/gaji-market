@@ -255,7 +255,7 @@
          if (newKeyword.trim()) {
 			
 			$.ajax({
-			    url: '/gaji/insertkeyword',
+			    url: '/gaji/keyword/insertkeyword',
 			    type: 'POST',
 			    data: { newKeyword: newKeyword }, // productId를 데이터로 전달
 			    success: function(result) {
@@ -277,7 +277,7 @@
        });
 	   
 		$.ajax({
-		    url: '/gaji/keywordlist',
+		    url: '/gaji/keyword/keywordlist',
 		    type: 'POST',
 		    success: function(result) {
 		        const keywordList = $('#keywordList');
