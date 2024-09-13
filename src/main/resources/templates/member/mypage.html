@@ -260,6 +260,8 @@
 			    data: { newKeyword: newKeyword }, // productId를 데이터로 전달
 			    success: function(result) {
 		           alert('새 키워드 "' + newKeyword + '"가 추가되었습니다.');
+
+				   location.reload(); // 페이지 새로고침
 			    },
 			    error: function(xhr, status, error) {
 			        alert("이미 등록된 키워드 이거나, 오류가 발생했습니다.")
@@ -278,14 +280,14 @@
 		    url: '/gaji/keywordlist',
 		    type: 'POST',
 		    success: function(result) {
-				console.log(result)
 		        const keywordList = $('#keywordList');
 
 		        $.each(result, function(index, keyword) {
-		            keywordList.append('<li>' + keyword.keyword + '</li>');
+		            keywordList.append('<li>' + keyword.word + '</li>');
 		        });
 
 		        $('#keywordModal').modal('hide');  // 모달 닫기
+				
 		    },
 		    error: function(xhr, status, error) {
 		        console.error('Failed to load keyword list:', error);

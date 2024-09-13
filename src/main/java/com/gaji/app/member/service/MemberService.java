@@ -244,19 +244,19 @@ public class MemberService {
 	// 키워드를 등록하면, tbl_keword와 tbl_register_keyword에 인서트하는 메소드
 	public boolean addKeyword(String newKeyword, Long memberseq) {
 
-//	    // 1. 키워드가 이미 존재하는지 확인
-//	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
-//
-//	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
-//	    if (keyword.isPresent()) {
-//	        Keyword existingKeyword = keyword.get();
-//	        Member member = memberRepository.findById(memberseq).orElse(null);
-//	        KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
-//	        keywordRegisterRepository.save(keywordRegister);
-//	        return true;
-//	    } 
-//	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
-//	    else {
+	    // 1. 키워드가 이미 존재하는지 확인
+	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
+
+	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
+	    if (keyword.isPresent()) {
+	        Keyword existingKeyword = keyword.get();
+	        Member member = memberRepository.findById(memberseq).orElse(null);
+	        KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
+	        keywordRegisterRepository.save(keywordRegister);
+	        return true;
+	    } 
+	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
+	    else {
 	        Keyword newKeywordEntity = new Keyword(newKeyword);
 	        Keyword savedKeyword = keywordRepository.save(newKeywordEntity);
 
@@ -266,8 +266,7 @@ public class MemberService {
 	            keywordRegisterRepository.save(keywordRegister);
 	            return true;
 	        }
-	   // }
-	    
+	    }
 	    return false;
 	}
 

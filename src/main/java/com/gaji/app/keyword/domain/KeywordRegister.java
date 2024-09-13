@@ -1,5 +1,6 @@
 package com.gaji.app.keyword.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class KeywordRegister {
 	
 	@Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "keyword")
     private Keyword keyword;

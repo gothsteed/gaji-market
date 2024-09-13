@@ -3,10 +3,12 @@ package com.gaji.app.member.controller;
 import com.gaji.app.auth.dto.MemberUserDetail;
 import com.gaji.app.keyword.domain.Keyword;
 import com.gaji.app.keyword.domain.KeywordRegister;
+import com.gaji.app.keyword.dto.KeywordDTO;
 import com.gaji.app.mongo.service.ChatService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,6 @@ public class MemberController {
 	@PostMapping("/insertkeyword")
 	public ResponseEntity<Void> insertkeyword(@RequestParam String newKeyword, @AuthenticationPrincipal MemberUserDetail userDetail) {
 		
-		
 		Long memberseq = userDetail.getMemberSeq();
 		boolean isInserted = memberService.addKeyword(newKeyword, memberseq);
 		
@@ -47,15 +48,18 @@ public class MemberController {
     	}
 	}
 	
-    @ResponseBody
-    @PostMapping("/keywordlist")
-    public ResponseEntity<List<KeywordRegister>> getKeywordList(@AuthenticationPrincipal MemberUserDetail userDetail) {
-        Long memberseq = userDetail.getMemberSeq();
-        List<KeywordRegister> keywordList = memberService.getKeywordListByMemberSeq(memberseq);
-        
-        System.out.println("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■" + keywordList.toString());
-        
-        return ResponseEntity.ok(keywordList);
-    }
+	@ResponseBody
+	@PostMapping("/keywordlist")
+	public ResponseEntity<List<KeywordDTO>> getKeywordList(@AuthenticationPrincipal MemberUserDetail userDetail) {
+	    Long memberseq = userDetail.getMemberSeq();
+	    List<KeywordRegister> keywordList = memberService.getKeywordListByMemberSeq(memberseq);
+	    
+	    // Convert to DTOs
+	    List<KeywordDTO> keywordDTOs = keywordList.stream()
+	        .map(kr -> new KeywordDTO(kr.getKeyword().getWord()))
+	        .collect(Collectors.toList());
+
+	    return ResponseEntity.ok(keywordDTOs);
+	}
 
 }
