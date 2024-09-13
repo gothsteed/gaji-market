@@ -6,8 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
 
-	String findBySellerId(Long sellerMemberSeq);
-
-	String findByBuyerId(Long buyerMemberSeq);
 	
 }
