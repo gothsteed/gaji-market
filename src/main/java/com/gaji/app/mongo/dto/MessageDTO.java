@@ -11,5 +11,5 @@ public class MessageDTO {
 	private String senderNickname;
 	private String senderType;
 	private String content;
-	
+
 }

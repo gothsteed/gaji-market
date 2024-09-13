@@ -35,4 +35,14 @@ public class KeywordRegister {
         this.member = member;
     }
     
+    public String getKeyword() {
+        return keyword.getWord();
+    }
+
+    public Long getMemberSeq() {
+        return member.getMemberSeq();
+    }
+
+
+
 }
