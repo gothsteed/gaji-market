@@ -79,7 +79,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         messageRepository.save(enterMessage);
     }
 
-    @Override
+/*    @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
@@ -105,7 +105,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         for (WebSocketSession connectedSession : roomSessions.get(roomId)) {
             connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
         }
-    }
+    }*/
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {

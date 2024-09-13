@@ -1,6 +1,7 @@
 package com.gaji.app.keyword.domain;
 
 import com.gaji.app.keyword.service.AlertObserver;
+import com.gaji.app.keyword.service.AlertSubject;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,6 +34,13 @@ public class KeywordRegister {
     @JoinColumn(name = "FKMEMBERSEQ")
     private Member member;
 
+    public String getKeyword() {
+        return keyword.getWord();
+    }
+
+    public Long getMemberSeq() {
+        return member.getMemberSeq();
+    }
 
 
 
