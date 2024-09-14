@@ -47,10 +47,10 @@ public class KeywordController {
 	    Long memberseq = userDetail.getMemberSeq();
 	    List<KeywordRegister> keywordList = memberService.getKeywordListByMemberSeq(memberseq);
 	    
-	    // Convert to DTOs
-	    List<KeywordDTO> keywordDTOs = keywordList.stream()
-	        .map(kr -> new KeywordDTO(kr.getWord().getWord()))
-	        .collect(Collectors.toList());
+      // Convert to DTOs
+       List<KeywordDTO> keywordDTOs = keywordList.stream()
+           .map(kr -> new KeywordDTO(kr.getKeyword().getWord()))
+           .collect(Collectors.toList());
 
 	    return ResponseEntity.ok(keywordDTOs);
 	}

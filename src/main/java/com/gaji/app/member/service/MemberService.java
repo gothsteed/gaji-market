@@ -251,7 +251,12 @@ public class MemberService {
 	    if (keyword.isPresent()) {
 	        Keyword existingKeyword = keyword.get();
 	        Member member = memberRepository.findById(memberseq).orElse(null);
-	        KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
+	        
+	        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+	        	return false;
+	        }
+	        
+        	KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
 	        keywordRegisterRepository.save(keywordRegister);
 	        return true;
 	    } 
@@ -262,8 +267,13 @@ public class MemberService {
 
 	        if (savedKeyword.getWord() != null) {
 	            Member member = memberRepository.findById(memberseq).orElse(null);
+	            
+		        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+		        	return false;
+		        }
+	            
 	            KeywordRegister keywordRegister = new KeywordRegister(savedKeyword, member);
-	            keywordRegisterRepository.save(keywordRegister);
+	        	keywordRegisterRepository.save(keywordRegister);
 	            return true;
 	        }
 	    }
