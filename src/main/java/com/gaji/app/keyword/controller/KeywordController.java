@@ -1,10 +1,8 @@
 package com.gaji.app.keyword.controller;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
-import com.gaji.app.keyword.domain.Keyword;
 import com.gaji.app.keyword.domain.KeywordRegister;
 import com.gaji.app.keyword.dto.KeywordDTO;
-import com.gaji.app.mongo.service.ChatService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +49,7 @@ public class KeywordController {
 	    
 	    // Convert to DTOs
 	    List<KeywordDTO> keywordDTOs = keywordList.stream()
-	        .map(kr -> new KeywordDTO(kr.getKeyword().getWord()))
+	        .map(kr -> new KeywordDTO(kr.getWord().getWord()))
 	        .collect(Collectors.toList());
 
 	    return ResponseEntity.ok(keywordDTOs);
