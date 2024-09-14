@@ -1,13 +1,10 @@
 package com.gaji.app.keyword.service;
 
-import com.gaji.app.keyword.domain.Keyword;
 import com.gaji.app.keyword.domain.KeywordAlert;
 import com.gaji.app.keyword.domain.KeywordRegister;
 import com.gaji.app.keyword.repository.KeywordAlertRepository;
 import com.gaji.app.product.domain.Product;
-import com.gaji.app.product.repository.ProductRepository;
 
-import java.util.List;
 import java.util.Objects;
 
 public class KeywordObserver implements AlertObserver<Product>{
@@ -21,7 +18,7 @@ public class KeywordObserver implements AlertObserver<Product>{
 
     @Override
     public void alert(Product product) {
-        keywordAlertRepository.save(new KeywordAlert(product.getProductseq(), keywordRegister.getKeyword(), keywordRegister.getMemberSeq()));
+        keywordAlertRepository.save(new KeywordAlert(product.getProductseq(), keywordRegister.getWord(), keywordRegister.getMemberSeq()));
     }
 
     @Override

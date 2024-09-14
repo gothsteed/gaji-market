@@ -1,6 +1,5 @@
 package com.gaji.app.keyword.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gaji.app.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,7 +34,7 @@ public class KeywordRegister {
         this.member = member;
     }
     
-    public String getKeyword() {
+    public String getWord() {
         return keyword.getWord();
     }
 
