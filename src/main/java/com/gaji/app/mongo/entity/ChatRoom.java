@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Document(collection = "ChatRooms")
+@Document(collection = "chatRooms")
 public class ChatRoom {
 
 	@Id

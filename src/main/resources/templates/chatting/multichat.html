@@ -240,71 +240,94 @@
 		$("div.more_btn_wrapper").click(function(){
 			$("div.option_container").fadeToggle();
 		});
+		
+		///////////////////////////////////////////////////////
+		
+		const sellerId = '[[${sellerId}]]';
+	    const buyerId = '[[${buyerId}]]';	
+			
+		const senderId = '[[${userId}]]'; 
+		let senderType = '';
 
-		const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";  // 프로토콜을 확인하여 ws 또는 wss 결정
-		const url = window.location.host;  // localhost:8080
-		const pathname = window.location.pathname;  // /gaji/chatting
-		const root = url + pathname;  // localhost:8080/gaji/chatting
+        if (senderId === sellerId) {
+            senderType = 'SELLER';
+        } else if (senderId === buyerId) {
+            senderType = 'BUYER';
+        } else {
+            senderType = 'UNKNOWN'; 
+        }
+				
+		// 현재 URL과 경로를 기반으로 WebSocket URL 생성
+		const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+		const host = window.location.host; // 예: localhost:8080
+		const roomId = '[[${roomId}]]';
 
-		const wsUrl = protocol + url + "/gaji/multichatstart";  // WebSocket 경로 설정
+		// WebSocket URL 생성
+		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
+
+		// WebSocket 연결 생성
 		const websocket = new WebSocket(wsUrl);
 
-	/* 
-		=== Javascript WebSocket 이벤트 정리 ===  
-		-------------------------------------
-     		이벤트 종류       설명
-        -------------------------------------
-        	onopen         WebSocket 연결
-       	    onmessage      메시지 수신
-       	    onerror        전송 에러 발생
-       	    onclose        WebSocket 연결 해제
- 	*/   
+		let messageObj = {};
 		
-		let messageObj = {}; 
-		const to = $("span.preview_nickname2").text();
-	
+		// WebSocket 이벤트 핸들러 설정
 		// 웹소켓에 최초로 연결이 되었을 경우에 실행되어지는 콜백함수 정의하기
-
-		websocket.onmessage = function(){
-			alert("웹소켓 onmessage");
-
+		websocket.onopen = function() {
+		    alert("웹소켓이 연결되었습니다.");
+		    console.log("WebSocket connection opened");
 		};
 
-		//////////////////////////////////////////////
-		websocket.onerror = function(){
-			alert("웹소켓 onerror");
-
-
-		};
-
-		///////////////////////////////////////////////////////
-		websocket.onclose = function(){
-			alert("웹소켓 onclose");
-
-		};
-
-		websocket.onopen = function(){
-			alert("웹소켓 연결되었습니다.");
-			
-			messageObj = {message : "채팅방에 <span style='color: red;'>입장</span> 했습니다."
-	                     ,type : "one"};
-						 
-		 	if(to != ""){
- 				messageObj.to = to;
-	 		}
-						 
-			websocket.send(JSON.stringify(messageObj));
-		};
-		
 		// 메시지 수신시 콜백함수 정의하기
-		websocket.onmessage = function(){
-			$("div.chat_message_list").append(event.data);
-			$("div.chat_message_list").append("<br>");
+		websocket.onmessage = function(event){
+			const message = JSON.parse(event.data);
+			
+			const now = new Date();
+							
+			let ampm = "오전 ";
+			let hours = now.getHours();
+		
+			if(hours > 12) {
+				hours = hours - 12;
+				ampm = "오후 ";
+			}
+			
+			if(hours == 0) {
+				hours = 12;
+			}
+			
+			if(hours == 12) {
+				ampm = "오후 ";
+			}
+			
+			let minutes = now.getMinutes();
+			
+			if(minutes < 10) {
+				minutes = "0" + minutes;
+			}
+			
+			const currentTime = ampm + hours + ":" + minutes;
+			
+			let html = '';
+			if (message.senderId == senderId) {
+			    html = `<div style='background: #b287f7; color: #fff; display: inline-block; max-width: 60%; float: right; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 8pt;'>${currentTime}</div><div style='clear: both;'>&nbsp;</div>`;
+			} else {
+           		html = `<div style='display: flex;'><span style='display: inline-block; margin-right: 2%;' class='profile_image'></span><div style='background: #eaebee; display: inline-block; max-width: 60%; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; padding: 20px 0 0 5px; font-size: 8pt;'>${currentTime}</div></div><div style='clear: both;'>&nbsp;</div>`;																																													
+			}
+			
+			$("div.chat_message_list").append(html);
 			$("div.chat_message_list").scrollTop(99999999);
 		};
+
+		websocket.onerror = function(error) {
+		    console.error("WebSocket error: ", error);
+		};
+
+		websocket.onclose = function(event) {
+		    console.log("WebSocket connection closed: ", event);
+		};
 		
 		///////////////////////////////////////////////////////
-		
+				
 		// 메시지 입력후 엔터하기
 		$("input#message").keyup(function(e){
 			if(e.keyCode == 13){
@@ -319,42 +342,13 @@
 				let messageVal = $("input#message").val();
 				messageVal = messageVal.replace(/<script/gi, "&lt;script")
 			
-				messageObj = {message : messageVal
-		                     ,type : "one"};
-							 
-			 	if(to != ""){
-	  				messageObj.to = to;
-	 	 		}			 
+				messageObj = {};
+				messageObj.senderId = senderId;
+				messageObj.senderType = senderType;
+				messageObj.content = messageVal;	 
 							 
 		 		websocket.send(JSON.stringify(messageObj));
 				
-				const now = new Date();
-				
-				let ampm = "오전 ";
-				let hours = now.getHours();
-			
-				if(hours > 12) {
-					hours = hours - 12;
-					ampm = "오후 ";
-				}
-				
-				if(hours == 0) {
-					hours = 12;
-				}
-				
-				if(hours == 12) {
-					ampm = "오후 ";
-				}
-				
-				let minutes = now.getMinutes();
-				
-				if(minutes < 10) {
-					minutes = "0" + minutes;
-				}
-				
-				const currentTime = ampm + hours + ":" + minutes;
-				
-				$("div.chat_message_list").append("<div style='background: #b287f7; color: #fff; display: inline-block; max-width: 60%; float: right; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>" + messageVal + "</div><div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 8pt;'>" + currentTime + "</div><div style='clear: both;'>&nbsp;</div>");
 				$("div.chat_message_list").scrollTop(99999999);
 				
 				$("input#message").val("");
@@ -362,9 +356,7 @@
 			}
 			
 		});
-	
-		///////////////////////////////////////////////////////
-	
+		
 	}); // end of $(document).ready(function()){}) ----------
   </script>
 </head>
@@ -381,7 +373,7 @@
 				</nav>
 				<nav class="message_list">
 					<div class="nickname">
-						<div class="nickname_area">예린</div>
+						<div class="nickname_area"><span sec:authentication="principal.username"></span></div>
 					</div>
 					<div class="unread">
 						<div class="unread_label common_bg_hover">
@@ -447,5 +439,6 @@
 			</div>
 		</div>
 	</div>  	
+	
 </body>
 </html>
