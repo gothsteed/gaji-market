@@ -264,9 +264,16 @@
 
 		// WebSocket URL 생성
 		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
+		console.log("WebSocket URL:", wsUrl);
+
 
 		// WebSocket 연결 생성
 		const websocket = new WebSocket(wsUrl);
+
+		websocket.onerror = function(error) {
+			console.error("WebSocket Error: ", error);
+			alert("Failed to connect to WebSocket. Please check your connection and try again.");
+		};
 
 		let messageObj = {};
 		
