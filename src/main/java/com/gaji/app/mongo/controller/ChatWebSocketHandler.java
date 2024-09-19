@@ -1,6 +1,5 @@
 package com.gaji.app.mongo.controller;
 
-import com.gaji.app.mongo.dto.MessageDTO;
 import com.gaji.app.mongo.entity.Message;
 import com.gaji.app.mongo.repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
