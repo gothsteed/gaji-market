@@ -45,6 +45,8 @@
 		span.delete{display:inline-block; width: 20px; color: #ff5353; text-align: center;} 
 		div.oneFileInfo:hover{background-color: rgb(250, 215, 205); color: #fff; cursor: pointer;}
 		span.fileName{padding-left: 10px;}
+		
+		
 
     </style>
 </head>
@@ -53,8 +55,71 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+<!-- 다음 주소 검색 -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<!-- 카카오 API 키 입력 -->
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a76ee334caf87a1587c2f7fcd7b84570&libraries=services"></script>
+ 
+
 <script>
     $(document).ready(function() {
+		
+		
+		<!-- 카카오 지도 표시-->
+		var mapContainer = document.getElementById("map");
+
+		// 지도를 생성할때 필요한 기본 옵션
+		var options = {
+			center: new kakao.maps.LatLng(37.5665, 126.978), // 지도의 중심좌표 서울 시청 좌표
+			level: 3  // 지도의 레벨
+		};
+
+		// 지도 생성 및 생성된 지도 객체 리턴
+		var mapobj = new kakao.maps.Map(mapContainer, options);
+
+		// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성
+		var mapTypeControl = new kakao.maps.MapTypeControl();
+		mapobj.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+		// 지도 확대 축소를 제어할 수 있는 줌 컨트롤을 생성
+		var zoomControl = new kakao.maps.ZoomControl();
+		mapobj.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+		// 사용자의 위치를 찾고, 현재 위치에 마커와 센터를 설정
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function(position) {
+		    	var latitude = position.coords.latitude;   // 현재 위치의 위도
+		      	var longitude = position.coords.longitude; // 현재 위치의 경도
+
+		      	// 마커가 표시될 위치를 geolocation으로 얻어온 현재 위치의 위도, 경도 좌표로 설정
+		      	var locPosition = new kakao.maps.LatLng(latitude, longitude);
+
+		      	// 마커 생성
+		      	var marker = new kakao.maps.Marker({ 
+		        	position: locPosition 
+		      	}); 
+
+		      	marker.setMap(mapobj); // 지도에 마커 추가
+
+		      	// 지도의 중심 위치를 현재 위치로 변경
+		      	mapobj.setCenter(locPosition);
+
+		  	}, function(error) {
+		      // 위치 정보를 얻지 못했을 때의 에러 처리
+		    	console.error("Geolocation error: ", error.message);
+
+		      	// 위치 정보를 사용할 수 없을 때의 기본 위치
+		      	var defaultPosition = new kakao.maps.LatLng(37.556513150417395, 126.91951995383943);     
+		      	mapobj.setCenter(defaultPosition);
+		  	});
+		} else {
+		  // HTML5의 GeoLocation을 사용할 수 없을 때
+		  	var defaultPosition = new kakao.maps.LatLng(37.556513150417395, 126.91951995383943);     
+		  	mapobj.setCenter(defaultPosition);
+		}
+		
+		
         $('#description').on('input', function() {
             var charCount = $(this).val().length;
             $('#charCount').text(charCount + '/2000');
@@ -133,9 +198,157 @@
 				
 		    	$(delSpan).closest("div.oneFileInfo").remove();
 		 //   	console.log("file_arr2"+file_arr);
-		});	    
+		});	
 		
-	});
+		
+		
+		// === "우편번호찾기"를 클릭했을 때 이벤트 처리하기 === //
+		$("button#searchAddressBtn").click(function(){
+				
+			// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+           // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+           	let addr = ''; // 주소 변수
+           	let extraAddr = ''; // 참고항목 변수
+
+		
+			new daum.Postcode({
+	        	oncomplete: function(data) {
+	               // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+	
+	              
+				//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+	            	if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+	                	addr = data.roadAddress;
+	               	} else { // 사용자가 지번 주소를 선택했을 경우(J)
+	                	addr = data.jibunAddress;
+	               	}
+	
+	               // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+	               	if(data.userSelectedType === 'R'){
+	                   // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	                   // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	                   	if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                       	extraAddr += data.bname;
+	                   	}
+	                   // 건물명이 있고, 공동주택일 경우 추가한다.
+	                   	if(data.buildingName !== '' && data.apartment === 'Y'){
+	                       	extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                   	}
+	                   // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	                   	if(extraAddr !== ''){
+	                       	extraAddr = ' (' + extraAddr + ')';
+	                   	}
+	               	} 
+	
+	               // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	               	document.getElementById("address").value = addr + extraAddr;
+	               // 커서를 상세주소 필드로 이동한다.
+	               	document.getElementById("detailAddress").focus();
+				   
+				   
+				   	console.log("주소" , addr);
+				   
+				   
+				   	const mapContainer = document.getElementById('map');// 지도를 표시할 div 
+				   	const defaultPosition = new kakao.maps.LatLng(37.5665, 126.978); // 서울 시청 좌표
+                   	const mapOption = {
+                   		center: defaultPosition,
+                        level: 3
+                    };
+   
+				   // 지도를 생성합니다    
+				   var map = new kakao.maps.Map(mapContainer, mapOption); 
+				   
+				   // 주소-좌표 변환 객체를 생성합니다
+	              	var geocoder = new kakao.maps.services.Geocoder();
+	              	
+					// 주소로 좌표를 검색합니다
+					geocoder.addressSearch(addr, function(result, status) {
+					
+	                	if (status === kakao.maps.services.Status.OK) {  // 정상적으로 검색이 완료됐으면 
+	                    
+							var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+	                      	// 결과값으로 받은 위치를 마커로 표시합니다
+	                      	var marker = new kakao.maps.Marker({
+	                        	map: map,
+	                          	position: coords
+	                      	});
+
+	                      // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	                      	map.setCenter(coords);
+	                  	} else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+							console.error('주소 검색 실패: ZERO_RESULT');
+
+						    alert('입력한 주소를 찾을 수 없습니다. 주소를 확인해 주세요.'); // 사용자에게 알림
+
+						    
+						    
+						} else {
+						 	console.error('주소 검색 실패: ' + status);
+						}
+	              });
+				   
+	           }
+	       	}).open();   
+			
+			// 주소를 읽기전용(readonly) 로 만들기
+		//	$("input#address").attr("readonly", true); 
+			
+		});// end of $("button#searchAddressBtn").click(function()-------------------
+		
+		
+		
+	});// end of $(document).ready(function() -------------------
+	
+
+	function btnSubmit(){
+		
+		var title = $("input:text[id='title']").val().trim();
+		var selectCategory = $('transactionType').val();
+		var selectElement = $('category').val();
+		var description = $("input:text[id='description']").val().trim();
+		var address = $("input:text[id='address']").val().trim();
+		let b_requiredInfo = true;
+		
+		if(title == ""){
+			alert("제목을 입력해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+		
+		if(selectElement == ""){
+			alert("카테고리를 선택해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+				
+		
+		if(selectElement == ""){
+			alert("거래 방식을 선택해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+		
+		if(description == ""){
+			alert("상품 설명을 입력해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+		
+		if(address == ""){
+			alert("거래 장소를 입력해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+		
+		const frm = document.registerFrm;
+		frm.action = "http://localhost:8080/gaji/productRegister/end";
+		frm.method = "post";
+		frm.submit();
+		
+	}
 	
 	
 </script>
@@ -147,7 +360,7 @@
         <div class="container mt-5" style="width: 80%;">
             <h1 class="mb-4">내 물건 팔기</h1>
             <hr style="border: solid 1px;">
-            <form>
+            <form name="registerFrm">
                 <!-- 이미지 첨부 -->
                 <div class="form-group">
                     <label for="imageUpload">상품 이미지</label>
@@ -161,17 +374,30 @@
                 <div class="form-group d-flex">
                     <span for="title" style="width: 20%; display: inline-flex; align-items: center;">상품명</span>
                     <div class="relative-container" style="width: 70%;">
-                        <input type="text" class="form-control" id="title" maxlength="40" placeholder="상품 제목을 입력하세요" required>
+                        <input type="text" class="form-control" id="title" maxlength="40" placeholder="상품 제목을 입력하세요" >
                         <span class="char-count" id="titlecharCount">0/40</span>
                     </div>
                 </div>
 
                 <hr>
+				
+				<!-- 카테고리 선택 -->
+				<div class="form-group d-flex">
+				    <span style="width: 20%; display: inline-flex; align-items: center;">카테고리</span>
+					<select class="form-control" style="width: 70%;" id="category" name="category">
+						<option value="">카테고리를 선택하세요</option>
+					    <option th:each="category : ${categoryNames}" 
+					            th:value="${category.categorySeq}" 
+					            th:text="${category.name}">카테고리</option>
+					</select>
+				</div>
+
+				<hr>
 
                 <!-- 거래 방식 선택 -->
                 <div class="form-group d-flex">
                     <span style="width: 20%; display: inline-flex; align-items: center;">거래 방식</span>
-                    <select class="form-control" style="width: 70%;" id="transactionType" required>
+                    <select class="form-control" style="width: 70%;" id="transactionType" >
                         <option value="">거래 방식을 선택하세요</option>
                         <option value="sell">판매</option>
                         <option value="giveaway">나눔</option>
@@ -185,7 +411,7 @@
                 <div class="form-group d-flex">
                     <span for="price" style="width: 20%; display: inline-flex; align-items: center;">가격</span>
                     <div style="width: 70%;">
-                        <input type="number" class="form-control" id="price" placeholder="가격을 입력하세요" required>
+                        <input type="number" class="form-control" id="price" placeholder="가격을 입력하세요">
                         <input type="checkbox" id="nego">
                         <label class="form-check-label" for="nego">
                             가격 제안 받기
@@ -199,22 +425,43 @@
                 <div class="form-group d-flex">
                     <label for="description" style="width: 20%;">상품 설명</label>
                     <div class="relative-container" style="width: 70%;">
-                        <textarea class="form-control" id="description" rows="4" maxlength="2000" placeholder="상품에 대한 설명을 입력하세요" required></textarea>
+                        <textarea class="form-control" id="description" rows="4" maxlength="2000" placeholder="상품에 대한 설명을 입력하세요"></textarea>
                         <div class="char-count" id="charCount">0/2000</div>
                     </div>
                 </div>
 
                 <hr>
+				
+				<!-- 키워드 입력 -->
+				<div class="form-group d-flex">
+				    <span for="keyword" style="width: 20%; display: inline-flex; align-items: center;">키워드</span>
+				    <div class="relative-container" style="width: 70%;">
+				        <input type="text" class="form-control" id="keyword" maxlength="40" placeholder="한 개의 키워드를 입력하세요" >
+				        <span class="char-count" id="charCount">0/40</span>
+				    </div>
+				</div>
+
+				<hr>
 
                 <!-- 거래 희망 장소 입력 -->
                 <div class="form-group d-flex">
                     <span for="location" style="width: 20%; display: inline-flex; align-items: center;">거래 희망 장소</span>
-                    <input type="text" class="form-control" style="width: 70%;" id="location" placeholder="거래 희망 장소를 입력하세요" required>
-                </div>
-
-                <button type="button" class="btn btn-primary" id="submit">등록</button>
+					<div style="width: 70%;">
+						<button type="button" id="searchAddressBtn" style="margin-bottom: 10px;">주소 검색</button>
+						<input type="text" class="form-control" style="margin-bottom: 10px;" name="address" id="address" placeholder="주소를 검색하세요" readonly />
+						<input type="text" class="form-control" name="detailaddress" id="detailAddress"  placeholder="추가 주소" />  
+					</div>                       
+				</div>
+				
+				<!-- 카카오 지도 표시 -->
+				<div id="map" style="height: 400px; width: 90%; margin-bottom: 10px;"></div>
+               
             </form>
-        </div>
+			
+			<div style="text-align:right; margin-right:10%; padding-bottom : 5%;">	
+				<button type="button" class="btn btn-primary" id="submit" onclick="btnSubmit()">등록</button>
+			</div>
+		</div>
     </div>
 
     <div th:replace="~{fragment/footer :: footer}"></div>

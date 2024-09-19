@@ -1,10 +1,13 @@
 package com.gaji.app.product.service;
 
+import com.gaji.app.product.domain.Category;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
+import com.gaji.app.product.dto.CategoryDto;
 import com.gaji.app.product.dto.ProductFirstDto;
 import com.gaji.app.product.dto.ProductListDto;
 import com.gaji.app.product.dto.ProductSearchParamDto;
+import com.gaji.app.product.repository.CategoryRepository;
 import com.gaji.app.product.repository.ProductImageRepository;
 import com.gaji.app.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private ProductImageRepository productImageRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
 
     // 상품 리스트 가져오기
     public Page<ProductImage> getProductList(int pageNumber, String sortType) throws Exception {
@@ -109,4 +115,22 @@ public class ProductService {
 
         return productListDto;
     }
+    
+    // 상품 등록시 카테고리 종류 가져오기
+	public List<CategoryDto> getAllCategoryInfo() {
+		
+		 List<Object[]> categoryObj = categoryRepository.getAllCategoryInfo();// Native Query 호출
+		 List<CategoryDto> categoryDto = new ArrayList<>();
+		    
+		 for (Object[] row : categoryObj) {
+			 Long categorySeq = ((Number) row[0]).longValue(); // categoryseq
+		     String name = (String) row[1]; // name
+		     categoryDto.add(new CategoryDto(categorySeq, name));
+		 }
+
+		 return categoryDto;
+		
+		// return categoryRepository.getAllCategoryInfo(); // DTO 리스트 직접 반환
+	}
+    
 }
