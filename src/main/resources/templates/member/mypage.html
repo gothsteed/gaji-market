@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>가지마켓</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
 
   <!-- CSS -->
   <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
@@ -29,6 +30,16 @@
       font-family: "Noto Sans KR", sans-serif;
     }
 
+	i.fa-bell:hover {
+	  color: #b287f7 !important;
+	  cursor: pointer;
+	}
+	
+	span#keyword:hover {
+		color: #b287f7 !important;
+		cursor: pointer;
+	}
+	
     i.fa-circle-info:hover {
       color: #b287f7 !important;
     }
@@ -39,11 +50,25 @@
       color: #580DD2 !important;
     }
 
+    div.sidebtn:hover a {
+      text-decoration: none;
+      color: #580DD2 !important;
+    }
+
     span.count:hover {
       cursor: pointer;
       text-decoration: underline;
       text-decoration-color: #580DD2;
     }
+	
+	li {
+	    cursor: pointer;
+	}
+
+	li:hover {
+	    /* 필요한 경우 호버 시 스타일 추가 */
+	    background-color: #f0f0f0; /* 예: 배경 색상 변경 */
+	}
   </style>
 </head>
 <body>
@@ -84,7 +109,7 @@
 
           <!-- 내 정보 수정 & 로그아웃 -->
           <div class="mb-3">
-            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;"><a th:href="@{/myedit}">내 정보 수정</a></div>
+            <div class="d-flex align-items-center justify-content-center sidebtn" style="border: solid 1px #ccc; border-radius: 30px; height: 40px; color: #808080;"><a th:href="@{/myedit}" style="color: #808080;">내 정보 수정</a></div>
           </div>
 
           <div>
@@ -110,7 +135,7 @@
             <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 25%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-credit-card mb-2" style="font-size: 1.2rem;"></i>
               <span class="d-block text-center">구매예약목록</span>
-              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="reservationCount"></span>&nbsp;개</span>
+              <span class="count mt-2 font-weight-bold text-center" style="font-size: 1.2rem;" th:onclick="'location.href=\'' + @{/myPage/reservationList} + '?memberSeq=' + ${memberSeq} + '\''"><span style="color: #580DD2; font-size: 1.5rem;" data-mypage="reservationCount"></span>&nbsp;개</span>
             </div>
             <div class="d-flex flex-column align-items-center justify-content-center" style="border-left: solid 1px #e6e6e6; width: 25%; height: 150px; margin: 2% 0;">
               <i class="fa-regular fa-heart mb-2" style="font-size: 1.2rem;"></i>
@@ -158,10 +183,12 @@
             </div>
             <div class="col" style="width: 50%; border-top: solid 1px #ccc; border-left: solid 1px #ccc;">
               <div class="m-2 d-flex align-items-center justify-content-between" style="height: 50px;">
-                <div>
-                  <i class="fa-regular fa-bell mr-2" style="font-size: 1.2rem;"></i>
-                  <span>키워드 알림 설정</span>
-                </div>
+				
+				<div>
+				  <i class="fa-regular fa-bell mr-2" style="font-size: 1.2rem;" data-toggle="modal" data-target="#keywordModal"></i>
+				  <span id="keyword" data-toggle="modal" data-target="#keywordModal">키워드 알림 설정</span>
+				</div>
+				
                 <div>
                   <i class="fa-solid fa-angle-right ml-2" style="color: #ccc;"></i>
                 </div>
@@ -174,6 +201,31 @@
     </div>
   </div>
 
+  <!-- Modal Structure -->
+  <div class="modal fade" id="keywordModal" tabindex="-1" role="dialog" aria-labelledby="keywordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="keywordModalLabel">키워드 알림 설정</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6>현재 설정된 키워드</h6>
+          <ul id="keywordList">
+          </ul>
+          <hr>
+          <h6>키워드 추가</h6>
+          <input type="text" class="form-control" id="newKeyword" placeholder="키워드를 입력하세요">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-primary" id="addKeywordBtn">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
@@ -204,6 +256,89 @@
               });
     });
   </script>
+  
+  <script>
+     document.addEventListener('DOMContentLoaded', function () {
+       document.getElementById('addKeywordBtn').addEventListener('click', function () {
+         const newKeyword = document.getElementById('newKeyword').value;
+         if (newKeyword.trim()) {
+			
+			$.ajax({
+			    url: '/gaji/keyword/insertkeyword',
+			    type: 'POST',
+			    data: { newKeyword: newKeyword }, // productId를 데이터로 전달
+			    success: function(result) {
+		           alert('새 키워드 "' + newKeyword + '"가 추가되었습니다.');
+
+				   location.reload(); // 페이지 새로고침
+			    },
+			    error: function(xhr, status, error) {
+			        alert("이미 등록된 키워드 이거나, 오류가 발생했습니다.")
+					console.error('Failed to insert keyword:', error); // 에러 처리
+			    }
+			});
+			
+           // Here you can add the logic to actually save the new keyword to the server
+           $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
+         } else {
+           alert('키워드를 입력하세요.');
+         }
+       });
+	   
+		$.ajax({
+		    url: '/gaji/keyword/keywordlist',
+		    type: 'POST',
+		    success: function(result) {
+		        const keywordList = $('#keywordList');
+
+		        $.each(result, function(index, keyword) {
+		            keywordList.append('<li id="forDelete" data-keywordname="' + keyword.word + '">' + keyword.word + '</li>');
+				});
+				
+					$('li#forDelete').on('click', function() {
+						
+						var keywordname = $(this).data('keywordname'); // data-product-id에서 값 가져오기
+						if(confirm( "'"+keywordname+"'" + " 키워드를 삭제하시겠습니까?")){
+					  		$.ajax({
+					   		    url: '/gaji/keyword/keyworddelete',
+					   		    type: 'POST',
+					   		    data: { keywordname: keywordname }, // productId를 데이터로 전달
+					   		    success: function(result) {
+								   alert("'"+keywordname+"'" + " 키워드가 삭제되었습니다.")
+								 
+					   			   location.reload(); // 페이지 새로고침
+					   		    },
+					   		    error: function(xhr, status, error) {
+					   		        alert("이미 등록된 키워드 이거나, 오류가 발생했습니다.")
+					   				console.error('Failed to insert keyword:', error); // 에러 처리
+					   		    }
+					   		});
+						}
+						else{
+							return false;
+						}
+					 		
+					   // Here you can add the logic to actually save the new keyword to the server
+					   $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
+					});
+
+		        $('#keywordModal').modal('hide');  // 모달 닫기
+				
+		    },
+		    error: function(xhr, status, error) {
+		        console.error('Failed to load keyword list:', error);
+		    }
+		});
+	   	
+	       // Here you can add the logic to actually save the new keyword to the server
+	       $('#keywordModal').modal('hide');  // Close the modal after adding the keyword
+	   });
+	   
+
+	   
+	 
+	 
+   </script>
 
   <div th:replace="~{/fragment/footer :: footer}"></div>
 </body>

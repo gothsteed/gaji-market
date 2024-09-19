@@ -1,16 +1,10 @@
 package com.gaji.app.product.controller;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
-import com.gaji.app.member.dto.AddressDTO;
-import com.gaji.app.member.dto.MemberDTO;
 import com.gaji.app.member.service.MemberService;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
-import com.gaji.app.product.dto.CategoryDto;
 import com.gaji.app.product.service.ProductService;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -18,11 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -32,6 +22,10 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    
+    public ProductController(ProductService productService) {
+    	this.productService = productService;
+    }
 
     @Autowired
     private MemberService memberService;
@@ -65,14 +59,10 @@ public class ProductController {
     }
 
     @GetMapping("productRegister")
-    public String productRegister(Model model) {
-    	
-    	List<CategoryDto> categoryNames = productService.getAllCategoryInfo(); // 카테고리 이름 가져오기
-    	model.addAttribute("categoryNames", categoryNames); // 모델에 추가
-    	
+    public String productRegister() {
         return "product/productregister";
     }
-    
+
 
     @GetMapping("productDetail")
     public String productDetail(@RequestParam Long seq, Model model) {
@@ -101,7 +91,6 @@ public class ProductController {
         return "product/productdetail";
     }
 
-
     @GetMapping("/product/search")
     public String search(@RequestParam String titleSearch, Model model) {
         model.addAttribute("titleSearch", titleSearch);
@@ -110,9 +99,5 @@ public class ProductController {
     }
 
 
-
-
-    
-    
 
 }

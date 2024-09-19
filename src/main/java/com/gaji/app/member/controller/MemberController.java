@@ -1,14 +1,18 @@
 package com.gaji.app.member.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import com.gaji.app.member.service.MemberService;
 
 @Controller
 public class MemberController {
-	
-	@GetMapping("chatting")
-    public String multichat() {
-        return "chatting/multichat";
+
+	 private MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
     }
 	
 }

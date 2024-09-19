@@ -124,6 +124,36 @@
         }
 
         kakao.maps.load(initMap);
+		
+		
+		
+		$(document).ready(function() {
+		    // 좋아요 아이콘 클릭 이벤트
+		    $('#likeproduct').on('click', function() {
+				
+		        var seq = $(this).data('seq'); 
+
+				$.ajax({
+		            url: '/gaji/likeproduct/clicklike', 
+		            type: 'POST',
+		            data: { seq: seq }, // productId를 데이터로 전달
+		            success: function(result) {
+		                //$icon.removeClass('fa-heart').addClass('fa-heart-broken'); // 예시: 좋아요 취소 상태로 변경
+						alert("찜한 목록에 추가되었습니다.");
+		            },
+		            error: function(xhr, status, error) {
+		                console.error('Failed to insert like:', error); // 에러 처리
+						alert("이미 찜한 목록에 추가된 상품입니다.");
+		            }
+		        });
+		    });
+		  
+		});
+		
+		
+		
+		
+		
     </script>
 
 </head>
@@ -235,7 +265,7 @@
                     <button class="btn btn-outline-success mr-5" type="button" th:if="${product.fkMemberSeq == memberSeq}" th:text="'수정하기'"></button>
                     <button class="btn btn-outline-danger" type="button" th:if="${product.fkMemberSeq == memberSeq}" th:text="'삭제하기'"></button>
                     <button class="btn btn-outline-danger mr-5" type="button" th:if="${product.fkMemberSeq != memberSeq}" th:text="'찜하기❤️'"></button>
-                    <button class="btn btn-custom" type="button" th:if="${product.fkMemberSeq != memberSeq}" onclick="location.href='http://localhost:8080/gaji/chatting';">채팅하기</button>
+                    <button class="btn btn-custom" type="button" th:if="${product.fkMemberSeq != memberSeq}" th:onclick="'location.href=\'http://localhost:8080/gaji/chatting?fkMemberSeq=' + ${product.fkMemberSeq} + '&productSeq=' + ${product.productseq} + '\''">채팅하기</button>
                 </div>
             </div>
         </div>

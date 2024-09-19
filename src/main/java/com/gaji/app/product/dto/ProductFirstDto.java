@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductFirstDto {
-    private Long productSeq;
+    private Long seq;
     private String image;
     private String title;
     private Long likeCount;

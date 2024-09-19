@@ -1,6 +1,10 @@
 package com.gaji.app.member.service;
 
 import com.gaji.app.address.domain.Address;
+import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.domain.KeywordRegister;
+import com.gaji.app.keyword.repository.KeywordRegisterRepository;
+import com.gaji.app.keyword.repository.KeywordRepository;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.dto.AddressDTO;
 import com.gaji.app.member.dto.MemberDTO;
@@ -9,7 +13,6 @@ import com.gaji.app.member.repository.LikeProductRepository;
 import com.gaji.app.member.repository.MemberRepository;
 import com.gaji.app.product.domain.LikeProduct;
 import com.gaji.app.product.domain.Product;
-import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.repository.ProductImageRepository;
 import com.gaji.app.product.repository.ProductRepository;
 import com.gaji.app.review.repository.ReviewRepository;
@@ -36,9 +39,11 @@ public class MemberService {
     private PasswordEncoder passwordEncoder;
     private LikeProductRepository likeProductRepository;
     private ProductImageRepository productImageRepository;
+    private KeywordRepository keywordRepository;
+    private KeywordRegisterRepository keywordRegisterRepository;
     
     @Autowired
-    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository, ProductImageRepository productImageRepository) {
+    public MemberService(MemberRepository memberRepository, ProductRepository productRepository, ReviewRepository reviewRepository, AddressRepository addressRepository, PasswordEncoder passwordEncoder, LikeProductRepository likeProductRepository, ProductImageRepository productImageRepository, KeywordRepository keywordRepository, KeywordRegisterRepository keywordRegisterRepository) {
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
@@ -46,6 +51,8 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
         this.likeProductRepository = likeProductRepository;
         this.productImageRepository = productImageRepository;
+        this.keywordRepository = keywordRepository;
+        this.keywordRegisterRepository = keywordRegisterRepository;
     }
 
     public String emailDuplicateCheck(String email) throws Exception {
@@ -189,6 +196,107 @@ public class MemberService {
         Member member = memberRepository.findById(memberSeq).orElseThrow(() -> new UsernameNotFoundException("존재하지 않은 맴버입니다."));
         return member.getName();
     }
+
+    // 좋아요를 누르면 LikeProduct 테이블에 인서트 되는 메소드
+    public boolean clickLike(Long memberseq, Long seq) {
+        try {
+            // LikeProduct 엔티티 생성
+            LikeProduct likeproduct = new LikeProduct(seq, memberseq);
+            
+            // LikeProduct 저장
+            likeProductRepository.save(likeproduct);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    // 좋아요를 누르면 Product 테이블에 있는 해당 상품의 likecount가 1 증가되는 메소드
+	public void increscLikeCount(Long seq) {
+        // 해당 상품을 seq로 조회
+        Optional<Product> productOptional = productRepository.findById(seq);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            
+            // likecount 1 증가
+            product.incrementLikeCount();  // likecount를 증가시키는 메서드 추가
+            
+            // 변경된 상품 정보 저장 (Dirty Checking을 통해 likecount만 업데이트)
+            productRepository.save(product);
+        }
+	}
+	
+	// 마이페이지에서 찜한 상품을 찜 취소 했을 경우, product 테이블에 있는 해당 상품의 likecount가 1 감소하는 메소드
+	public void decrescLikeCount(Long seq) {
+		// 해당 상품을 seq로 조회
+		Optional<Product> productOptional = productRepository.findById(seq);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			
+			// likecount 1 증가
+			product.decrementLikeCount();  // likecount를 증가시키는 메서드 추가
+			
+			// 변경된 상품 정보 저장 (Dirty Checking을 통해 likecount만 업데이트)
+			productRepository.save(product);
+		}
+	}
+
+	// 키워드를 등록하면, tbl_keword와 tbl_register_keyword에 인서트하는 메소드
+	public boolean addKeyword(String newKeyword, Long memberseq) {
+
+	    // 1. 키워드가 이미 존재하는지 확인
+	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
+
+	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
+	    if (keyword.isPresent()) {
+	        Keyword existingKeyword = keyword.get();
+	        Member member = memberRepository.findById(memberseq).orElse(null);
+	        
+	        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+	        	return false;
+	        }
+	        
+        	KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
+	        keywordRegisterRepository.save(keywordRegister);
+	        return true;
+	    } 
+	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
+	    else {
+	        Keyword newKeywordEntity = new Keyword(newKeyword);
+	        Keyword savedKeyword = keywordRepository.save(newKeywordEntity);
+
+	        if (savedKeyword.getWord() != null) {
+	            Member member = memberRepository.findById(memberseq).orElse(null);
+	            
+		        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+		        	return false;
+		        }
+	            
+	            KeywordRegister keywordRegister = new KeywordRegister(savedKeyword, member);
+	        	keywordRegisterRepository.save(keywordRegister);
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
+    public List<KeywordRegister> getKeywordListByMemberSeq(Long memberseq) {
+        return keywordRegisterRepository.findByMemberSeq(memberseq);
+    }
+
+	public boolean deleteKeyword(String keywordname, Long memberseq) {
+		
+		Optional<Keyword> keyword = keywordRepository.findByWord(keywordname);
+		
+        Optional<KeywordRegister> deleteKeyword = keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq);
+        
+        if (deleteKeyword.isPresent()) {
+        	keywordRegisterRepository.delete(deleteKeyword.get());
+            return true;
+        }
+        return false;
+	}
+
 
 
 }

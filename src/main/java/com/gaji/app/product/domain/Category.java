@@ -1,13 +1,6 @@
 package com.gaji.app.product.domain;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
@@ -19,8 +12,8 @@ import lombok.Getter;
         allocationSize = 1
 )
 public class Category {
-	
-	@Id
+
+    @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE
             , generator = "CATEGORYSEQ"
