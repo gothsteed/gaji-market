@@ -323,9 +323,6 @@
 
 		websocket.onclose = function(event) {
 		    console.log("WebSocket connection closed: ", event);
-			
-			// 재연결 시도
-		    setTimeout(reconnect, 1000); // 1초 후에 재연결 시도
 		};
 		
 		///////////////////////////////////////////////////////
