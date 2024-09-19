@@ -244,36 +244,58 @@ public class MemberService {
 	// 키워드를 등록하면, tbl_keword와 tbl_register_keyword에 인서트하는 메소드
 	public boolean addKeyword(String newKeyword, Long memberseq) {
 
-//	    // 1. 키워드가 이미 존재하는지 확인
-//	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
-//
-//	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
-//	    if (keyword.isPresent()) {
-//	        Keyword existingKeyword = keyword.get();
-//	        Member member = memberRepository.findById(memberseq).orElse(null);
-//	        KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
-//	        keywordRegisterRepository.save(keywordRegister);
-//	        return true;
-//	    } 
-//	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
-//	    else {
+	    // 1. 키워드가 이미 존재하는지 확인
+	    Optional<Keyword> keyword = keywordRepository.findByWord(newKeyword);
+
+	    // 2. 키워드가 이미 존재하면 TBL_KEYWORD_REGISTER에 등록
+	    if (keyword.isPresent()) {
+	        Keyword existingKeyword = keyword.get();
+	        Member member = memberRepository.findById(memberseq).orElse(null);
+	        
+	        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+	        	return false;
+	        }
+	        
+        	KeywordRegister keywordRegister = new KeywordRegister(existingKeyword, member);
+	        keywordRegisterRepository.save(keywordRegister);
+	        return true;
+	    } 
+	    // 3. 키워드가 없을 경우, 새로 등록 후 TBL_KEYWORD_REGISTER에 추가
+	    else {
 	        Keyword newKeywordEntity = new Keyword(newKeyword);
 	        Keyword savedKeyword = keywordRepository.save(newKeywordEntity);
 
 	        if (savedKeyword.getWord() != null) {
 	            Member member = memberRepository.findById(memberseq).orElse(null);
+	            
+		        if(keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq).isPresent()) {
+		        	return false;
+		        }
+	            
 	            KeywordRegister keywordRegister = new KeywordRegister(savedKeyword, member);
-	            keywordRegisterRepository.save(keywordRegister);
+	        	keywordRegisterRepository.save(keywordRegister);
 	            return true;
 	        }
-	   // }
-	    
+	    }
 	    return false;
 	}
 
     public List<KeywordRegister> getKeywordListByMemberSeq(Long memberseq) {
         return keywordRegisterRepository.findByMemberSeq(memberseq);
     }
+
+	public boolean deleteKeyword(String keywordname, Long memberseq) {
+		
+		Optional<Keyword> keyword = keywordRepository.findByWord(keywordname);
+		
+        Optional<KeywordRegister> deleteKeyword = keywordRegisterRepository.findByKeywordAndMember_MemberSeq(keyword.get(), memberseq);
+        
+        if (deleteKeyword.isPresent()) {
+        	keywordRegisterRepository.delete(deleteKeyword.get());
+            return true;
+        }
+        return false;
+	}
 
 
 

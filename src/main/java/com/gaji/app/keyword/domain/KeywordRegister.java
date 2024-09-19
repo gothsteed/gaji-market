@@ -17,7 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class KeywordRegister {
 	
 	@Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "keyword")
     private Keyword keyword;
@@ -34,4 +34,14 @@ public class KeywordRegister {
         this.member = member;
     }
     
+    public String getWord() {
+        return keyword.getWord();
+    }
+
+    public Long getMemberSeq() {
+        return member.getMemberSeq();
+    }
+
+
+
 }

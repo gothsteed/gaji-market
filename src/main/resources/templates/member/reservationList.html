@@ -22,7 +22,7 @@
   <!-- Optional JavaScript -->
   <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
   <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
-  <script type="text/javascript" th:src="@{/js/header.js}"></script>
+<!--  <script type="text/javascript" th:src="@{/js/header.js}"></script>-->
 
 
   <style>
@@ -66,10 +66,17 @@
 
       const contextPath = '[[@{/}]]';
 
+      // 헤더 로고 경로 지정
+      $("div.navbar-brand").click(function() {
+        location.href = contextPath + "home";
+      });
+
+      // '중고거래 페이지로 이동' 클릭 시 상품목록으로 이동
       $("span#goProductList").click(function() {
         location.href = contextPath + "productList";
       });
 
+      // 아이템 1개 클릭 시 상품상세로 이동
       $("div.reservationItem").click(function() {
         const seq = $(this).data('seq');
         location.href = contextPath + "productDetail?seq=" + seq;

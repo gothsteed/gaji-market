@@ -1,7 +1,5 @@
 package com.gaji.app.config;
 
-import com.gaji.app.chatting.websockethandler.WebsocketEchoHandler;
-
 import com.gaji.app.mongo.controller.ChatWebSocketHandler;
 import com.gaji.app.mongo.handshaker.ChatroomHandshakeInterceptor;
 import com.gaji.app.mongo.repository.MessageRepository;
@@ -23,14 +21,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebsocketEchoHandler(), "/gaji/multichatstart")
-                .addInterceptors(new ChatroomHandshakeInterceptor());
+        registry.addHandler(chatWebSocketHandler(), "/gaji/multichatstart")
+                .addInterceptors(new ChatroomHandshakeInterceptor())
+                .setAllowedOrigins("*");
     }
 
     @Bean
     public ChatWebSocketHandler chatWebSocketHandler() {
         return new ChatWebSocketHandler(messageRepository);
     }
-
 
 }

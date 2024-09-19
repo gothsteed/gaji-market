@@ -1,5 +1,7 @@
 package com.gaji.app.keyword.domain;
 
+import com.gaji.app.keyword.repository.KeywordAlertRepository;
+import com.gaji.app.keyword.repository.KeywordRegisterRepository;
 import com.gaji.app.keyword.service.AlertObserver;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,7 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "TBL_KEYWORD")
-public class Keyword implements AlertObserver {
+public class Keyword {
     @Id
     @Nationalized
     @Column(name = "WORD", nullable = false, length = 100)
@@ -22,13 +24,8 @@ public class Keyword implements AlertObserver {
 
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KeywordRegister> keywordRegisters;
-
-    @Override
-    public void alert(String message) {
-
-    }
     public Keyword(String word) {
         this.word = word;
     }
-    
+
 }
