@@ -54,7 +54,7 @@ public class ChatService {
 	}
 
 	public ModelAndView getChatPage(HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
-									String roomId, String userId, ModelAndView mav) {
+									String roomId, ModelAndView mav) {
 		
 		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
 	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
@@ -65,7 +65,6 @@ public class ChatService {
 	    } 
 		
 	    mav.addObject("roomId", roomId); 
-	    mav.addObject("userId", userId); 
 	    mav.setViewName("chatting/multichat");
 		
 		return mav;

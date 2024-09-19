@@ -245,7 +245,7 @@
 		const sellerId = '[[${sellerId}]]';
 	    const buyerId = '[[${buyerId}]]';	
 			
-		const senderId = '[[${userId}]]'; 
+		const senderId = '[[${member.userId}]]';
 		let senderType = '';
 
         if (senderId === sellerId) {
@@ -263,16 +263,9 @@
 
 		// WebSocket URL 생성
 		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
-		console.log("WebSocket URL:", wsUrl);
-
 
 		// WebSocket 연결 생성
 		const websocket = new WebSocket(wsUrl);
-
-		websocket.onerror = function(error) {
-			console.error("WebSocket Error: ", error);
-			alert("Failed to connect to WebSocket. Please check your connection and try again.");
-		};
 
 		let messageObj = {};
 		
@@ -330,6 +323,9 @@
 
 		websocket.onclose = function(event) {
 		    console.log("WebSocket connection closed: ", event);
+			
+			// 재연결 시도
+		    setTimeout(reconnect, 1000); // 1초 후에 재연결 시도
 		};
 		
 		///////////////////////////////////////////////////////

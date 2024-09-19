@@ -39,14 +39,16 @@ public class ChatController {
 										            @RequestParam("productSeq") Long productSeq) {
 
         Long buyerMemberSeq = userDetail.getMemberSeq();
-        String userId = userDetail.getUserId();
         
         ResponseEntity<String> responseEntity = chatService.createChatRoom(request, response, sellerMemberSeq, buyerMemberSeq, productSeq);
         String roomId = responseEntity.getBody();
 
         if (responseEntity.getStatusCode() == HttpStatus.OK && roomId != null) {
         	ModelAndView mav = new ModelAndView();
-            mav = chatService.getChatPage(request, sellerMemberSeq, buyerMemberSeq, roomId, userId, mav);
+            mav = chatService.getChatPage(request, sellerMemberSeq, buyerMemberSeq, roomId, mav);
+            
+            Member member = memberService.getInfo(buyerMemberSeq);
+            mav.addObject("member", member);
             
             return mav;
         }
