@@ -50,7 +50,7 @@ server:
     context-path: /gaji
 
 logging:
-  level:
-    root: DEBUG  # Set the default log level to DEBUG
+  level:  # Set the default log level to DEBUG
     # Example of setting specific package to DEBUG level
     org.springframework.security: DEBUG
+    root: trace
