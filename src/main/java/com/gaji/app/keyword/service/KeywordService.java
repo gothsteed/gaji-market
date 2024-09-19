@@ -19,8 +19,6 @@ public class KeywordService implements AlertSubject<Product>{
 
     private Set<AlertObserver<Product>> keywordSubscriber;
 
-
-
     public KeywordService(Set<AlertObserver<Product>> subscribers) {
         keywordSubscriber = subscribers;
     }
@@ -28,6 +26,7 @@ public class KeywordService implements AlertSubject<Product>{
     @Override
     public void attach(AlertObserver<Product> observer) {
         keywordSubscriber.add(observer);
+
     }
 
     @Override

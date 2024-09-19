@@ -49,7 +49,7 @@ public class KeywordController {
 	    
 	    // Convert to DTOs
 	    List<KeywordDTO> keywordDTOs = keywordList.stream()
-	        .map(kr -> new KeywordDTO(kr.getWord().getWord()))
+	        .map(kr -> new KeywordDTO(kr.getWord()))
 	        .collect(Collectors.toList());
 
 	    return ResponseEntity.ok(keywordDTOs);
