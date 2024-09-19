@@ -118,8 +118,7 @@
 		align-items: center;
 		overflow: hidden;
 	}
-	.preview_nickname1,
-	.preview_nickname2 {
+	.preview_nickname {
 		height: 25px;
 		font-weight: bold;
 		font-size: 13pt;
@@ -246,7 +245,7 @@
 		const sellerId = '[[${sellerId}]]';
 	    const buyerId = '[[${buyerId}]]';	
 			
-		const senderId = '[[${userId}]]'; 
+		const senderId = '[[${member.userId}]]';
 		let senderType = '';
 
         if (senderId === sellerId) {
@@ -264,16 +263,9 @@
 
 		// WebSocket URL 생성
 		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
-		console.log("WebSocket URL:", wsUrl);
-
 
 		// WebSocket 연결 생성
 		const websocket = new WebSocket(wsUrl);
-
-		websocket.onerror = function(error) {
-			console.error("WebSocket Error: ", error);
-			alert("Failed to connect to WebSocket. Please check your connection and try again.");
-		};
 
 		let messageObj = {};
 		
@@ -331,6 +323,9 @@
 
 		websocket.onclose = function(event) {
 		    console.log("WebSocket connection closed: ", event);
+			
+			// 재연결 시도
+		    setTimeout(reconnect, 1000); // 1초 후에 재연결 시도
 		};
 		
 		///////////////////////////////////////////////////////
@@ -375,12 +370,15 @@
 			<div style="border: 0px solid red; display: flex;">
 				<nav class="sidebar">
 					<a href="#" style="display: inline-block; width: 40px; height: 40px;">
-						<img class="profile_image" th:src="@{/images/mypage/nyang.jpg}">
+						<!-- profilePic이 null인 경우 기본 이미지를 표시 -->
+						<img class="profile_image" th:src="@{/images/mypage/basicimg.png}" th:if="${member.profilePic == null}">
+						<!-- profilePic이 null이 아닌 경우 사용자의 프로필 사진을 표시 -->
+						<img class="profile_image" th:src="@{'/images/mypage/' + ${member.profilePic}}" th:if="${member.profilePic != null}">
 					</a>
 				</nav>
 				<nav class="message_list">
 					<div class="nickname">
-						<div class="nickname_area"><span sec:authentication="principal.username"></span></div>
+						<div class="nickname_area"><span th:text="${member.nickname}"></span></div>
 					</div>
 					<div class="unread">
 						<div class="unread_label common_bg_hover">
@@ -396,7 +394,7 @@
 								</div>
 								<div style="flex: 1 0 0%; width: 0px;">
 									<div class="preview_title" style="display: flex; align-items: center;">
-										<span class="preview_nickname1">당근</span>
+										<span class="preview_nickname">당근</span>
 										<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
 										<div class="preview_time">오전 00:00<span></span></div>
 									</div>
@@ -424,7 +422,7 @@
 								<img class="profile_image" th:src="@{/images/mypage/basicimg.png}">
 							</div>
 							<div class="preview_title" style="display: flex; align-items: center;">
-								<span class="preview_nickname2">당근</span>
+								<span class="preview_nickname">당근</span>
 								<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
 							</div>
 						</div>
