@@ -81,10 +81,11 @@ public class Product {
     @Column(nullable = false, columnDefinition="NUMBER")
     private int likecount;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
-//    @JoinColumn(name = "keyword")
-//    private Keyword keyword;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "KEYWORD")
+    private Keyword keyword;
+
 
 
     public String getFirstImageName() {
@@ -104,6 +105,10 @@ public class Product {
     @JoinColumn(name="fkcategoryseq", referencedColumnName = "categoryseq", insertable = false, updatable = false)
     private Category category;
 
+    public void setKeyword(Keyword keyword) {
+        this.keyword = keyword;
+    }
+
 
     public void incrementLikeCount() {
         this.likecount += 1;
@@ -120,4 +125,7 @@ public class Product {
         this.writedate = this.writedate == null ? LocalDateTime.now() : this.writedate; // 설정한 날짜가 null(default) 이면 현재 시간 설정, null이 아니면 설정되어있는 날짜를 넣어준다.
     }
 
+    public String getKeywordString() {
+        return  keyword.getWord();
+    }
 }

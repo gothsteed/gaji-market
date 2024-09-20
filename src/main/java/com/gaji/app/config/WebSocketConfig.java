@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWebSocketHandler(), "/gaji/multichatstart")
+        registry.addHandler(chatWebSocketHandler(), "/multichatstart")
                 .addInterceptors(new ChatroomHandshakeInterceptor())
                 .setAllowedOrigins("*");
     }
