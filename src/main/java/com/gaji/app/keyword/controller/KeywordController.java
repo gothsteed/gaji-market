@@ -7,6 +7,7 @@ import com.gaji.app.keyword.dto.KeywordDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gaji.app.keyword.service.KeywordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,25 +21,29 @@ import com.gaji.app.member.service.MemberService;
 @Controller
 public class KeywordController {
 
-	 private MemberService memberService;
+	private MemberService memberService;
+	private KeywordService keywordService;
 
-    @Autowired
-    public KeywordController(MemberService memberService) {
-        this.memberService = memberService;
-    }
-	
+	@Autowired
+	public KeywordController(MemberService memberService, KeywordService keywordService) {
+		this.memberService = memberService;
+		this.keywordService = keywordService;
+	}
+
 	@ResponseBody
 	@PostMapping("/keyword/insertkeyword")
-	public ResponseEntity<Void> insertkeyword(@RequestParam String newKeyword, @AuthenticationPrincipal MemberUserDetail userDetail) {
+	public ResponseEntity<String> insertkeyword(@RequestParam String newKeyword, @AuthenticationPrincipal MemberUserDetail userDetail) {
 		
 		Long memberseq = userDetail.getMemberSeq();
-		boolean isInserted = memberService.addKeyword(newKeyword, memberseq);
-		
-		if (isInserted) {
-    		return ResponseEntity.ok().build();
-    	} else {
-    		return ResponseEntity.notFound().build();
-    	}
+
+		keywordService.registerKeyword(newKeyword, memberseq);
+		return ResponseEntity.ok().build();
+
+//		if (isInserted) {
+//
+//    	} else {
+//    		return ResponseEntity.notFound().build();
+//    	}
 	}
 	
 	@ResponseBody
@@ -61,6 +66,7 @@ public class KeywordController {
 	    Long memberseq = userDetail.getMemberSeq();
 
 	    boolean isDeleted = memberService.deleteKeyword(keywordname, memberseq);
+
 	    
 	    if (isDeleted) {
 	        return ResponseEntity.ok().build();
