@@ -265,7 +265,7 @@
 		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
 
 		// WebSocket 연결 생성
-		const websocket = new WebSocket(wsUrl);
+		let websocket = new WebSocket(wsUrl);
 
 		let messageObj = {};
 		
@@ -355,6 +355,21 @@
 			}
 			
 		});
+
+		// 웹소캣 에러찾기
+		websocket.onerror = function(error) {
+			console.error("WebSocket error: ", error);
+			alert("An error occurred: " + error.message);
+		};
+
+		// 웹소캣 재연결
+		websocket.onclose = function(event) {
+			console.log("WebSocket connection closed: ", event);
+			setTimeout(function() {
+				console.log("Reconnecting WebSocket...");
+				websocket = new WebSocket(wsUrl); // 연결 재시도
+			}, 5000); // 5초 후에 재시도
+		};
 		
 	}); // end of $(document).ready(function()){}) ----------
   </script>

@@ -1,5 +1,6 @@
 package com.gaji.app.mongo.controller;
 
+import com.gaji.app.mongo.dto.MessageDTO;
 import com.gaji.app.mongo.entity.Message;
 import com.gaji.app.mongo.repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,11 +79,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         messageRepository.save(enterMessage);
     }
 
-/*    @Override
+    @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
         String role = (String) session.getAttributes().get("role");
+
+        System.out.println("확인용 룸 " + roomId);
+        System.out.println("확인용 로그인유저 " + loginUserSeq);
+        System.out.println("확인용 롤 " + role);
+
 
         // 클라이언트에서 받은 메시지 처리 (MessageDTO 사용)
         MessageDTO messageDto = MessageDTO.convertMessage(textMessage.getPayload());
@@ -104,7 +110,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         for (WebSocketSession connectedSession : roomSessions.get(roomId)) {
             connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
         }
-    }*/
+    }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {

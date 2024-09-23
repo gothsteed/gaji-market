@@ -32,25 +32,29 @@ public class ChatService {
     	this.memberRepository = memberRepository;
     	this.messageRepository = messageRepository;
     }
-	
-	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response, 
-        										 Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
 
-	    Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
-	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
+	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response,
+												 Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
 
-	    if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
-	        String sellerId = sellerChatRoom.get().getUserId();
-	        String buyerId = buyerChatRoom.get().getUserId();
+		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
+		Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
-	        ChatRoom chatRoom = new ChatRoom(sellerId, buyerId, productSeq);
-	        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
+			String sellerId = sellerChatRoom.get().getUserId();
+			String buyerId = buyerChatRoom.get().getUserId();
 
-	        String roomId = savedChatRoom.get_id();
-	        return ResponseEntity.status(HttpStatus.OK).body(roomId.toString()); 
-	    } 
+			ChatRoom chatRoom = new ChatRoom(sellerId, buyerId, productSeq);
+			ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
-	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("채팅방 생성에 실패했습니다.");
+			if (savedChatRoom.get_id() != null) {
+				String roomId = savedChatRoom.get_id();
+				return ResponseEntity.status(HttpStatus.OK).body(roomId);
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("채팅방 생성에 실패했습니다. (roomId가 null입니다.)");
+			}
+		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("채팅방 생성에 실패했습니다.");
 	}
 
 	public ModelAndView getChatPage(HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
