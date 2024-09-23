@@ -81,7 +81,7 @@ public class KeywordService {
             initializeKeywordObservers(word);
         }
 
-        Set<KeywordObserver> observers = keywordObservers.get(word);
+        Set<KeywordObserver> observers = keywordObservers.get(word.getWord());
         for(KeywordObserver observer : observers) {
             observer.alert(product);
         }
