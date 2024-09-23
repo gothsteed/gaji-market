@@ -57,22 +57,5 @@ public class MainConfig {
         return new RestTemplate();
     }
 
-    @Bean
-    public Map<String, AlertSubject<Product>> keywordObserver(KeywordRepository keywordRepository, KeywordRegisterRepository keywordRegisterRepository, KeywordAlertRepository keywordAlertRepository) {
-        Map<String, AlertSubject<Product>> observers = new HashMap<>();
-
-        List<KeywordRegister> keywords = keywordRegisterRepository.findAll();
-
-        for(KeywordRegister keyword : keywords) {
-            if(!observers.containsKey(keyword.getWord())) {
-                observers.put(keyword.getWord(), new KeywordService(new HashSet<>()));
-            }
-
-            observers.get(keyword.getWord()).attach(new KeywordObserver(keyword, keywordAlertRepository));
-        }
-
-        return observers;
-    }
-
 }
 
