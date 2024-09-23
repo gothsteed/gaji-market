@@ -40,8 +40,9 @@ public class KeywordService {
         keywordRegisterRepository.findAll().forEach(this::registerKeyword);
     }
 
-    private void initializeKeywordObservers(String word) {
-        keywordRegisterRepository.findByWord(word).forEach(this::registerKeyword);
+    private void initializeKeywordObservers(Keyword word) {
+//        keywordRegisterRepository.findByWord(word).forEach(this::registerKeyword);
+        keywordRegisterRepository.findByKeyword(word).forEach(this::registerKeyword);
     }
 
     private void registerKeyword(KeywordRegister keywordRegister) {
@@ -75,8 +76,8 @@ public class KeywordService {
     }
 
     public void alert(Product product) {
-        String word = product.getKeywordString();
-        if(!keywordObservers.containsKey(word)) {
+        Keyword word = product.getKeyword();
+        if(!keywordObservers.containsKey(word.getWord())) {
             initializeKeywordObservers(word);
         }
 
