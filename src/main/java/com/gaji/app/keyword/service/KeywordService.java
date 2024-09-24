@@ -1,6 +1,7 @@
 package com.gaji.app.keyword.service;
 
 import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.domain.KeywordAlert;
 import com.gaji.app.keyword.domain.KeywordRegister;
 import com.gaji.app.keyword.repository.KeywordAlertRepository;
 import com.gaji.app.keyword.repository.KeywordRegisterRepository;
@@ -91,5 +92,10 @@ public class KeywordService {
     @Scheduled(fixedRate = 1800000)
     public void refreshKeywordObservers() {
         keywordObservers.clear();
+    }
+
+    public List<KeywordAlert> getKeywordAlert(long memberSeq) {
+
+        return keywordAlertRepository.findByMemberSeq(memberSeq);
     }
 }
