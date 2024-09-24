@@ -1,5 +1,10 @@
 package com.gaji.app.product.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CategoryDto {
 	
 	private Long categorySeq;
@@ -10,21 +15,12 @@ public class CategoryDto {
         this.name = name;
     }
 
-    // Getters and Setters
-    public Long getCategorySeq() {
-        return categorySeq;
-    }
-
-    public void setCategorySeq(Long categorySeq) {
-        this.categorySeq = categorySeq;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "CategoryDto{" +
+                "categorySeq=" + categorySeq +
+                ", name='" + name + '\'' +
+                '}';
     }
 
 }

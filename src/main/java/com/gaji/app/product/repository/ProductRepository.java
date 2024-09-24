@@ -129,5 +129,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
         return map;
     }
+
+    /*
+    @Query(value = "SELECT productseq.NEXTVAL FROM dual", nativeQuery = true)
+    Long getProductSeq(); // 시퀀스 값 가져오기
+    */
 }
 

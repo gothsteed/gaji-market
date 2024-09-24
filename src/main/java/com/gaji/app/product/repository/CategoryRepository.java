@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gaji.app.product.domain.ProductImage;
-import com.gaji.app.product.dto.CategoryDto;
 
 public interface CategoryRepository extends JpaRepository<ProductImage, Long> {
 	

@@ -42,6 +42,26 @@
             color: #888;
         }
 		
+		div.imgDrop{ 
+		 	display: inline-block; 
+		    width: 100%; 
+		    height: 100px;
+			overflow: auto; 
+		    background-color: #fff;
+		}
+		
+		#previewImg {
+		    display: flex;          /* Flexbox 사용 */
+		    flex-wrap: wrap;      /* 줄바꿈 허용 */
+		    gap: 10px;            /* 이미지 간격 */
+		}
+
+		.imgWrapper {
+		    display: flex;         /* Wrapper 내에서 flex 사용 */
+		    justify-content: center; /* 이미지 중앙 정렬 */
+		    align-items: center;   /* 세로 중앙 정렬 */
+		}
+		
 		span.delete{display:inline-block; width: 20px; color: #ff5353; text-align: center;} 
 		div.oneFileInfo:hover{background-color: rgb(250, 215, 205); color: #fff; cursor: pointer;}
 		span.fileName{padding-left: 10px;}
@@ -132,12 +152,33 @@
 		
 		let file_arr = []; // 첨부되어진 파일 정보를 담아둘 배열 
 		
-		document.getElementById('imageUpload').addEventListener('change', function(event) {
+		// == 파일 Drag & Drop 만들기 == //
+		$("div#imgDrop").on("dragenter", function(e){ /* "dragenter" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 최초로 들어왔을 때 */ 
+
+			e.preventDefault(); // 브라우저 기본 동작 막기
+			e.stopPropagation(); // 이벤트 버블링 막기
 			
+			
+		}).on("dragover", function(e){ /* "dragover" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 머물러 있는 중일 때. 필수이벤트이다. dragover 이벤트를 적용하지 않으면 drop 이벤트가 작동하지 않음 */
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).css("background-color", "#ffd8d8");
+		}).on("dragleave", function(e){ /* "dragleave" 이벤트는 Drag 한 파일이 드롭대상인 박스 밖으로 벗어났을 때  */
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).css("background-color", "#fff");
+		}).on("drop", function(e){      /* "drop" 이벤트는 드롭대상인 박스 안에서 Drag 한것을 Drop(Drag 한 파일(객체)을 놓는것) 했을 때. 필수이벤트이다. */
+			e.preventDefault();
+			$("span#imgInfo").css("display", "none");
+			var files = e.originalEvent.dataTransfer.files;  
+/*
+					 
+
 			const imgListPreview = document.getElementById('imgListPreview');
 			imgListPreview.innerHTML = ''; // 이전 파일 목록 리스트 없애기
 			
 			const files = event.target.files; // 사용자가 선택하 파일의 목록(fileList객체)
+			*/
 			
 			if(files !=null && files != undefined && files.length > 0){// 파일이 하나 이상 선택되었는지
 				
@@ -170,7 +211,13 @@
 							    "<span class='fileSize'>("+fileSize+" MB)</span>" +
 							    "<span class='delete'><i class='far fa-minus-square'></i></span>" +
 							    "<span class='clear'></span></div>";
-						            
+						   
+						
+						const fileReader = new FileReader();
+						fileReader.readAsDataURL(f); // FileReader.readAsDataURL() --> 파일을 읽고, result속성에 파일을 나타내는 URL을 저장 시켜준다. 
+						fileReader.onload = function() { // FileReader.onload --> 파일 읽기 완료 성공시에만 작동하도록 하는 것임. 
+							$("#previewImg").append("<div class='imgWrapper'><img src='" + event.target.result + "' alt='" + fileName + "' class='imgPreview' style='width:150px; height:150px;' /></div>");
+						};     
 					}	
 				}// end of for----------------------
 				
@@ -179,25 +226,34 @@
 				// 파일이 유효하지 않으면 입력 필드를 리셋
 					document.getElementById('imageUpload').value = ''; // 파일 입력 필드 리셋
 					return; // 함수 종료
-				} else{
-					$('#imgListPreview').append(html);
 				}
+				$(this).append(html);    
 				
 			}// end of if----------------
 			
+			$(this).css("background-color", "#fff");
 		});	
+		
+		
 		
 		$(document).on("click", "span.delete", function(e){
 				
-				let delSpan = $(e.target).closest("span.delete");
-				let idx = $("span.delete").index(delSpan);
+			let delSpan = $(e.target).closest("span.delete");
+			let idx = $("span.delete").index(delSpan);
 				//alert("인덱스 : " +idx);
 				
-				file_arr.splice(idx, 1);// 드롭대상인 박스 안에 첨부파일을 드롭하면 파일들을 담아둘 배열인 file_arr 에서 파일을 제거시키도록 한다. 
+			file_arr.splice(idx, 1);// 드롭대상인 박스 안에 첨부파일을 드롭하면 파일들을 담아둘 배열인 file_arr 에서 파일을 제거시키도록 한다. 
 			//	console.log(file_arr);
 				
-		    	$(delSpan).closest("div.oneFileInfo").remove();
+		    $(delSpan).closest("div.oneFileInfo").remove();
 		 //   	console.log("file_arr2"+file_arr);
+		 
+		 	// 미리보기 이미지 삭제
+		    $(".imgWrapper").eq(idx).remove();
+			
+		 	if(file_arr.length == 0){
+		 		$("span#imgInfo").css("display", "inline");
+		 	}
 		});	
 		
 		
@@ -305,11 +361,14 @@
 
 	function btnSubmit(){
 		
+		console.log("btnSubmit 호출됨"); // 로그 추가
+		
 		var title = $("input:text[id='title']").val().trim();
-		var selectCategory = $('transactionType').val();
-		var selectElement = $('category').val();
-		var description = $("input:text[id='description']").val().trim();
+		var salesType = $('#salesType').val();
+		var category = $('#category').val();
+		var description = $("textarea[id='description']").val().trim();
 		var address = $("input:text[id='address']").val().trim();
+		var detailaddress = $("input:text[id='detailAddress']").val().trim();
 		let b_requiredInfo = true;
 		
 		if(title == ""){
@@ -318,15 +377,15 @@
 		    return false; // break; 라는 뜻이다.
 		}
 		
-		if(selectElement == ""){
-			alert("카테고리를 선택해 주세요.");
+		if(salesType == ""){
+			alert("거래 방법을 선택해 주세요.");
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
 				
 		
-		if(selectElement == ""){
-			alert("거래 방식을 선택해 주세요.");
+		if(category == ""){
+			alert("판매 카테고리를 선택해 주세요.");
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
@@ -360,12 +419,15 @@
         <div class="container mt-5" style="width: 80%;">
             <h1 class="mb-4">내 물건 팔기</h1>
             <hr style="border: solid 1px;">
-            <form name="registerFrm">
+           	<form name="registerFrm" enctype="multipart/form-data">
                 <!-- 이미지 첨부 -->
                 <div class="form-group">
-                    <label for="imageUpload">상품 이미지</label>
-                    <input type="file" class="form-control-file" id="imageUpload" multiple>
-					<div id="imgListPreview" style="border: solid 1px red;"></div>
+                    <label for="imgDrop">상품 이미지</label>
+                    <!-- <input type="file" class="form-control-file" id="imageUpload" multiple> -->
+					
+					<div id="imgDrop" class="imgDrop border border-secondary" style="font-size: 10pt;"><span id="imgInfo">이곳에 파일을 올려주세요.</span></div>
+					
+					<div id="previewImg" style="border: solid 1px lightgray;"></div>
                 </div>
 
                 <hr>
@@ -374,7 +436,7 @@
                 <div class="form-group d-flex">
                     <span for="title" style="width: 20%; display: inline-flex; align-items: center;">상품명</span>
                     <div class="relative-container" style="width: 70%;">
-                        <input type="text" class="form-control" id="title" maxlength="40" placeholder="상품 제목을 입력하세요" >
+                        <input type="text" class="form-control" id="title" name="title" maxlength="40" placeholder="상품 제목을 입력하세요" >
                         <span class="char-count" id="titlecharCount">0/40</span>
                     </div>
                 </div>
@@ -384,24 +446,24 @@
 				<!-- 카테고리 선택 -->
 				<div class="form-group d-flex">
 				    <span style="width: 20%; display: inline-flex; align-items: center;">카테고리</span>
-					<select class="form-control" style="width: 70%;" id="category" name="category">
+					<select class="form-control" style="width: 70%;" id="category" name="fkCategorySeq">
 						<option value="">카테고리를 선택하세요</option>
-					    <option th:each="category : ${categoryNames}" 
+					    <option th:each="category : ${categories}" 
 					            th:value="${category.categorySeq}" 
 					            th:text="${category.name}">카테고리</option>
 					</select>
 				</div>
-
+				
 				<hr>
 
                 <!-- 거래 방식 선택 -->
                 <div class="form-group d-flex">
                     <span style="width: 20%; display: inline-flex; align-items: center;">거래 방식</span>
-                    <select class="form-control" style="width: 70%;" id="transactionType" >
+                    <select class="form-control" style="width: 70%;" id="salesType" name="salesType" >
                         <option value="">거래 방식을 선택하세요</option>
-                        <option value="sell">판매</option>
-                        <option value="giveaway">나눔</option>
-                        <option value="auction">경매</option>
+                        <option value="1">판매</option>
+                        <option value="2">나눔</option>
+                       <!-- <option value="auction">경매</option> -->
                     </select>
                 </div>
 
@@ -411,9 +473,9 @@
                 <div class="form-group d-flex">
                     <span for="price" style="width: 20%; display: inline-flex; align-items: center;">가격</span>
                     <div style="width: 70%;">
-                        <input type="number" class="form-control" id="price" placeholder="가격을 입력하세요">
-                        <input type="checkbox" id="nego">
-                        <label class="form-check-label" for="nego">
+                        <input type="number" class="form-control" id="price" name="price" placeholder="가격을 입력하세요">
+                        <input type="checkbox" id="negostatus" value="true">
+                        <label class="form-check-label" for="negostatus">
                             가격 제안 받기
                         </label>
                     </div>
@@ -425,7 +487,7 @@
                 <div class="form-group d-flex">
                     <label for="description" style="width: 20%;">상품 설명</label>
                     <div class="relative-container" style="width: 70%;">
-                        <textarea class="form-control" id="description" rows="4" maxlength="2000" placeholder="상품에 대한 설명을 입력하세요"></textarea>
+                        <textarea class="form-control" id="description" name="content" rows="4" maxlength="2000" placeholder="상품에 대한 설명을 입력하세요"></textarea>
                         <div class="char-count" id="charCount">0/2000</div>
                     </div>
                 </div>
@@ -436,7 +498,7 @@
 				<div class="form-group d-flex">
 				    <span for="keyword" style="width: 20%; display: inline-flex; align-items: center;">키워드</span>
 				    <div class="relative-container" style="width: 70%;">
-				        <input type="text" class="form-control" id="keyword" maxlength="40" placeholder="한 개의 키워드를 입력하세요" >
+				        <input type="text" class="form-control" id="keyword" name="keyword" maxlength="40" placeholder="한 개의 키워드를 입력하세요" >
 				        <span class="char-count" id="charCount">0/40</span>
 				    </div>
 				</div>
@@ -449,7 +511,7 @@
 					<div style="width: 70%;">
 						<button type="button" id="searchAddressBtn" style="margin-bottom: 10px;">주소 검색</button>
 						<input type="text" class="form-control" style="margin-bottom: 10px;" name="address" id="address" placeholder="주소를 검색하세요" readonly />
-						<input type="text" class="form-control" name="detailaddress" id="detailAddress"  placeholder="추가 주소" />  
+						<input type="text" class="form-control" name="detailAddress" id="detailAddress"  placeholder="추가 주소" />  
 					</div>                       
 				</div>
 				

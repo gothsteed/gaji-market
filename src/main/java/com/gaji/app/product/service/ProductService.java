@@ -1,11 +1,14 @@
 package com.gaji.app.product.service;
 
+import com.gaji.app.member.domain.Member;
 import com.gaji.app.product.domain.Category;
+import com.gaji.app.product.domain.CompleteStatus;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
 import com.gaji.app.product.dto.CategoryDto;
 import com.gaji.app.product.dto.ProductFirstDto;
 import com.gaji.app.product.dto.ProductListDto;
+import com.gaji.app.product.dto.ProductRegistDto;
 import com.gaji.app.product.dto.ProductSearchParamDto;
 import com.gaji.app.product.repository.CategoryRepository;
 import com.gaji.app.product.repository.ProductImageRepository;
@@ -124,7 +127,8 @@ public class ProductService {
 		
 		 List<Object[]> categoryObj = categoryRepository.getAllCategoryInfo();// Native Query 호출
 		 List<CategoryDto> categoryDto = new ArrayList<>();
-		    
+		 
+		 
 		 for (Object[] row : categoryObj) {
 			 Long categorySeq = ((Number) row[0]).longValue(); // categoryseq
 		     String name = (String) row[1]; // name
@@ -135,5 +139,81 @@ public class ProductService {
 		
 		// return categoryRepository.getAllCategoryInfo(); // DTO 리스트 직접 반환
 	}
-    
+
+
+	// product seq 채번해오기
+/*	public Long getProductSeq() {
+		Long productSeq = productRepository.getProductSeq();
+		return productSeq;
+	}
+*/
+
+	public int productRegister_end(ProductRegistDto prdto) {
+		  // 각 필드가 null인지 확인하고 값 출력
+	    if (prdto.getProductSeq() == null) {
+	        System.out.println("productSeq is null");
+	    } else {
+	        System.out.println("productSeq: " + prdto.getProductSeq());
+	    }
+
+	    if (prdto.getFkCategorySeq() == null) {
+	        System.out.println("fkCategorySeq is null");
+	    } else {
+	        System.out.println("fkCategorySeq: " + prdto.getFkCategorySeq());
+	    }
+
+	    if (prdto.getTitle() == null) {
+	        System.out.println("Title is null");
+	    } else {
+	        System.out.println("Title: " + prdto.getTitle());
+	    }
+
+	    if (prdto.getContent() == null) {
+	        System.out.println("Content is null");
+	    } else {
+	        System.out.println("Content: " + prdto.getContent());
+	    }
+
+	    if (prdto.getPrice() == null) {
+	        System.out.println("Price is null");
+	    } else {
+	        System.out.println("Price: " + prdto.getPrice());
+	    }
+
+	    if (prdto.getSalesType() == null) {
+	        System.out.println("SalesType is null");
+	    } else {
+	        System.out.println("SalesType: " + prdto.getSalesType());
+	    }
+
+	    if (prdto.getAddress() == null) {
+	        System.out.println("Address is null");
+	    } else {
+	        System.out.println("Address: " + prdto.getAddress());
+	    }
+		
+		// ProductRegistDto를 Product 엔티티로 변환
+	    Product product = new Product(
+	    	    prdto.getFkCategorySeq(), 
+	    	    prdto.getTitle(), 
+	    	    prdto.getContent(), 
+	    	    prdto.getPrice(), 
+	    	    prdto.getSalesType(), 
+	    	    prdto.getAddress(),
+	    	    CompleteStatus.FOR_SALE,
+	    	    prdto.getEndDateTime()
+	    );
+	    
+		try {
+			Product savedProduct = productRepository.save(product);
+		
+			System.out.println("111111111111111111확인용 : " + savedProduct.getProductseq() != null ? 1:0);
+			return savedProduct.getProductseq() != null ? 1:0;
+	
+		} catch (Exception e) {
+            // 예외가 발생하면 실패를 나타내는 0을 반환
+            e.printStackTrace();
+            return 0;
+        }
+	}
 }

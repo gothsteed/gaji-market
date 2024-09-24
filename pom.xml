@@ -141,6 +141,11 @@
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.spring</groupId>
+			<artifactId>app</artifactId>
+			<version>1.0.0-BUILD-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

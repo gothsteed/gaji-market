@@ -70,15 +70,18 @@ public class Product {
 
     @Column(nullable = false, length = 200)
     private String address;
+    
+    @Column(nullable = true, length = 200)
+    private String detailaddress;
 
 
-    @Column(nullable = false, columnDefinition="DATE")
+    @Column(nullable = false, columnDefinition="DATE default sysdate")
     private LocalDateTime startdatetime;
 
     @Column(nullable = false, columnDefinition="DATE")
     private LocalDateTime enddatetime;
 
-    @Column(nullable = false, columnDefinition="NUMBER")
+    @Column(nullable = false, columnDefinition="NUMBER default 0")
     private int likecount;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
@@ -118,6 +121,18 @@ public class Product {
     @PrePersist // insert 전에 호출
     public void prePersist() {
         this.writedate = this.writedate == null ? LocalDateTime.now() : this.writedate; // 설정한 날짜가 null(default) 이면 현재 시간 설정, null이 아니면 설정되어있는 날짜를 넣어준다.
+    }
+    
+
+    public Product(Long fkcategoryseq, String title, String content, int price, String salestype, String address, CompleteStatus completestatus, String negostatus) {
+        this.fkcategoryseq = fkcategoryseq;
+        this.title = title;
+        this.content = content;
+        this.price = price;
+        this.salestype = salestype;
+        this.address = address;
+        this.completestatus = CompleteStatus.FOR_SALE; // 또는 여기서 초기값 설정
+        this.enddatetime = LocalDateTime.now().plusMonths(1); // 1개월 후 설정
     }
 
 }
