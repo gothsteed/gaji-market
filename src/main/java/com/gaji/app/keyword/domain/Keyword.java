@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -22,10 +23,13 @@ public class Keyword {
     @Column(name = "WORD", nullable = false, length = 100)
     private String word;
 
-    @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<KeywordRegister> keywordRegisters;
     public Keyword(String word) {
         this.word = word;
     }
+
+    //todo: n + 1 문제 해결
+    @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KeywordRegister> keywordRegisters;
+
 
 }

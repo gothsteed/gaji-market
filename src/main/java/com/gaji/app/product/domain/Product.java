@@ -84,10 +84,11 @@ public class Product {
     @Column(nullable = false, columnDefinition="NUMBER default 0")
     private int likecount;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
-//    @JoinColumn(name = "keyword")
-//    private Keyword keyword;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "KEYWORD")
+    private Keyword keyword;
+
 
 
     public String getFirstImageName() {
@@ -106,6 +107,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name="fkcategoryseq", referencedColumnName = "categoryseq", insertable = false, updatable = false)
     private Category category;
+
+    public void setKeyword(Keyword keyword) {
+        this.keyword = keyword;
+    }
 
 
     public void incrementLikeCount() {
@@ -135,4 +140,7 @@ public class Product {
         this.enddatetime = LocalDateTime.now().plusMonths(1); // 1개월 후 설정
     }
 
+    public String getKeywordString() {
+        return  keyword.getWord();
+    }
 }

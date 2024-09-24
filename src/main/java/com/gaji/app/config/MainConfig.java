@@ -1,5 +1,15 @@
 package com.gaji.app.config;
 
+import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.domain.KeywordRegister;
+import com.gaji.app.keyword.repository.KeywordAlertRepository;
+import com.gaji.app.keyword.repository.KeywordRegisterRepository;
+import com.gaji.app.keyword.repository.KeywordRepository;
+import com.gaji.app.keyword.service.AlertObserver;
+import com.gaji.app.keyword.service.AlertSubject;
+import com.gaji.app.keyword.service.KeywordObserver;
+import com.gaji.app.keyword.service.KeywordService;
+import com.gaji.app.product.domain.Product;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -10,6 +20,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class MainConfig {

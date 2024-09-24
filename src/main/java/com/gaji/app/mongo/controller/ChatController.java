@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
-import com.gaji.app.mongo.entity.ChatRoom;
+import com.gaji.app.member.domain.Member;
+import com.gaji.app.member.service.MemberService;
+import com.gaji.app.mongo.dto.ChatRoomWithMessages;
 import com.gaji.app.mongo.service.ChatService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +24,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ChatController {
 
     private ChatService chatService;
+    private MemberService memberService;
 
     @Autowired
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, MemberService memberService) {
         this.chatService = chatService;
+        this.memberService = memberService;
     }
     
     @GetMapping("chatting")
@@ -36,14 +39,16 @@ public class ChatController {
 										            @RequestParam("productSeq") Long productSeq) {
 
         Long buyerMemberSeq = userDetail.getMemberSeq();
-        String userId = userDetail.getUserId();
         
         ResponseEntity<String> responseEntity = chatService.createChatRoom(request, response, sellerMemberSeq, buyerMemberSeq, productSeq);
         String roomId = responseEntity.getBody();
 
         if (responseEntity.getStatusCode() == HttpStatus.OK && roomId != null) {
         	ModelAndView mav = new ModelAndView();
-            mav = chatService.getChatPage(request, sellerMemberSeq, buyerMemberSeq, roomId, userId, mav);
+            mav = chatService.getChatPage(request, sellerMemberSeq, buyerMemberSeq, roomId, mav);
+            
+            Member member = memberService.getInfo(buyerMemberSeq);
+            mav.addObject("member", member);
             
             return mav;
         }
@@ -55,12 +60,25 @@ public class ChatController {
         return errorMav;
     }
     
-    @PostMapping("myChatting")
-    public ResponseEntity<List<ChatRoom>> showChatRoom(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal MemberUserDetail userDetail) {
-    	
-    	String userId = userDetail.getUserId();
-    	
-    	return chatService.showChatRoom(request, response, userId);
+    @GetMapping("myChatting")
+    public ModelAndView showChatRoom(HttpServletRequest request, HttpServletResponse response, 
+                                     @AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
+        
+        Long memberSeq = userDetail.getMemberSeq();
+        String userId = userDetail.getUserId();
+        
+        // 사용자 정보 가져오기
+        Member member = memberService.getInfo(memberSeq);
+        mav.addObject("member", member);
+        
+        // 채팅방 목록 가져오기
+        ResponseEntity<List<ChatRoomWithMessages>> chatRoomResponse = chatService.showChatRoom(request, response, userId);
+        List<ChatRoomWithMessages> chatRooms = chatRoomResponse.getBody();
+        mav.addObject("chatRooms", chatRooms);
+        
+        mav.setViewName("chatting/multichat");
+        
+        return mav;
     }
     
 }

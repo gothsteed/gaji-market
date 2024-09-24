@@ -18,5 +18,6 @@ public interface KeywordRegisterRepository extends JpaRepository<KeywordRegister
     
     Optional<KeywordRegister> findByKeywordAndMember_MemberSeq(Keyword keyword, Long memberSeq);
 
+    List<KeywordRegister> findByKeyword(Keyword word);
 }
 

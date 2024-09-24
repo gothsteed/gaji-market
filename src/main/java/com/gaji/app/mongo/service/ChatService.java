@@ -1,5 +1,6 @@
 package com.gaji.app.mongo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,8 +11,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.member.repository.MemberRepository;
+import com.gaji.app.mongo.dto.ChatRoomWithMessages;
 import com.gaji.app.mongo.entity.ChatRoom;
+import com.gaji.app.mongo.entity.Message;
 import com.gaji.app.mongo.repository.ChatRoomRepository;
+import com.gaji.app.mongo.repository.MessageRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +25,12 @@ public class ChatService {
 
     private ChatRoomRepository chatRoomRepository;
     private MemberRepository memberRepository;
+    private MessageRepository messageRepository;
     
-    public ChatService(ChatRoomRepository chatRoomRepository, MemberRepository memberRepository) {
+    public ChatService(ChatRoomRepository chatRoomRepository, MemberRepository memberRepository, MessageRepository messageRepository) {
     	this.chatRoomRepository = chatRoomRepository;
     	this.memberRepository = memberRepository;
+    	this.messageRepository = messageRepository;
     }
 	
 	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response, 
@@ -48,7 +54,7 @@ public class ChatService {
 	}
 
 	public ModelAndView getChatPage(HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
-									String roomId, String userId, ModelAndView mav) {
+									String roomId, ModelAndView mav) {
 		
 		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
 	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
@@ -59,17 +65,24 @@ public class ChatService {
 	    } 
 		
 	    mav.addObject("roomId", roomId); 
-	    mav.addObject("userId", userId); 
 	    mav.setViewName("chatting/multichat");
 		
 		return mav;
 	}
 
-	public ResponseEntity<List<ChatRoom>> showChatRoom(HttpServletRequest request, HttpServletResponse response, String userId) {
-        
-		List<ChatRoom> roomList = chatRoomRepository.findBySellerIdOrBuyerId(userId);
-        
-		return ResponseEntity.ok().body(roomList);
-    }
+	public ResponseEntity<List<ChatRoomWithMessages>> showChatRoom(HttpServletRequest request, HttpServletResponse response, String userId) {
+	    
+		// 채팅방 리스트 가져오기
+	    List<ChatRoom> roomList = chatRoomRepository.findBySellerIdOrBuyerId(userId);
+
+	    // 각 채팅방의 roomId를 사용하여 이전 메시지 가져오기
+	    List<ChatRoomWithMessages> chatRoomsWithMessages = new ArrayList<>();
+	    for (ChatRoom room : roomList) {
+	        List<Message> previousMessages = messageRepository.findAllByRoomId(room.get_id());
+	        chatRoomsWithMessages.add(new ChatRoomWithMessages(room, previousMessages));
+	    }
+
+	    return ResponseEntity.ok().body(chatRoomsWithMessages);
+	}
 
 }
