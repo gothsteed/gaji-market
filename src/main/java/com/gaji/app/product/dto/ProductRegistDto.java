@@ -1,5 +1,8 @@
 package com.gaji.app.product.dto;
 
+import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.product.domain.CompleteStatus;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,15 +17,15 @@ public class ProductRegistDto {
     private Integer price;         // PRICE
     private String negoStatus;     // NEGOSTATUS (boolean 대신 String으로 처리)
     private String salesType;      // SALESTYPE
-    private String completeStatus;  // COMPLETESTATUS
+    private CompleteStatus completeStatus;  // COMPLETESTATUS
     private String writeDate;      // WRITEDATE (String으로 처리, 필요시 변환)
     private Integer reuploadCount; // REUPLOADCOUNT
     private Integer viewCount;     // VIEWCOUNT
     private String address;        // ADDRESS
-    private String detailaddress;
+    private String detailAddress;
     private Long fkMemberSeq;      // FKMEMBERSEQ (nullable이므로 Long)
     private String startDateTime;  // STARTDATETIME (String으로 처리, 필요시 변환)
     private String endDateTime;    // ENDDATETIME (String으로 처리, 필요시 변환)
     private Integer likeCount;     // LIKECOUNT
-    private String keyword;        // KEYWORD
+    private Keyword keyword;        // KEYWORD
 }

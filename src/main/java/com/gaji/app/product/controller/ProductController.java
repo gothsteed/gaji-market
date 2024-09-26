@@ -1,6 +1,9 @@
 package com.gaji.app.product.controller;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
+import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.service.KeywordService;
+import com.gaji.app.member.dto.MemberDTO;
 import com.gaji.app.member.service.MemberService;
 import com.gaji.app.product.domain.Product;
 import com.gaji.app.product.domain.ProductImage;
@@ -10,6 +13,7 @@ import com.gaji.app.product.service.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +29,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +52,9 @@ public class ProductController {
 
     @Autowired
     private MemberService memberService;
+    
+    @Autowired
+    private KeywordService keywordService;
 
     @GetMapping("productList")
     public String productList(Model model,
@@ -77,8 +88,16 @@ public class ProductController {
     public String productRegister(Model model) {
     	List<CategoryDto> categories = productService.getAllCategoryInfo();
     	
+    	// 현재 로그인된 사용자 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MemberUserDetail userDetail = (MemberUserDetail) authentication.getPrincipal();
+        Long memberSeq  = userDetail.getMemberSeq();
+    	
     	// 모델에 카테고리 정보를 추가
         model.addAttribute("categories", categories);
+        
+        // 모델에 로그인 정보를 추가
+        model.addAttribute("memberSeq", memberSeq);
         
         return "product/productregister";
     }
@@ -119,16 +138,21 @@ public class ProductController {
     }
     
     @PostMapping("productRegister/end")
-    public ModelAndView productRegister_end(ModelAndView mav, HttpServletRequest request, MultipartHttpServletRequest mtp_request, ProductRegistDto prdto) {
+    public ModelAndView productRegister_end( @Valid ProductRegistDto prdto, BindingResult bindingResult,  ModelAndView mav, HttpServletRequest request, MultipartHttpServletRequest mtp_request) {
         
+    	if (bindingResult.hasErrors()) {
+            mav.addObject("errors", bindingResult.getAllErrors());
+            mav.setViewName("error");
+            return mav;
+        }
+    	
+    	System.out.println("*********컨트롤러까지는 넘어왔다. ");
     	List<MultipartFile> fileList = mtp_request.getFiles("file_arr"); // getFile는 단수 개, getFiles는 List로 반환
 
 		// WAS 의 webapp 의 절대경로 알아오기
 		HttpSession session = mtp_request.getSession();
 		String root = session.getServletContext().getRealPath("/");
 		String path = root+"resources"+File.separator+"files"+File.separator;
-		
-		System.out.println("~~~~ 확인용 업로드 path => " + path);
 		
 		File dir = new File(path);
 		if(!dir.exists()) { // community_attach_file 이라는 폴더가 없다면 생성하기
@@ -182,47 +206,63 @@ public class ProductController {
 		/*Long productSeq = productService.getProductSeq();*/
 		//prdto.setProductSeq(productSeq); 
 		
-		if ("true".equals(prdto.getNegoStatus())) {
-		    // 체크된 경우의 로직
-			prdto.setNegoStatus("0");
-		} else {
-		    // 체크되지 않은 경우의 로직
-			prdto.setNegoStatus("1");
+		System.out.println("!!!!!!!!!!1111111111111 확인용 : " + prdto.getNegoStatus());
+		
+		if (prdto.getNegoStatus() == null || "false".equals(prdto.getNegoStatus())) {
+		    prdto.setNegoStatus("1"); // 체크 해제 또는 NULL인 경우
+		} else if ("true".equals(prdto.getNegoStatus())) {
+		    prdto.setNegoStatus("0"); // 체크된 경우
 		}
 		
+		System.out.println("!!!!!!!!!!2222222222222 확인용 : " + prdto.getNegoStatus());
 		
-		int n = productService.productRegister_end(prdto);
+		int n1 = productService.productRegister_end(prdto); // product 테이블에 글 내용 insert 결과 
+		int n2 = 1; // keyword 인서트 확인
+		int n3 = 1; // 첨부파일 insert 성공여부 확인할 변수
 		
-		int result = 0;
-		
-		if(n == 1) {
-			result = 1;
+		if(n1 == 1 && prdto.getKeyword() != null) {
+			boolean isSuccess = keywordService.insertKeyword(prdto.getKeyword());
 			
-		}/*
-		if(n == 1 && fileList != null && fileList.size() > 0) {
+			if (isSuccess) { // 성공 처리 (중복이거나 삽입 성공)
+		        n2 = 1;
+		    } else { // 실패 처리
+		    	n2 = 0;
+		    }
+		}
+		
+		if(n1 == 1 && fileList != null && fileList.size() > 0) { // 첨부 파일 DB에 저장하기
 			int cnt = 0;
+			List<ProductImage> productImageList = new ArrayList<>();
 			
 			for(int i=0; i<fileList.size(); i++) {
-				Map<String, Object> paraMap = new HashMap<>();
+				ProductImage productImg = new ProductImage();
 				
-				paraMap.put("fk_community_seq", cvo.getCommunity_seq()); 
-				paraMap.put("orgfilename", arr_attachOrgFilename[i]); 
-				paraMap.put("filename", arr_attachNewFilename[i]); 
-				paraMap.put("filesize", arr_attachFilesize[i]); 
+				productImg.setFkproductseq(prdto.getProductSeq());
+				productImg.setOriginalname(arr_attachOrgFilename[i]);
+				productImg.setFilename(arr_attachNewFilename[i]);
 				
-				int attach_update_result = service.community_attachfile_insert(paraMap);
+				productImageList.add(productImg);
 				
-				if(attach_update_result == 1) {
-        			cnt++;
-        		}
-				
-			} // end of for ----------
+//				Map<String, Object> paraMap = new HashMap<>();
+//				
+//				paraMap.put("fkproductseq", prdto.getProductSeq()); 
+//				paraMap.put("originalname", arr_attachOrgFilename[i]); 
+//				paraMap.put("filename", arr_attachNewFilename[i]); 
+//			paraMap.put("filesize", arr_attachFilesize[i]); 
+			} // end of for ----------	
 			
-			if(cnt == fileList.size()) { // insert 가 성공되어지면 cnt 와 추가 이미지 파일의 갯수가 같아진다.
-        		result = 1;
+			int attach_update_result = productService.product_attachfile_insert(productImageList);
+			
+			if(!(attach_update_result == fileList.size())) { // insert 가 성공되어지면 추가 이미지 파일의 갯수가 같아진다. 다른 경우 insert 실패!
+        		n3 = 0;
         	}
-		}*/
-		if(result == 1) {
+		}
+		
+		System.out.println("확인용 n1 : "+ n1);
+		System.out.println("확인용 n2 : "+ n2);
+		System.out.println("확인용 n3 : "+ n3);
+		
+		if(n1*n2*n3 == 1) {
 			mav.addObject("message", "제품 등록에 성공하였습니다!");
 			mav.addObject("loc", "http://localhost:8080/gaji/productList");
 			mav.setViewName("msg");
