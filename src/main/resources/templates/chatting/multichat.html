@@ -239,13 +239,13 @@
 		$("div.more_btn_wrapper").click(function(){
 			$("div.option_container").fadeToggle();
 		});
-		
+
 		///////////////////////////////////////////////////////
-		
-		const sellerId = '[[${sellerId}]]';
-	    const buyerId = '[[${buyerId}]]';	
-			
-		const senderId = '[[${member.userId}]]';
+
+		const sellerId = '[[${sellerMemberSeq}]]';
+	    const buyerId = '[[${buyerMemberSeq}]]';
+
+		const senderId = '[[${loginUserSeq}]]';
 		let senderType = '';
 
         if (senderId === sellerId) {
@@ -253,22 +253,22 @@
         } else if (senderId === buyerId) {
             senderType = 'BUYER';
         } else {
-            senderType = 'UNKNOWN'; 
+            senderType = 'UNKNOWN';
         }
-				
+
 		// 현재 URL과 경로를 기반으로 WebSocket URL 생성
 		const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 		const host = window.location.host; // 예: localhost:8080
 		const roomId = '[[${roomId}]]';
 
 		// WebSocket URL 생성
-		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
+		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId +"&sellerId=" + sellerId + "&buyerId=" + buyerId;
 
 		// WebSocket 연결 생성
-		const websocket = new WebSocket(wsUrl);
+		let websocket = new WebSocket(wsUrl);
 
 		let messageObj = {};
-		
+
 		// WebSocket 이벤트 핸들러 설정
 		// 웹소켓에 최초로 연결이 되었을 경우에 실행되어지는 콜백함수 정의하기
 		websocket.onopen = function() {
@@ -279,40 +279,40 @@
 		// 메시지 수신시 콜백함수 정의하기
 		websocket.onmessage = function(event){
 			const message = JSON.parse(event.data);
-			
+
 			const now = new Date();
-							
+
 			let ampm = "오전 ";
 			let hours = now.getHours();
-		
+
 			if(hours > 12) {
 				hours = hours - 12;
 				ampm = "오후 ";
 			}
-			
+
 			if(hours == 0) {
 				hours = 12;
 			}
-			
+
 			if(hours == 12) {
 				ampm = "오후 ";
 			}
-			
+
 			let minutes = now.getMinutes();
-			
+
 			if(minutes < 10) {
 				minutes = "0" + minutes;
 			}
-			
+
 			const currentTime = ampm + hours + ":" + minutes;
-			
+
 			let html = '';
 			if (message.senderId == senderId) {
 			    html = `<div style='background: #b287f7; color: #fff; display: inline-block; max-width: 60%; float: right; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 8pt;'>${currentTime}</div><div style='clear: both;'>&nbsp;</div>`;
 			} else {
-           		html = `<div style='display: flex;'><span style='display: inline-block; margin-right: 2%;' class='profile_image'></span><div style='background: #eaebee; display: inline-block; max-width: 60%; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; padding: 20px 0 0 5px; font-size: 8pt;'>${currentTime}</div></div><div style='clear: both;'>&nbsp;</div>`;																																													
+           		html = `<div style='display: flex;'><span style='display: inline-block; margin-right: 2%;' class='profile_image'></span><div style='background: #eaebee; display: inline-block; max-width: 60%; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; padding: 20px 0 0 5px; font-size: 8pt;'>${currentTime}</div></div><div style='clear: both;'>&nbsp;</div>`;
 			}
-			
+
 			$("div.chat_message_list").append(html);
 			$("div.chat_message_list").scrollTop(99999999);
 		};
@@ -324,38 +324,54 @@
 		websocket.onclose = function(event) {
 		    console.log("WebSocket connection closed: ", event);
 		};
-		
+
 		///////////////////////////////////////////////////////
-				
+
 		// 메시지 입력후 엔터하기
 		$("input#message").keyup(function(e){
 			if(e.keyCode == 13){
 				$("input#btnSendMessage").click();
 			}
 		});
-		
+
 		// 메시지 보내기
 		$("input#btnSendMessage").click(function(){
-			
+
 			if($("input#message").val().trim() != ""){
 				let messageVal = $("input#message").val();
 				messageVal = messageVal.replace(/<script/gi, "&lt;script")
-			
+
 				messageObj = {};
 				messageObj.senderId = senderId;
 				messageObj.senderType = senderType;
-				messageObj.content = messageVal;	 
-							 
+				messageObj.content = messageVal;
+
 		 		websocket.send(JSON.stringify(messageObj));
-				
+
 				$("div.chat_message_list").scrollTop(99999999);
-				
+
 				$("input#message").val("");
 				$("input#message").focus();
 			}
-			
+
 		});
+
+		// 웹소캣 에러찾기
+		websocket.onerror = function(error) {
+			console.error("WebSocket error: ", error);
+			alert("An error occurred: " + error.message);
+		};
+
+		// 웹소캣 재연결
+		websocket.onclose = function(event) {
+			console.log("WebSocket connection closed: ", event);
+			setTimeout(function() {
+				console.log("Reconnecting WebSocket...");
+				websocket = new WebSocket(wsUrl); // 연결 재시도
+			}, 5000); // 5초 후에 재시도
+		};
 		
+
 	}); // end of $(document).ready(function()){}) ----------
   </script>
 </head>

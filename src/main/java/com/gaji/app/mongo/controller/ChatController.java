@@ -45,7 +45,7 @@ public class ChatController {
 
         if (responseEntity.getStatusCode() == HttpStatus.OK && roomId != null) {
         	ModelAndView mav = new ModelAndView();
-            mav = chatService.getChatPage(request, sellerMemberSeq, buyerMemberSeq, roomId, mav);
+            mav = chatService.getChatPage(userDetail, request, sellerMemberSeq, buyerMemberSeq, roomId, mav);
             
             Member member = memberService.getInfo(buyerMemberSeq);
             mav.addObject("member", member);
