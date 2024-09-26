@@ -1,5 +1,6 @@
 package com.gaji.app.config;
 
+import com.gaji.app.auth.filter.JwtRequestFilter;
 import com.gaji.app.auth.service.DefaultUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,18 +13,19 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private DefaultUserDetailService userDetailService;
-    private OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService;
+    private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    public SecurityConfig(DefaultUserDetailService userDetailService, OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService) {
+    public SecurityConfig(DefaultUserDetailService userDetailService, JwtRequestFilter jwtRequestFilter) {
         this.userDetailService = userDetailService;
-        this.customOAuth2UserService = customOAuth2UserService;
+        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -40,16 +42,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
-        )
-/*                .oauth2Login(
-                oauth2 -> oauth2
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                                .userService(customOAuth2UserService)
-                        )
-                        .successHandler(new SimpleUrlAuthenticationSuccessHandler("/home"))
-                        .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error=true"))
-        )*/
-                .logout(
+        ).logout(
                 logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
@@ -58,6 +51,7 @@ public class SecurityConfig {
                         .permitAll()
         ).csrf(csrf -> csrf.disable());
 
+        //http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.userDetailsService(userDetailService);
         return http.build();
