@@ -242,10 +242,10 @@
 		
 		///////////////////////////////////////////////////////
 		
-		const sellerId = '[[${sellerId}]]';
-	    const buyerId = '[[${buyerId}]]';	
-			
-		const senderId = '[[${member.userId}]]';
+		const sellerId = '[[${sellerMemberSeq}]]';
+	    const buyerId = '[[${buyerMemberSeq}]]';
+
+		const senderId = '[[${loginUserSeq}]]';
 		let senderType = '';
 
         if (senderId === sellerId) {
@@ -262,7 +262,7 @@
 		const roomId = '[[${roomId}]]';
 
 		// WebSocket URL 생성
-		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId;
+		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId +"&sellerId=" + sellerId + "&buyerId=" + buyerId;
 
 		// WebSocket 연결 생성
 		let websocket = new WebSocket(wsUrl);
