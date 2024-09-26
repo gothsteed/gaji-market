@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @NoArgsConstructor
@@ -12,9 +16,21 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Document(collection = "keywordAlert")
 public class KeywordAlert {
-    private Long productSeq;
-    private String keyword;
-    private Long memberSeq;
+	
+    @Id
+	private String _id;
+	
+	private String word;
+	private Long memberSeq;
+	private Long productSeq;
+	private LocalDateTime currentTime;
+	
+	public KeywordAlert(String word, Long memberSeq, Long productSeq, LocalDateTime currentTime) {
+		this.word = word;
+		this.memberSeq = memberSeq;
+		this.productSeq = productSeq;
+		this.currentTime = currentTime;
+	}
 
 
 }
