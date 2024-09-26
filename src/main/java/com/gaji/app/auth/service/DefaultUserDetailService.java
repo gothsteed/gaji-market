@@ -32,6 +32,4 @@ public class DefaultUserDetailService implements UserDetailsService {
 
         return memberUserDetails;
     }
-
-
 }

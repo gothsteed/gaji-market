@@ -1,5 +1,6 @@
 package com.gaji.app.config;
 
+import com.gaji.app.member.repository.MemberRepository;
 import com.gaji.app.mongo.controller.ChatWebSocketHandler;
 import com.gaji.app.mongo.handshaker.ChatroomHandshakeInterceptor;
 import com.gaji.app.mongo.repository.MessageRepository;
@@ -14,9 +15,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final MessageRepository messageRepository;
+    private final MemberRepository memberRepository;
 
-    public WebSocketConfig(MessageRepository messageRepository) {
+    public WebSocketConfig(MessageRepository messageRepository, MemberRepository memberRepository) {
         this.messageRepository = messageRepository;
+        this.memberRepository = memberRepository;
+
     }
 
     @Override
@@ -28,7 +32,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Bean
     public ChatWebSocketHandler chatWebSocketHandler() {
-        return new ChatWebSocketHandler(messageRepository);
+        return new ChatWebSocketHandler(messageRepository, memberRepository);
     }
 
 }

@@ -1,5 +1,10 @@
 package com.gaji.app.mongo.controller;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gaji.app.member.domain.Member;
+import com.gaji.app.member.repository.MemberRepository;
+import com.gaji.app.mongo.dto.MessageDTO;
 import com.gaji.app.mongo.entity.Message;
 import com.gaji.app.mongo.repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,14 +19,18 @@ import java.util.*;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final MessageRepository messageRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환을 위해 ObjectMapper 사용
+    private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())  // Java 8 날짜/시간 모듈 등록
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);  // 타임스탬프로 쓰는 대신 ISO-8601 형식으로 날짜 기록
 
     // 채팅방 ID별로 연결된 세션들을 관리
     private final Map<String, List<WebSocketSession>> roomSessions = new HashMap<>();
 
     @Autowired
-    public ChatWebSocketHandler(MessageRepository messageRepository) {
+    public ChatWebSocketHandler(MessageRepository messageRepository, MemberRepository memberRepository) {
         this.messageRepository = messageRepository;
+        this.memberRepository = memberRepository;
     }
 
     // 이전 메시지 전송
@@ -34,9 +43,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
-        Long sellerMemberSeq = Long.parseLong((String) session.getAttributes().get("SellerMemberSeq"));
-        Long buyerMemberSeq = Long.parseLong((String) session.getAttributes().get("BuyerMemberSeq"));
+        String sellerMemberSeq = (String) session.getAttributes().get("sellerId");
+        String buyerMemberSeq = (String) session.getAttributes().get("buyerId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
+
+        Optional<Member> loginuser = memberRepository.findByMemberSeq(loginUserSeq);
+        String loginUserNic = loginuser.get().getNickname();
+        String loginUserId = loginuser.get().getUserId();
+
+        System.out.println("확인용 roomId " + roomId);
+        System.out.println("확인용 sellerMemberSeq " + sellerMemberSeq);
+        System.out.println("확인용 buyerMemberSeq " + buyerMemberSeq);
+        System.out.println("확인용 loginUserSeq " + loginUserSeq);
 
         // 채팅방에 세션 추가
         roomSessions.computeIfAbsent(roomId, k -> new ArrayList<>());
@@ -44,9 +62,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         // 사용자 역할 구분
         String role;
-        if (loginUserSeq.equals(sellerMemberSeq)) {
+        if (loginUserSeq.toString().equals(sellerMemberSeq)) {  // loginUserSeq를 String으로 변환하여 비교
             role = "SELLER";
-        } else if (loginUserSeq.equals(buyerMemberSeq)) {
+        } else if (loginUserSeq.toString().equals(buyerMemberSeq)) {  // loginUserSeq를 String으로 변환하여 비교
             role = "BUYER";
         } else {
             role = "UNKNOWN";
@@ -55,15 +73,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 사용자 역할 저장
         session.getAttributes().put("role", role);
 
+        role = role.equals("SELLER") ? "판매자" : "구매자";
+
         // 입장 메시지 전송
         Message enterMessage = new Message(
-                loginUserSeq.toString(),
-                role.equals("SELLER") ? "판매자" : "구매자",
+                loginUserId,
+                loginUserNic,
                 role,
-                loginUserSeq + " 님이 입장했습니다 (" + role + ")",
+                loginUserNic + " 님이 입장했습니다 (" + role + ")",
                 roomId,
                 LocalDateTime.now()
         );
+
+
 
         // 이전 메시지 불러오기 및 전송
         List<Message> previousMessages = messageRepository.findAllByRoomId(roomId);
@@ -78,11 +100,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         messageRepository.save(enterMessage);
     }
 
-/*    @Override
+    @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
         String role = (String) session.getAttributes().get("role");
+
+        System.out.println("확인용 룸 " + roomId);
+        System.out.println("확인용 로그인유저 " + loginUserSeq);
+        System.out.println("확인용 롤 " + role);
+
 
         // 클라이언트에서 받은 메시지 처리 (MessageDTO 사용)
         MessageDTO messageDto = MessageDTO.convertMessage(textMessage.getPayload());
@@ -104,7 +131,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         for (WebSocketSession connectedSession : roomSessions.get(roomId)) {
             connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
         }
-    }*/
+    }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {

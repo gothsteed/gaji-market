@@ -1,6 +1,7 @@
 package com.gaji.app.keyword.service;
 
 import com.gaji.app.keyword.domain.Keyword;
+import com.gaji.app.keyword.domain.KeywordAlert;
 import com.gaji.app.keyword.domain.KeywordRegister;
 import com.gaji.app.keyword.repository.KeywordAlertRepository;
 import com.gaji.app.keyword.repository.KeywordRegisterRepository;
@@ -107,4 +108,8 @@ public class KeywordService {
 	        return false; // 삽입 실패
 	    }
 	}
+    public List<KeywordAlert> getKeywordAlert(long memberSeq) {
+
+        return keywordAlertRepository.findByMemberSeq(memberSeq);
+    }
 }
