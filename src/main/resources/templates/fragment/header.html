@@ -22,14 +22,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gothic+A1&family=IBM+Plex+Sans+KR&family=Nanum+Gothic&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
-
 <!-- google font -->
 <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
-
 
 <title>가지마켓</title>
 <link rel="icon" type="image/x-icon" th:href="@{/images/gaji.png}">
 
+
+<script type="text/javascript">
+ $(document).ready(function() {
+
+	var memberSeq = $("#memberSeq").text().trim()
+    $.ajax({
+        url: 'keywordalarm',  // 요청 보낼 URL
+        type: 'POST',
+        data: {memberSeq : memberSeq}, // 사용자 Id를 데이터로 전달
+        success: function(result) {
+			var alarmCount = result.alarmCount || 0;  // 받아온 알림 수 (없으면 0으로 설정)
+			                
+            if (alarmCount > 0) {
+                // 알림이 1개 이상이면 알림 배지 추가
+                $('#alarm-icon').append('<span class="alarm-badge" style="position: absolute; top: -5px; right: -5px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px; font-size: 12px; line-height: 12px;">' + alarmCount + '</span>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Failed to send Alarm:', error); // 에러 처리
+        }
+    });
+  
+ });
+ </script>
 
 </head>
 
@@ -67,19 +89,25 @@
                     <button type="submit" class="btn" style="background-color: #580DD2; color:white;">Search</button>
                 </form>
 
-                <ul style="font-size: small; margin: 2% 0 0 auto;">
-                    <ol class="breadcrumb bg-light d-flex align-items-center">
-                        <img th:src="@{/images/eggplant.png}" width="10"><span style="padding-right: 10px;"></span><span style="padding-right: 10px;"><span sec:authentication="principal.username"></span>님 로그인중</span>
-                        <li class="breadcrumb-item">
-                            <form th:action="@{/logout}" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-link p-0 darkmagenta" id="logoutButton">로그아웃</button>
-                            </form>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a id="mypage" class="darkmagenta" th:href="@{/myPage(memberSeq=${#authentication.principal.memberSeq})}">마이페이지</a>
-                        </li>
-                    </ol>
-                </ul>
+				<ul style="font-size: small; margin: 2% 0 0 auto;">
+				    <ol class="breadcrumb bg-light d-flex align-items-center">
+				        <div style="position: relative; display: inline-block;" id="alarm-icon">
+				            <!-- 키워드 알림 아이콘 -->
+				            <img th:src="@{/images/eggplant.png}" style="width: 30px; height: 30px;">
+				            
+						</div>
+				        <span style="padding-right: 10px;"></span>
+				        <span style="padding-right: 10px;"><span sec:authentication="principal.username"></span><span id="memberSeq" sec:authentication="principal.memberSeq" style="display:none"></span>님 로그인중</span>
+				        <li class="breadcrumb-item">
+				            <form th:action="@{/logout}" method="post" style="display: inline;">
+				                <button type="submit" class="btn btn-link p-0 darkmagenta" id="logoutButton">로그아웃</button>
+				            </form>
+				        </li>
+				        <li class="breadcrumb-item">
+				            <a id="mypage" class="darkmagenta" th:href="@{/myPage(memberSeq=${#authentication.principal.memberSeq})}">마이페이지</a>
+				        </li>
+				    </ol>
+				</ul>
 
 
             </div>

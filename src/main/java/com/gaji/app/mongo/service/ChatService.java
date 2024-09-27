@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.gaji.app.auth.dto.MemberUserDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,42 +29,60 @@ public class ChatService {
     private ChatRoomRepository chatRoomRepository;
     private MemberRepository memberRepository;
     private MessageRepository messageRepository;
-    
+
+	@Autowired
     public ChatService(ChatRoomRepository chatRoomRepository, MemberRepository memberRepository, MessageRepository messageRepository) {
     	this.chatRoomRepository = chatRoomRepository;
     	this.memberRepository = memberRepository;
     	this.messageRepository = messageRepository;
     }
-	
-	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response, 
-        										 Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
 
-	    Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
-	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
+	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response,
+												 Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
 
-	    if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
-	        String sellerId = sellerChatRoom.get().getUserId();
-	        String buyerId = buyerChatRoom.get().getUserId();
+		System.out.println("확인용 샐러 " + sellerMemberSeq);
+		System.out.println("확인용 바이어 " + buyerMemberSeq);
 
-	        ChatRoom chatRoom = new ChatRoom(sellerId, buyerId, productSeq);
-	        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
+		Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
-	        String roomId = savedChatRoom.get_id();
-	        return ResponseEntity.status(HttpStatus.OK).body(roomId.toString()); 
-	    } 
+		long sellmemberseq =  sellerChatRoom.get().getMemberSeq();
+		System.out.println("확인용 sellmemberseq " + sellmemberseq);
+		long buymemberseq =  buyerChatRoom.get().getMemberSeq();
+		System.out.println("확인용 buymemberseq " + buymemberseq);
 
-	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("채팅방 생성에 실패했습니다.");
+		if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
+
+
+			ChatRoom chatRoom = new ChatRoom(sellerMemberSeq.toString(), buyerMemberSeq.toString(), productSeq);
+			ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+
+			if (savedChatRoom.get_id() != null) {
+				String roomId = savedChatRoom.get_id();
+				return ResponseEntity.status(HttpStatus.OK).body(roomId);
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("채팅방 생성에 실패했습니다. (roomId가 null입니다.)");
+			}
+		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("채팅방 생성에 실패했습니다.");
 	}
 
-	public ModelAndView getChatPage(HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
+	public ModelAndView getChatPage(@AuthenticationPrincipal MemberUserDetail userDetail, HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
 									String roomId, ModelAndView mav) {
-		
+
+		System.out.println("확인용 샐러 " + sellerMemberSeq);
+		System.out.println("확인용 바이어 " + buyerMemberSeq);
+
 		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
 	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
+		long loginUserSeq = userDetail.getMemberSeq();
+
 	    if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
-	       mav.addObject("sellerId", sellerChatRoom.get().getUserId());
-	       mav.addObject("buyerId", buyerChatRoom.get().getUserId());
+	       mav.addObject("sellerMemberSeq", sellerChatRoom.get().getMemberSeq());
+	       mav.addObject("buyerMemberSeq", buyerChatRoom.get().getMemberSeq());
+		   mav.addObject("loginUserSeq", loginUserSeq);
 	    } 
 		
 	    mav.addObject("roomId", roomId); 

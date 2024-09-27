@@ -11,13 +11,20 @@ public class MemberUserDetail implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
     private Long memberSeq;
     private String userId;
+    private String role;  // 역할 필드
 
-    public MemberUserDetail(String username, String password, Collection<? extends GrantedAuthority> authorities, Long memberSeq, String userId) {
+    public MemberUserDetail(String username, String password, Collection<? extends GrantedAuthority> authorities, Long memberSeq, String userId, String role) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
         this.memberSeq = memberSeq;
         this.userId = userId;
+        this.role = role;  // 역할 필드 초기화
+    }
+
+    // role 없이 사용하는 생성자 추가
+    public MemberUserDetail(String username, String password, Collection<? extends GrantedAuthority> authorities, Long memberSeq, String userId) {
+        this(username, password, authorities, memberSeq, userId, "MEMBER"); // 기본 역할을 "MEMBER"로 설정
     }
 
     // Implement all methods from UserDetails interface
@@ -56,12 +63,16 @@ public class MemberUserDetail implements UserDetails {
         return true;
     }
 
-    // Add getters for memberSeq and userId
+    // Add getters for memberSeq, userId, and role
     public Long getMemberSeq() {
         return memberSeq;
     }
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getRole() {  // 역할 필드에 대한 getter 추가
+        return role;
     }
 }
