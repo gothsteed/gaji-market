@@ -82,11 +82,14 @@ public class ChatService {
 	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
 		long loginUserSeq = userDetail.getMemberSeq();
-
+		Optional<Member> loginUser = memberRepository.findByMemberSeq(loginUserSeq);
+		String loginUserNickname = loginUser.get().getNickname();
+		
 	    if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
 	       mav.addObject("sellerMemberSeq", sellerChatRoom.get().getMemberSeq());
 	       mav.addObject("buyerMemberSeq", buyerChatRoom.get().getMemberSeq());
 		   mav.addObject("loginUserSeq", loginUserSeq);
+		   mav.addObject("loginUserNickname", loginUserNickname);
 	    } 
 		
 	    mav.addObject("roomId", roomId); 

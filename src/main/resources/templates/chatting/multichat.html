@@ -246,6 +246,8 @@
 	    const buyerMemberSeq = '[[${buyerMemberSeq}]]';
 
 		const senderSeq = '[[${loginUserSeq}]]';
+		const senderNickname = '[[${loginUserNickname}]]';
+
 		let senderType = '';
 
         if (senderSeq === sellerMemberSeq) {
@@ -342,7 +344,8 @@
 				messageVal = messageVal.replace(/<script/gi, "&lt;script")
 
 				messageObj = {};
-				messageObj.senderId = senderId;
+				messageObj.senderSeq = senderSeq;
+				messageObj.senderNickname = senderNickname;
 				messageObj.senderType = senderType;
 				messageObj.content = messageVal;
 
@@ -371,7 +374,6 @@
 			}, 5000); // 5초 후에 재시도
 		};
 		
-
 	}); // end of $(document).ready(function()){}) ----------
   </script>
 </head>
