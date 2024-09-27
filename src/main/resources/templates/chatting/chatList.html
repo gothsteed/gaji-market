@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>채팅하기</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/js/bootstrap-4.6.2-dist/css/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/header.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+
+  <!-- Google font, Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Dongle:wght@700&family=Gugi&family=Moirai+One&display=swap" rel="stylesheet">
+
+  <!-- Optional JavaScript -->
+  <script type="text/javascript" th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/header.js}"></script>
+
+  <style type="text/css">
+    body {
+  		margin: 0;
+      	font-family: "Noto Sans KR", sans-serif;
+    }
+	a {
+		text-decoration: none !important;
+	}
+	li {
+		list-style: none;
+	}
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		border-left: 1px solid #0017580d;
+		border-right: 1px solid #0017580d;
+		padding: 20px 13px;
+		width: 70px;
+		max-width: 70px;
+		background-color: #eaebee;
+	}
+	.profile_image {
+		box-shadow: 0px 0px 0 2px #eaebee, 0px 0px 0 4px #b287f7;
+		border: 1px solid #dcdee3;
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
+	}
+	.message_list {
+		display: flex;
+		background: #fff;
+		border-right: 1px solid #eaebee;
+		width: 310px;
+		min-width: 310px;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.nickname {
+		display: flex;
+		height: 65px;
+		min-height: 65px;
+		border-bottom: 1px solid #eaebee;
+		padding: 0 20px;
+		align-items: center;
+	}
+	.nickname_area {
+		font-weight: bold;
+		font-size: 16pt;
+		line-height: 150%;
+	}
+	.unread {
+		display: flex;
+		flex-direction: row-reverse;
+		height: 45px;
+		min-height: 45px;
+		padding: 0 6px;
+		border-bottom: 1px solid #eaebee;
+		font-size: 12pt;
+		align-items: center;
+	}
+	.unread_label {
+		display: flex;
+		padding: 5px;
+		border-radius: 5px;
+		color: #868b94;
+	}
+	.common_bg_hover {
+		cursor: pointer;
+		transition: background-color .6s, background-size .6s;
+	}
+	.common_bg_hover:hover {
+		background: #eaebee radial-gradient(circle, transparent 1%, #eaebee 1%) center / 15000%;
+		color: #868b94;
+	}
+	.checkbox {
+		margin-left: 5px;
+	}
+	.channel_list {
+		position: relative;
+		margin: 0;
+		padding: 0;
+		height: calc(100% - 55px);
+		overflow: hidden auto;
+	}
+	.selected {
+		background: #f2f3f6;
+	}
+	.channel {
+		display: flex;
+		padding: 15px;
+		height: 72px;
+		border-bottom: 1px solid #eaebee;
+		align-items: center;
+		overflow: hidden;
+	}
+	.preview_nickname {
+		height: 25px;
+		font-weight: bold;
+		font-size: 13pt;
+		color: #212124;
+		overflow-y: hidden;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.preview_time {
+		margin-left: 5px;
+		color: #868b94;
+		font-size: 12pt;
+		white-space: nowrap;
+	}
+	.preview_description_text {
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.more_btn {
+		display: block;
+		width: 100%;
+		height: 45px;
+		border: none;
+		background: #fff;
+		font-size: 14pt;
+		line-height: 150%;
+		color: #b287f7;
+		cursor: pointer;
+	}
+	.faq_container {
+		display: flex;
+		align-items: center;
+		border-top: 1px solid #eaebee;
+		padding-left: 10px;
+		height: 55px;
+		min-height: 55px;
+	}
+	.faq_content {
+		display: inline-flex;
+		align-items: center;
+		padding: 5px;
+		border-radius: 5px;
+		font-size: 14pt;
+		color: #868b94;
+	}
+	.chatting_wrapper {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		border-right: 1px solid #eaebee;
+		min-width: 810px;
+		max-width: 810px;
+		background: #fff;
+	}
+	.chatting {
+		position: relative;
+		display: flex;
+		flex: 1 1 0px;
+		flex-direction: column;
+		overflow: hidden;
+	}
+	.chat_header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 65px;
+		min-height: 65px;
+		border-bottom: 1px solid #eaebee;
+		padding: 0 20px;
+		margin-bottom: 2%;
+	}
+	.more_btn_wrapper {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 5px;
+		width: 25px;
+		height: 25px;
+	}
+	.option_container {
+		display: none;
+		position: absolute;
+		right: 25px;
+		top: 55px;
+		width: 200px;
+		border: 1px solid #868b94;
+		border-radius: 8px;
+		padding: 10px;
+		font-size: 14pt;
+		color: #4d5159;
+		background: #f7f8fa;
+		animation: 0.3s ease-in 0s 1 normal none running fadeIn;
+		z-index: 999;
+	}
+	.option_item {
+		border-radius: 5px;
+		padding: 10px;
+	}
+	.message {
+		border: 1px solid #eaebee;
+		border-radius: 5px;
+		height: 50px;
+		margin-right: 20px;
+	}
+	.send_message_btn {
+		background-color: #580DD2;
+	    color: white;
+		width: 80px;
+	}
+	.send_message_btn:hover {
+		color: white;
+	}
+  </style>
+  <script type="text/javascript">
+	$(document).ready(function(){
+		$("div.more_btn_wrapper").click(function(){
+			$("div.option_container").fadeToggle();
+		});
+
+		///////////////////////////////////////////////////////
+
+		const sellerId = '[[${sellerMemberSeq}]]';
+	    const buyerId = '[[${buyerMemberSeq}]]';
+
+		const senderId = '[[${loginUserSeq}]]';
+		let senderType = '';
+
+        if (senderId === sellerId) {
+            senderType = 'SELLER';
+        } else if (senderId === buyerId) {
+            senderType = 'BUYER';
+        } else {
+            senderType = 'UNKNOWN';
+        }
+
+		// 현재 URL과 경로를 기반으로 WebSocket URL 생성
+		const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+		const host = window.location.host; // 예: localhost:8080
+		const roomId = '[[${roomId}]]';
+
+		// WebSocket URL 생성
+		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId +"&sellerId=" + sellerId + "&buyerId=" + buyerId;
+
+		// WebSocket 연결 생성
+		let websocket = new WebSocket(wsUrl);
+
+		let messageObj = {};
+
+		// WebSocket 이벤트 핸들러 설정
+		// 웹소켓에 최초로 연결이 되었을 경우에 실행되어지는 콜백함수 정의하기
+		websocket.onopen = function() {
+		    alert("웹소켓이 연결되었습니다.");
+		    console.log("WebSocket connection opened");
+		};
+
+		// 메시지 수신시 콜백함수 정의하기
+		websocket.onmessage = function(event){
+			const message = JSON.parse(event.data);
+
+			const now = new Date();
+
+			let ampm = "오전 ";
+			let hours = now.getHours();
+
+			if(hours > 12) {
+				hours = hours - 12;
+				ampm = "오후 ";
+			}
+
+			if(hours == 0) {
+				hours = 12;
+			}
+
+			if(hours == 12) {
+				ampm = "오후 ";
+			}
+
+			let minutes = now.getMinutes();
+
+			if(minutes < 10) {
+				minutes = "0" + minutes;
+			}
+
+			const currentTime = ampm + hours + ":" + minutes;
+
+			let html = '';
+			if (message.senderId == senderId) {
+			    html = `<div style='background: #b287f7; color: #fff; display: inline-block; max-width: 60%; float: right; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 8pt;'>${currentTime}</div><div style='clear: both;'>&nbsp;</div>`;
+			} else {
+           		html = `<div style='display: flex;'><span style='display: inline-block; margin-right: 2%;' class='profile_image'></span><div style='background: #eaebee; display: inline-block; max-width: 60%; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; padding: 20px 0 0 5px; font-size: 8pt;'>${currentTime}</div></div><div style='clear: both;'>&nbsp;</div>`;
+			}
+
+			$("div.chat_message_list").append(html);
+			$("div.chat_message_list").scrollTop(99999999);
+		};
+
+		websocket.onerror = function(error) {
+		    console.error("WebSocket error: ", error);
+		};
+
+		websocket.onclose = function(event) {
+		    console.log("WebSocket connection closed: ", event);
+		};
+
+		///////////////////////////////////////////////////////
+
+		// 메시지 입력후 엔터하기
+		$("input#message").keyup(function(e){
+			if(e.keyCode == 13){
+				$("input#btnSendMessage").click();
+			}
+		});
+
+		// 메시지 보내기
+		$("input#btnSendMessage").click(function(){
+
+			if($("input#message").val().trim() != ""){
+				let messageVal = $("input#message").val();
+				messageVal = messageVal.replace(/<script/gi, "&lt;script")
+
+				messageObj = {};
+				messageObj.senderId = senderId;
+				messageObj.senderType = senderType;
+				messageObj.content = messageVal;
+
+		 		websocket.send(JSON.stringify(messageObj));
+
+				$("div.chat_message_list").scrollTop(99999999);
+
+				$("input#message").val("");
+				$("input#message").focus();
+			}
+
+		});
+
+		// 웹소캣 에러찾기
+		websocket.onerror = function(error) {
+			console.error("WebSocket error: ", error);
+			alert("An error occurred: " + error.message);
+		};
+
+		// 웹소캣 재연결
+		websocket.onclose = function(event) {
+			console.log("WebSocket connection closed: ", event);
+			setTimeout(function() {
+				console.log("Reconnecting WebSocket...");
+				websocket = new WebSocket(wsUrl); // 연결 재시도
+			}, 5000); // 5초 후에 재시도
+		};
+		
+
+	}); // end of $(document).ready(function()){}) ----------
+  </script>
+</head>
+<body>
+	<div th:replace="~{/fragment/header :: main_header}"></div>
+	
+	<div style="border-top: 1px solid #eaebee; background: #f2f3f6; display: flex; justify-content: center; flex-direction: column; height: calc(100vh - 143px);">
+		<div style="display: flex; position: relative; margin: 0 auto; height: 100%;">
+			<div style="border: 0px solid red; display: flex;">
+				<nav class="sidebar">
+					<a href="#" style="display: inline-block; width: 40px; height: 40px;">
+						<!-- profilePic이 null인 경우 기본 이미지를 표시 -->
+						<img class="profile_image" th:src="@{/images/mypage/basicimg.png}" th:if="${member.profilePic == null}">
+						<!-- profilePic이 null이 아닌 경우 사용자의 프로필 사진을 표시 -->
+						<img class="profile_image" th:src="@{'/images/mypage/' + ${member.profilePic}}" th:if="${member.profilePic != null}">
+					</a>
+				</nav>
+				<nav class="message_list">
+					<div class="nickname">
+						<div class="nickname_area"><span th:text="${member.nickname}"></span></div>
+					</div>
+					<div class="unread">
+						<div class="unread_label common_bg_hover">
+							<span>안읽은 메시지만 보기</span>
+							<input class="checkbox" type="checkbox">
+						</div>
+					</div>
+					<ul class="channel_list">
+						<li>
+							<a class="selected channel" href="#">
+								<div class="profile_wrapper" style="margin-right: 10px; height: 40px;">
+									<img class="profile_image" th:src="@{/images/mypage/basicimg.png}">
+								</div>
+								<div style="flex: 1 0 0%; width: 0px;">
+									<div class="preview_title" style="display: flex; align-items: center;">
+										<span class="preview_nickname">당근</span>
+										<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
+										<div class="preview_time">오전 00:00<span></span></div>
+									</div>
+									<div class="preview_description" style="display: flex; align-items: center; height: 20px; font-size: 13pt; color: #4d5159;">
+										<span class="preview_description_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</span>
+									</div>
+								</div>
+							</a>
+						</li>
+						<button class="more_btn">더보기</button>
+					</ul>
+					<div class="faq_container">
+						<a class="faq_content common_bg_hover" href="#" target="_blank">
+							<span style="margin-right: 5px;">자주묻는질문</span>
+							<i class="fa-regular fa-circle-question" style="color: #c4cad4;"></i>
+						</a>
+					</div>
+				</nav>
+			</div>
+			<div class="chatting_wrapper" style="border: 0px solid blue;">
+				<div class="chatting">
+					<div class="chat_header">
+						<div class="chat_header_profile" style="display: flex; align-items: center;">
+							<div class="profile_wrapper" style="margin-right: 10px; height: 40px;">
+								<img class="profile_image" th:src="@{/images/mypage/basicimg.png}">
+							</div>
+							<div class="preview_title" style="display: flex; align-items: center;">
+								<span class="preview_nickname">당근</span>
+								<span class="preview_badge">&nbsp;<i class="fa-solid fa-circle-check" style="color: #b287f7;"></i></span>
+							</div>
+						</div>
+						<div>
+							<div class="more_btn_wrapper common_bg_hover"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+							<div class="option_container">
+								<div class="option_item common_bg_hover">알림음 끄기</div>
+								<div class="option_item common_bg_hover">대화상대 차단하기</div>
+								<div class="option_item common_bg_hover" th:onclick="|location.href='@{/home}'|">채팅방 나가기</div>
+							</div>
+						</div>
+					</div>
+					<div class="chat_message_list" style="overflow: hidden auto; padding: 0 20px;"></div>
+				</div>
+				<div style="margin: 20px; display: flex;">
+					<input type="text" id="message" class="message form-control" placeholder="메시지를 입력해주세요."/>
+					<input type="button" id="btnSendMessage" class="btn send_message_btn" value="전송" />
+				</div>	
+			</div>
+		</div>
+	</div>  	
+	
+</body>
+</html>

@@ -59,25 +59,29 @@ public class ChatController {
         
         return errorMav;
     }
-    
+
     @GetMapping("myChatting")
-    public ModelAndView showChatRoom(HttpServletRequest request, HttpServletResponse response, 
+    public ModelAndView showChatRoom(HttpServletRequest request, HttpServletResponse response,
                                      @AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
-        
+
         Long memberSeq = userDetail.getMemberSeq();
         String userId = userDetail.getUserId();
-        
+
         // 사용자 정보 가져오기
         Member member = memberService.getInfo(memberSeq);
         mav.addObject("member", member);
-        
+
         // 채팅방 목록 가져오기
         ResponseEntity<List<ChatRoomWithMessages>> chatRoomResponse = chatService.showChatRoom(request, response, userId);
         List<ChatRoomWithMessages> chatRooms = chatRoomResponse.getBody();
         mav.addObject("chatRooms", chatRooms);
-        
-        mav.setViewName("chatting/multichat");
-        
+
+        // WebSocket 연결에 필요한 정보 추가
+        mav.addObject("loginUserSeq", userId); // 로그인한 사용자 ID
+        mav.addObject("sellerMemberSeq", memberSeq); // 판매자 정보 (필요시 추가)
+        mav.addObject("buyerMemberSeq", memberSeq); // 구매자 정보 (필요시 추가)
+
+        mav.setViewName("chatting/chatList");
         return mav;
     }
     
