@@ -40,24 +40,31 @@ public class ChatController {
 
         Long buyerMemberSeq = userDetail.getMemberSeq();
         
-        ResponseEntity<String> responseEntity = chatService.createChatRoom(request, response, sellerMemberSeq, buyerMemberSeq, productSeq);
-        String roomId = responseEntity.getBody();
-
-        if (responseEntity.getStatusCode() == HttpStatus.OK && roomId != null) {
-        	ModelAndView mav = new ModelAndView();
-            mav = chatService.getChatPage(userDetail, request, sellerMemberSeq, buyerMemberSeq, roomId, mav);
+        // 기존 채팅방 찾기 시도
+        ResponseEntity<String> chatRoomResponse = chatService.findChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
+        String roomId = chatRoomResponse.getBody();
+        
+        // roomId가 없으면 새로운 채팅방 생성
+        if (roomId == null) {
+            ResponseEntity<String> createResponse = chatService.createChatRoom(request, response, sellerMemberSeq, buyerMemberSeq, productSeq);
+            roomId = createResponse.getBody();
             
-            Member member = memberService.getInfo(buyerMemberSeq);
-            mav.addObject("member", member);
+            if (createResponse.getStatusCode() != HttpStatus.OK || roomId == null) {
+                ModelAndView errorMav = new ModelAndView("msg");
             
-            return mav;
+                errorMav.addObject("message", "채팅방 생성에 실패했습니다.");
+                errorMav.addObject("loc", "/home");
+                
+                return errorMav;
+            }
         }
         
-        ModelAndView errorMav = new ModelAndView("msg");
-        errorMav.addObject("message", "채팅방 생성에 실패했습니다.");
-        errorMav.addObject("loc", "/home");
-        
-        return errorMav;
+        // 기존 또는 새로 생성된 roomId로 채팅 페이지 가져오기
+        ModelAndView mav = chatService.getChatPage(userDetail, request, sellerMemberSeq, buyerMemberSeq, roomId, new ModelAndView());
+        Member member = memberService.getInfo(buyerMemberSeq);
+        mav.addObject("member", member);
+
+        return mav;
     }
     
     @GetMapping("myChatting")
@@ -65,14 +72,13 @@ public class ChatController {
                                      @AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
         
         Long memberSeq = userDetail.getMemberSeq();
-        String userId = userDetail.getUserId();
         
         // 사용자 정보 가져오기
         Member member = memberService.getInfo(memberSeq);
         mav.addObject("member", member);
         
         // 채팅방 목록 가져오기
-        ResponseEntity<List<ChatRoomWithMessages>> chatRoomResponse = chatService.showChatRoom(request, response, userId);
+        ResponseEntity<List<ChatRoomWithMessages>> chatRoomResponse = chatService.showChatRoom(request, response, memberSeq);
         List<ChatRoomWithMessages> chatRooms = chatRoomResponse.getBody();
         mav.addObject("chatRooms", chatRooms);
         

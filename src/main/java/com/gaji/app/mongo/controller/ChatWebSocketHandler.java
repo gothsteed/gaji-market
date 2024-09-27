@@ -43,8 +43,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
-        String sellerMemberSeq = (String) session.getAttributes().get("sellerId");
-        String buyerMemberSeq = (String) session.getAttributes().get("buyerId");
+        String sellerMemberSeq = (String) session.getAttributes().get("sellerMemberSeq");
+        String buyerMemberSeq = (String) session.getAttributes().get("buyerMemberSeq");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
 
         Optional<Member> loginuser = memberRepository.findByMemberSeq(loginUserSeq);
