@@ -2,6 +2,7 @@ package com.gaji.app.mongo.controller;
 
 import java.util.List;
 
+import com.gaji.app.mongo.dto.ChatRoomInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +66,7 @@ public class ChatController {
                                      @AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
 
         Long memberSeq = userDetail.getMemberSeq();
-        String userId = userDetail.getUserId();
+        String userId = memberSeq.toString();
 
         // 사용자 정보 가져오기
         Member member = memberService.getInfo(memberSeq);
@@ -74,15 +75,26 @@ public class ChatController {
         // 채팅방 목록 가져오기
         ResponseEntity<List<ChatRoomWithMessages>> chatRoomResponse = chatService.showChatRoom(request, response, userId);
         List<ChatRoomWithMessages> chatRooms = chatRoomResponse.getBody();
-        mav.addObject("chatRooms", chatRooms);
+
+        // 채팅방 목록이 있을 때만 추가
+        if (chatRooms != null && !chatRooms.isEmpty()) {
+            mav.addObject("chatRooms", chatRooms);
+        }
+
+
 
         // WebSocket 연결에 필요한 정보 추가
         mav.addObject("loginUserSeq", userId); // 로그인한 사용자 ID
-        mav.addObject("sellerMemberSeq", memberSeq); // 판매자 정보 (필요시 추가)
-        mav.addObject("buyerMemberSeq", memberSeq); // 구매자 정보 (필요시 추가)
 
         mav.setViewName("chatting/chatList");
         return mav;
+    }
+
+    @GetMapping("/chatRoomInfo")
+    public ResponseEntity<ChatRoomInfo> getChatRoomInfo(@RequestParam Long roomId) {
+        // roomId를 통해 해당 채팅방의 정보를 가져옴
+        ChatRoomInfo chatRoomInfo = chatService.getChatRoomInfo(roomId);
+        return ResponseEntity.ok(chatRoomInfo);
     }
     
 }

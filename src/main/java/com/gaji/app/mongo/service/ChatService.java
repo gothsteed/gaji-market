@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
+import com.gaji.app.mongo.dto.ChatRoomInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,4 +107,19 @@ public class ChatService {
 	    return ResponseEntity.ok().body(chatRoomsWithMessages);
 	}
 
+	public ChatRoomInfo getChatRoomInfo(Long roomId) {
+
+		Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(String.valueOf(roomId));
+
+		if (chatRoomOptional.isPresent()) {
+			ChatRoom chatRoom = chatRoomOptional.get();
+			Long sellerId = Long.valueOf(chatRoom.getSellerId());
+			Long buyerId = Long.valueOf(chatRoom.getBuyerId());
+
+			return new ChatRoomInfo(sellerId, buyerId);
+		}
+
+		// 채팅방을 찾지 못한 경우 처리
+		return null; // 또는 예외 던지기
+	}
 }
