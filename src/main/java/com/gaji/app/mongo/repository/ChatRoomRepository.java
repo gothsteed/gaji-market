@@ -19,5 +19,6 @@ public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
 	@Query("{ '$or': [ { 'sellerMemberSeq': ?0 }, { 'buyerMemberSeq': ?0 } ] }")
     List<ChatRoom> findBySellerMemberSeqOrBuyerMemberSeq(Long memberSeq);
 
-
+    @Query("{ '$or': [ { 'sellerMemberSeq': ?0 }, { 'productSeq': ?0 } ] }")
+    List<ChatRoom> findBySellerMemberSeqAndProductSeq(Long sellerMemberSeq, Long productSeq);
 }

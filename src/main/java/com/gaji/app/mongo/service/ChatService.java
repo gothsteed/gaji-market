@@ -52,7 +52,8 @@ public class ChatService {
 
 		// 구매자가 채팅하기 눌렀을 때
 		if(chatRooms.isEmpty()){
-			chatRooms = chatRoomRepository.findBySellerMemberSeqOrBuyerMemberSeq(buyerMemberSeq);
+
+			chatRooms = chatRoomRepository.findBySellerMemberSeqAndProductSeq(sellerMemberSeq, productSeq);
 			String roomId = chatRooms.get(0).get_id();
 			System.out.println("확인용 roomId " + roomId);
 			return ResponseEntity.ok(roomId);

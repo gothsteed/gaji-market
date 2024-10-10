@@ -3,6 +3,8 @@ package com.gaji.app.mongo.controller;
 import java.util.List;
 
 import com.gaji.app.mongo.dto.ChatRoomInfo;
+import com.gaji.app.mongo.entity.ChatRoom;
+import com.gaji.app.mongo.repository.ChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +28,11 @@ public class ChatController {
 
     private ChatService chatService;
     private MemberService memberService;
+    private ChatRoomRepository chatRoomRepository;
 
     @Autowired
-    public ChatController(ChatService chatService, MemberService memberService) {
+    public ChatController(ChatService chatService, MemberService memberService, ChatRoomRepository chatRoomRepository) {
+        this.chatRoomRepository = chatRoomRepository;
         this.chatService = chatService;
         this.memberService = memberService;
     }
@@ -39,32 +43,46 @@ public class ChatController {
 										            @RequestParam("fkMemberSeq") Long sellerMemberSeq,
 										            @RequestParam("productSeq") Long productSeq) {
 
+        Long loginUserSeq = userDetail.getMemberSeq();
     	Long buyerMemberSeq = null;
-    	
+        String roomId = "";
         if (userDetail.getMemberSeq() != sellerMemberSeq) {
         	buyerMemberSeq = userDetail.getMemberSeq();
+
+            // 기존 채팅방 찾기 시도
+            ResponseEntity<String> chatRoomResponse = chatService.findChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
+            roomId = chatRoomResponse.getBody();
         }
         
         if (buyerMemberSeq == null) {
-        	ModelAndView errorMav = new ModelAndView("msg");
-            
-            errorMav.addObject("message", "채팅방 생성은 구매자가 할 수 있습니다.");
-            
-            // 이전 페이지 URL을 가져오기
-            String referer = request.getHeader("Referer");
-            
-            if (referer != null) {
-                errorMav.addObject("loc", referer);
-            } else {
-                errorMav.addObject("loc", "/home"); 
+            ResponseEntity<String> chatRoomResponse = chatService.findChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
+
+            if(chatRoomResponse == null) {
+
+                ModelAndView errorMav = new ModelAndView("msg");
+
+                errorMav.addObject("message", "채팅방 생성은 구매자가 할 수 있습니다.");
+
+                // 이전 페이지 URL을 가져오기
+                String referer = request.getHeader("Referer");
+
+                if (referer != null) {
+                    errorMav.addObject("loc", referer);
+                } else {
+                    errorMav.addObject("loc", "/home");
+                }
+
+                return errorMav;
             }
-            
-            return errorMav;
+
+            List<ChatRoom> chatRooms = chatRoomRepository.findBySellerMemberSeqAndProductSeq(sellerMemberSeq, productSeq);
+            buyerMemberSeq = chatRooms.get(0).getBuyerMemberSeq();
+            roomId = chatRoomResponse.getBody();
+
         }
         
-        // 기존 채팅방 찾기 시도
-        ResponseEntity<String> chatRoomResponse = chatService.findChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
-        String roomId = chatRoomResponse.getBody();
+
+
         
         // roomId가 없으면 새로운 채팅방 생성
         if (roomId == null) {
@@ -83,7 +101,7 @@ public class ChatController {
         
         // 기존 또는 새로 생성된 roomId로 채팅 페이지 가져오기
         ModelAndView mav = chatService.getChatPage(userDetail, request, sellerMemberSeq, buyerMemberSeq, roomId, new ModelAndView());
-        Member member = memberService.getInfo(buyerMemberSeq);
+        Member member = memberService.getInfo(loginUserSeq);
         mav.addObject("member", member);
 
         return mav;
