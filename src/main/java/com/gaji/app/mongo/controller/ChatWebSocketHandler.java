@@ -77,7 +77,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         // 입장 메시지 전송
         Message enterMessage = new Message(
-                loginUserId,
+                String.valueOf(loginUserSeq),
                 loginUserNic,
                 role,
                 loginUserNic + " 님이 입장했습니다 (" + role + ")",
