@@ -282,7 +282,7 @@
 		websocket.onmessage = function(event){
 			const message = JSON.parse(event.data);
 
-			const now = new Date();
+			const now =  new Date(message.currentTime);
 
 			let ampm = "오전 ";
 			let hours = now.getHours();
@@ -311,7 +311,7 @@
 			let html = '';
 			if (message.senderSeq === senderSeq) {
 			    html = `<div style='background: #b287f7; color: #fff; display: inline-block; max-width: 60%; float: right; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; float: right; padding: 20px 5px 0 0; font-size: 8pt;'>${currentTime}</div><div style='clear: both;'>&nbsp;</div>`;
-			} else {
+			} if(message.senderSeq !== senderSeq) {
            		html = `<div style='display: flex;'><span style='display: inline-block; margin-right: 2%;' class='profile_image'></span><div style='background: #eaebee; display: inline-block; max-width: 60%; padding: 8px 10px; border-radius: 25px; word-break: break-all;'>${message.content}</div><div style='display: inline-block; padding: 20px 0 0 5px; font-size: 8pt;'>${currentTime}</div></div><div style='clear: both;'>&nbsp;</div>`;
 			}
 
