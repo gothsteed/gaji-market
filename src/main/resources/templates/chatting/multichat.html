@@ -242,15 +242,17 @@
 
 		///////////////////////////////////////////////////////
 
-		const sellerId = '[[${sellerMemberSeq}]]';
-	    const buyerId = '[[${buyerMemberSeq}]]';
+		const sellerMemberSeq = '[[${sellerMemberSeq}]]';
+	    const buyerMemberSeq = '[[${buyerMemberSeq}]]';
 
-		const senderId = '[[${loginUserSeq}]]';
+		const senderSeq = '[[${loginUserSeq}]]';
+		const senderNickname = '[[${loginUserNickname}]]';
+
 		let senderType = '';
 
-        if (senderId === sellerId) {
+        if (senderSeq === sellerMemberSeq) {
             senderType = 'SELLER';
-        } else if (senderId === buyerId) {
+        } else if (senderSeq === buyerMemberSeq) {
             senderType = 'BUYER';
         } else {
             senderType = 'UNKNOWN';
@@ -262,7 +264,7 @@
 		const roomId = '[[${roomId}]]';
 
 		// WebSocket URL 생성
-		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId +"&sellerId=" + sellerId + "&buyerId=" + buyerId;
+		const wsUrl = protocol + host + "/gaji/multichatstart?roomId=" + roomId +"&sellerMemberSeq=" + sellerMemberSeq + "&buyerMemberSeq=" + buyerMemberSeq;
 
 		// WebSocket 연결 생성
 		let websocket = new WebSocket(wsUrl);
@@ -342,7 +344,8 @@
 				messageVal = messageVal.replace(/<script/gi, "&lt;script")
 
 				messageObj = {};
-				messageObj.senderId = senderId;
+				messageObj.senderSeq = senderSeq;
+				messageObj.senderNickname = senderNickname;
 				messageObj.senderType = senderType;
 				messageObj.content = messageVal;
 
@@ -371,7 +374,6 @@
 			}, 5000); // 5초 후에 재시도
 		};
 		
-
 	}); // end of $(document).ready(function()){}) ----------
   </script>
 </head>

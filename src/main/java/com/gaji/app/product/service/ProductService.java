@@ -1,5 +1,6 @@
 package com.gaji.app.product.service;
 
+import com.gaji.app.keyword.domain.Keyword;
 import com.gaji.app.member.domain.Member;
 import com.gaji.app.product.domain.Category;
 import com.gaji.app.product.domain.CompleteStatus;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -194,14 +196,17 @@ public class ProductService {
 		
 		// ProductRegistDto를 Product 엔티티로 변환
 	    Product product = new Product(
-	    	    prdto.getFkCategorySeq(), 
-	    	    prdto.getTitle(), 
-	    	    prdto.getContent(), 
-	    	    prdto.getPrice(), 
-	    	    prdto.getSalesType(), 
-	    	    prdto.getAddress(),
-	    	    CompleteStatus.FOR_SALE,
-	    	    prdto.getEndDateTime()
+	    	prdto.getFkMemberSeq(), // fkMemberSeq 추가
+		    prdto.getFkCategorySeq(),
+		    prdto.getTitle(),
+		    prdto.getContent(),
+		    prdto.getPrice(),
+		    prdto.getSalesType(),
+		    prdto.getAddress(),
+		    CompleteStatus.FOR_SALE, // 적절한 상태 설정
+		    prdto.getNegoStatus(),
+		    prdto.getDetailAddress(),
+		    prdto.getKeyword()
 	    );
 	    
 		try {
@@ -216,4 +221,22 @@ public class ProductService {
             return 0;
         }
 	}
+
+
+
+	public int product_attachfile_insert(List<ProductImage> productImageList) {
+		
+		if (productImageList != null && !productImageList.isEmpty()) {
+			productImageRepository.saveAll(productImageList);
+		    return productImageList.size(); // 저장된 파일 수 반환
+		}
+		
+		return 0; // 저장할 파일이 없을 경우 0 반환
+	}
+
+
+
+
+
+
 }

@@ -129,15 +129,19 @@ public class Product {
     }
     
 
-    public Product(Long fkcategoryseq, String title, String content, int price, String salestype, String address, CompleteStatus completestatus, String negostatus) {
-        this.fkcategoryseq = fkcategoryseq;
+    public Product(Long fkMemberSeq, Long fkcategoryseq, String title, String content, int price, String salestype, String address, CompleteStatus completestatus, String negostatus, String detailaddress, Keyword keyword) {
+    	this.fkMemberSeq = fkMemberSeq; 
+    	this.fkcategoryseq = fkcategoryseq;
         this.title = title;
         this.content = content;
         this.price = price;
         this.salestype = salestype;
         this.address = address;
+        this.negostatus = negostatus;
         this.completestatus = CompleteStatus.FOR_SALE; // 또는 여기서 초기값 설정
         this.enddatetime = LocalDateTime.now().plusMonths(1); // 1개월 후 설정
+        this.detailaddress = detailaddress;
+        this.keyword = keyword;
     }
 
     public String getKeywordString() {

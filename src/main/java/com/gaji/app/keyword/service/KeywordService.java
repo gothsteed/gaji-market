@@ -94,6 +94,20 @@ public class KeywordService {
         keywordObservers.clear();
     }
 
+    // 키워드테이블에 키워드 삽입
+	public boolean insertKeyword(Keyword keyword) {
+		if (keywordRepository.existsByWord(keyword.getWord())) {
+			return true; // 이미 존재하는 경우 성공으로 간주
+		}
+		    
+		try {
+	        keywordRepository.save(keyword); // 삽입 시도
+	        return true; // 삽입 성공
+	    } catch (Exception e) {// 예외 처리
+	        e.printStackTrace();
+	        return false; // 삽입 실패
+	    }
+	}
     public List<KeywordAlert> getKeywordAlert(long memberSeq) {
 
         return keywordAlertRepository.findByMemberSeq(memberSeq);
