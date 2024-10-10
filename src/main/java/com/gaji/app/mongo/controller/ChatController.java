@@ -39,7 +39,28 @@ public class ChatController {
 										            @RequestParam("fkMemberSeq") Long sellerMemberSeq,
 										            @RequestParam("productSeq") Long productSeq) {
 
-        Long buyerMemberSeq = userDetail.getMemberSeq();
+    	Long buyerMemberSeq = null;
+    	
+        if (userDetail.getMemberSeq() != sellerMemberSeq) {
+        	buyerMemberSeq = userDetail.getMemberSeq();
+        }
+        
+        if (buyerMemberSeq == null) {
+        	ModelAndView errorMav = new ModelAndView("msg");
+            
+            errorMav.addObject("message", "채팅방 생성은 구매자가 할 수 있습니다.");
+            
+            // 이전 페이지 URL을 가져오기
+            String referer = request.getHeader("Referer");
+            
+            if (referer != null) {
+                errorMav.addObject("loc", referer);
+            } else {
+                errorMav.addObject("loc", "/home"); 
+            }
+            
+            return errorMav;
+        }
         
         // 기존 채팅방 찾기 시도
         ResponseEntity<String> chatRoomResponse = chatService.findChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
@@ -88,8 +109,6 @@ public class ChatController {
         if (chatRooms != null && !chatRooms.isEmpty()) {
             mav.addObject("chatRooms", chatRooms);
         }
-
-
 
         // WebSocket 연결에 필요한 정보 추가
         mav.addObject("loginUserSeq", userId); // 로그인한 사용자 ID
