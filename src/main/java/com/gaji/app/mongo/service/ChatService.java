@@ -120,8 +120,8 @@ public class ChatService {
 
 		if (chatRoomOptional.isPresent()) {
 			ChatRoom chatRoom = chatRoomOptional.get();
-			Long sellerId = Long.valueOf(chatRoom.getSellerId());
-			Long buyerId = Long.valueOf(chatRoom.getBuyerId());
+			Long sellerId = chatRoom.getSellerMemberSeq();
+			Long buyerId = chatRoom.getBuyerMemberSeq();
 
 			return new ChatRoomInfo(sellerId, buyerId);
 		}

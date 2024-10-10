@@ -73,7 +73,9 @@ public class ChatController {
                                      @AuthenticationPrincipal MemberUserDetail userDetail, ModelAndView mav) {
 
         Long memberSeq = userDetail.getMemberSeq();
-        
+
+        String userId = userDetail.getUserId();
+
         // 사용자 정보 가져오기
         Member member = memberService.getInfo(memberSeq);
         mav.addObject("member", member);
