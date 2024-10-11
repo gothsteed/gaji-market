@@ -16,15 +16,15 @@ public class Message {
 	@Id
 	private String _id;
 	
-	private String senderId;
+	private String senderSeq;
 	private String senderNickname;
 	private String senderType;
 	private String content;
 	private String roomId;
 	private LocalDateTime currentTime;
 	
-	public Message(String senderId, String senderNickname, String senderType, String content, String roomId, LocalDateTime currentTime) {
-		this.senderId = senderId;
+	public Message(String senderSeq, String senderNickname, String senderType, String content, String roomId, LocalDateTime currentTime) {
+		this.senderSeq = senderSeq;
 		this.senderNickname = senderNickname;
 		this.senderType = senderType;
 		this.content = content;

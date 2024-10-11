@@ -33,51 +33,26 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         this.memberRepository = memberRepository;
     }
 
-    // 이전 메시지 전송
-    private void sendPreviousMessages(WebSocketSession session, List<Message> previousMessages) throws IOException {
-        for (Message message : previousMessages) {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        }
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String roomId = (String) session.getAttributes().get("roomId");
-        String sellerMemberSeq = (String) session.getAttributes().get("sellerId");
-        String buyerMemberSeq = (String) session.getAttributes().get("buyerId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
 
         Optional<Member> loginuser = memberRepository.findByMemberSeq(loginUserSeq);
-        String loginUserNic = loginuser.get().getNickname();
-        String loginUserId = loginuser.get().getUserId();
+        String loginUserNic = loginuser.map(Member::getNickname).orElse("Unknown User");
+        String role = determineUserRole(session, loginUserSeq);
 
         System.out.println("확인용 roomId " + roomId);
-        System.out.println("확인용 sellerMemberSeq " + sellerMemberSeq);
-        System.out.println("확인용 buyerMemberSeq " + buyerMemberSeq);
         System.out.println("확인용 loginUserSeq " + loginUserSeq);
+        System.out.println("확인용 role " + role);
 
         // 채팅방에 세션 추가
-        roomSessions.computeIfAbsent(roomId, k -> new ArrayList<>());
-        roomSessions.get(roomId).add(session);
-
-        // 사용자 역할 구분
-        String role;
-        if (loginUserSeq.toString().equals(sellerMemberSeq)) {  // loginUserSeq를 String으로 변환하여 비교
-            role = "SELLER";
-        } else if (loginUserSeq.toString().equals(buyerMemberSeq)) {  // loginUserSeq를 String으로 변환하여 비교
-            role = "BUYER";
-        } else {
-            role = "UNKNOWN";
-        }
-
-        // 사용자 역할 저장
-        session.getAttributes().put("role", role);
-
+        roomSessions.computeIfAbsent(roomId, k -> new ArrayList<>()).add(session);
         role = role.equals("SELLER") ? "판매자" : "구매자";
-
         // 입장 메시지 전송
         Message enterMessage = new Message(
-                loginUserId,
+                String.valueOf(loginUserSeq),
                 loginUserNic,
                 role,
                 loginUserNic + " 님이 입장했습니다 (" + role + ")",
@@ -85,19 +60,51 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 LocalDateTime.now()
         );
 
-
-
         // 이전 메시지 불러오기 및 전송
-        List<Message> previousMessages = messageRepository.findAllByRoomId(roomId);
-        sendPreviousMessages(session, previousMessages);
+        sendPreviousMessages(session, roomId);
 
         // 입장 메시지 채팅방 전체 전송
-        for (WebSocketSession connectedSession : roomSessions.get(roomId)) {
-            connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(enterMessage)));
-        }
+        sendToAllInRoom(roomId, enterMessage);
 
         // 메시지 저장
         messageRepository.save(enterMessage);
+    }
+
+    private String determineUserRole(WebSocketSession session, Long loginUserSeq) {
+        String sellerMemberSeq = (String) session.getAttributes().get("sellerMemberSeq");
+        String buyerMemberSeq = (String) session.getAttributes().get("buyerMemberSeq");
+
+        if (loginUserSeq.toString().equals(sellerMemberSeq)) {
+            return "SELLER";
+        } else if (loginUserSeq.toString().equals(buyerMemberSeq)) {
+            return "BUYER";
+        } else {
+            return "UNKNOWN";
+        }
+    }
+
+    // 이전 메시지 전송
+    private void sendPreviousMessages(WebSocketSession session, String roomId) throws IOException {
+        List<Message> previousMessages = messageRepository.findAllByRoomId(roomId);
+        for (Message message : previousMessages) {
+
+            String seq = message.getSenderSeq();
+            String nickname = message.getSenderNickname();
+            String role = message.getSenderType();
+            String content = message.getContent();
+            LocalDateTime currentTime = message.getCurrentTime();
+
+            Message previousMessage = new Message(
+                    seq,
+                    nickname,
+                    role,
+                    content,
+                    roomId,
+                    currentTime
+            );
+
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(previousMessage)));
+        }
     }
 
     @Override
@@ -105,11 +112,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String roomId = (String) session.getAttributes().get("roomId");
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
         String role = (String) session.getAttributes().get("role");
-
-        System.out.println("확인용 룸 " + roomId);
-        System.out.println("확인용 로그인유저 " + loginUserSeq);
-        System.out.println("확인용 롤 " + role);
-
 
         // 클라이언트에서 받은 메시지 처리 (MessageDTO 사용)
         MessageDTO messageDto = MessageDTO.convertMessage(textMessage.getPayload());
@@ -128,8 +130,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         messageRepository.save(newMessage);
 
         // 모든 클라이언트에게 메시지 전송
+        sendToAllInRoom(roomId, newMessage);
+    }
+
+    private void sendToAllInRoom(String roomId, Message message) throws IOException {
         for (WebSocketSession connectedSession : roomSessions.get(roomId)) {
-            connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
+            connectedSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
         }
     }
 
@@ -139,12 +145,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         Long loginUserSeq = (Long) session.getAttributes().get("loginuser");
         String role = (String) session.getAttributes().get("role");
 
+        Optional<Member> loginuser = memberRepository.findByMemberSeq(loginUserSeq);
+        String loginUserNic = loginuser.get().getNickname();
+
+        role = role.equals("SELLER") ? "판매자" : "구매자";
+
         // 퇴장 메시지 생성
         Message exitMessage = new Message(
                 loginUserSeq.toString(),
-                role.equals("SELLER") ? "판매자" : "구매자",
+                loginUserNic,
                 role,
-                loginUserSeq + " 님이 퇴장했습니다 (" + role + ")",
+                loginUserNic + " 님이 퇴장했습니다 (" + role + ")",
                 roomId,
                 LocalDateTime.now()
         );
