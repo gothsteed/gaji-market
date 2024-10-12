@@ -86,7 +86,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "KEYWORD")
+    @JoinColumn(name = "KEYWORD", nullable = false)
     private Keyword keyword;
 
 

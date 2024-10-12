@@ -14,6 +14,7 @@ import com.gaji.app.product.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import net.minidev.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,11 +25,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -137,16 +140,10 @@ public class ProductController {
         return "product/productsearch";
     }
     
-    @PostMapping("productRegister/end")
-    public ModelAndView productRegister_end( @Valid ProductRegistDto prdto, BindingResult bindingResult,  ModelAndView mav, HttpServletRequest request, MultipartHttpServletRequest mtp_request) {
-        
-    	if (bindingResult.hasErrors()) {
-            mav.addObject("errors", bindingResult.getAllErrors());
-            mav.setViewName("error");
-            return mav;
-        }
-    	
-    	System.out.println("*********컨트롤러까지는 넘어왔다. ");
+    @ResponseBody
+    @PostMapping(value="productRegister/end", produces="text/plain;charset=UTF-8")
+    public String productRegister_end(@Valid ProductRegistDto prdto, BindingResult bindingResult,  ModelAndView mav, HttpServletRequest request, MultipartHttpServletRequest mtp_request) {
+
     	List<MultipartFile> fileList = mtp_request.getFiles("file_arr"); // getFile는 단수 개, getFiles는 List로 반환
 
 		// WAS 의 webapp 의 절대경로 알아오기
@@ -191,6 +188,8 @@ public class ProductController {
 					arr_attachNewFilename[i] = newFilename;
 					arr_attachFilesize[i] = Long.toString(mtfile.getSize());
     				
+					System.out.println("Saving file: " + newFilename);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -202,11 +201,6 @@ public class ProductController {
 		
 		// === 첨부 이미지 파일을 저장했으니 그 다음으로 product 정보를 테이블에 insert 해주어야 한다.  ===
 		
-		// 글번호 채번해오기
-		/*Long productSeq = productService.getProductSeq();*/
-		//prdto.setProductSeq(productSeq); 
-		
-		System.out.println("!!!!!!!!!!1111111111111 확인용 : " + prdto.getNegoStatus());
 		
 		if (prdto.getNegoStatus() == null || "false".equals(prdto.getNegoStatus())) {
 		    prdto.setNegoStatus("1"); // 체크 해제 또는 NULL인 경우
@@ -214,67 +208,85 @@ public class ProductController {
 		    prdto.setNegoStatus("0"); // 체크된 경우
 		}
 		
-		System.out.println("!!!!!!!!!!2222222222222 확인용 : " + prdto.getNegoStatus());
-		
-		int n1 = productService.productRegister_end(prdto); // product 테이블에 글 내용 insert 결과 
-		int n2 = 1; // keyword 인서트 확인
-		int n3 = 1; // 첨부파일 insert 성공여부 확인할 변수
-		
-		if(n1 == 1 && prdto.getKeyword() != null) {
-			boolean isSuccess = keywordService.insertKeyword(prdto.getKeyword());
 			
-			if (isSuccess) { // 성공 처리 (중복이거나 삽입 성공)
-		        n2 = 1;
-		    } else { // 실패 처리
-		    	n2 = 0;
+		int n1 = 0; // keyword insert 확인
+		int n2 = 0; // tbl_product insert 확인
+		int n3 = 0; // 첨부파일 insert 성공여부 확인할 변수
+		
+		String keywordValue = request.getParameter("keyword");
+		
+		Keyword keyword = new Keyword(); // 초기화
+		
+		if (keywordValue != null && !keywordValue.trim().isEmpty()) { // keywordValue가 null이 아니고 비어있지 않은 경우에만 키워드 처리
+
+			try {
+				keyword = new Keyword(keywordValue); // 새로운 Keyword 객체 생성
+				boolean isSuccess = keywordService.insertKeyword(keyword);			
+				
+				
+				if (isSuccess) { // 성공 처리 (중복이거나 삽입 성공)
+			        n1 = 1;
+			    } else { // 실패 처리
+			    	n1 = 0;
+			    }
+				
+				
+				prdto.setKeyword(keyword);
+				
+				
+			} catch (Exception e) {
+		        System.err.println("오류 발생: " + e.getMessage());
+		        e.printStackTrace(); // 예외 출력
+		        n1 = 0; // 실패 처리
 		    }
+			
+		}else {
+			n1 = 1;
 		}
 		
-		if(n1 == 1 && fileList != null && fileList.size() > 0) { // 첨부 파일 DB에 저장하기
-			int cnt = 0;
+		if(n1 == 1) {
+			n2 = productService.productRegister_end(prdto); // product 테이블에 글 내용 insert 결과 
+		}
+	
+		
+		if(n2 == 1 && fileList != null && fileList.size() > 0) { // 첨부 파일 DB에 저장하기
+			
+			 // 새로 삽입된 제품의 시퀀스를 가져옵니다.
+	        Long productSeq = prdto.getProductSeq();
+			
 			List<ProductImage> productImageList = new ArrayList<>();
 			
 			for(int i=0; i<fileList.size(); i++) {
 				ProductImage productImg = new ProductImage();
 				
-				productImg.setFkproductseq(prdto.getProductSeq());
+				productImg.setFkproductseq(productSeq); // 가져온 productSeq 사용
 				productImg.setOriginalname(arr_attachOrgFilename[i]);
 				productImg.setFilename(arr_attachNewFilename[i]);
 				
 				productImageList.add(productImg);
 				
-//				Map<String, Object> paraMap = new HashMap<>();
-//				
-//				paraMap.put("fkproductseq", prdto.getProductSeq()); 
-//				paraMap.put("originalname", arr_attachOrgFilename[i]); 
-//				paraMap.put("filename", arr_attachNewFilename[i]); 
-//			paraMap.put("filesize", arr_attachFilesize[i]); 
 			} // end of for ----------	
 			
 			int attach_update_result = productService.product_attachfile_insert(productImageList);
 			
-			if(!(attach_update_result == fileList.size())) { // insert 가 성공되어지면 추가 이미지 파일의 갯수가 같아진다. 다른 경우 insert 실패!
-        		n3 = 0;
+			if(attach_update_result == fileList.size()) { // insert 가 성공되어지면 추가 이미지 파일의 갯수가 같아진다. 
+        		n3 = 1;
         	}
 		}
 		
-		System.out.println("확인용 n1 : "+ n1);
-		System.out.println("확인용 n2 : "+ n2);
-		System.out.println("확인용 n3 : "+ n3);
+		JSONObject jsonObj = new JSONObject();
 		
-		if(n1*n2*n3 == 1) {
-			mav.addObject("message", "제품 등록에 성공하였습니다!");
-			mav.addObject("loc", "http://localhost:8080/gaji/productList");
-			mav.setViewName("msg");
+		try {
+			jsonObj.put("result", n2*n1*n3); // 성공된 경우
 			
-		}else {
-			mav.addObject("message", "제품등록에 실패하였습니다!");
-			mav.addObject("loc", "http://localhost:8080/gaji/productList");
-			mav.setViewName("msg");
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObj.put("result", n2*n1*n3); // 실패된 경우
 		}
+			
+		return jsonObj.toString();
 		
-		return mav;
-    }
+  }
     
 
 

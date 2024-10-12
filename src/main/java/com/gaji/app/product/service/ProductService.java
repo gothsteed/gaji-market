@@ -143,56 +143,7 @@ public class ProductService {
 	}
 
 
-	// product seq 채번해오기
-/*	public Long getProductSeq() {
-		Long productSeq = productRepository.getProductSeq();
-		return productSeq;
-	}
-*/
-
 	public int productRegister_end(ProductRegistDto prdto) {
-		  // 각 필드가 null인지 확인하고 값 출력
-	    if (prdto.getProductSeq() == null) {
-	        System.out.println("productSeq is null");
-	    } else {
-	        System.out.println("productSeq: " + prdto.getProductSeq());
-	    }
-
-	    if (prdto.getFkCategorySeq() == null) {
-	        System.out.println("fkCategorySeq is null");
-	    } else {
-	        System.out.println("fkCategorySeq: " + prdto.getFkCategorySeq());
-	    }
-
-	    if (prdto.getTitle() == null) {
-	        System.out.println("Title is null");
-	    } else {
-	        System.out.println("Title: " + prdto.getTitle());
-	    }
-
-	    if (prdto.getContent() == null) {
-	        System.out.println("Content is null");
-	    } else {
-	        System.out.println("Content: " + prdto.getContent());
-	    }
-
-	    if (prdto.getPrice() == null) {
-	        System.out.println("Price is null");
-	    } else {
-	        System.out.println("Price: " + prdto.getPrice());
-	    }
-
-	    if (prdto.getSalesType() == null) {
-	        System.out.println("SalesType is null");
-	    } else {
-	        System.out.println("SalesType: " + prdto.getSalesType());
-	    }
-
-	    if (prdto.getAddress() == null) {
-	        System.out.println("Address is null");
-	    } else {
-	        System.out.println("Address: " + prdto.getAddress());
-	    }
 		
 		// ProductRegistDto를 Product 엔티티로 변환
 	    Product product = new Product(
@@ -211,8 +162,10 @@ public class ProductService {
 	    
 		try {
 			Product savedProduct = productRepository.save(product);
+			
+			 // 새로 삽입된 제품의 시퀀스를 prdto에 설정합니다.
+	        prdto.setProductSeq(savedProduct.getProductseq());
 		
-			System.out.println("111111111111111111확인용 : " + savedProduct.getProductseq() != null ? 1:0);
 			return savedProduct.getProductseq() != null ? 1:0;
 	
 		} catch (Exception e) {
@@ -228,10 +181,12 @@ public class ProductService {
 		
 		if (productImageList != null && !productImageList.isEmpty()) {
 			productImageRepository.saveAll(productImageList);
+				
 		    return productImageList.size(); // 저장된 파일 수 반환
 		}
-		
-		return 0; // 저장할 파일이 없을 경우 0 반환
+		else {
+			return 0; // 저장할 파일이 없을 경우 0 반환
+		}		
 	}
 
 
