@@ -2,6 +2,7 @@ package com.gaji.app.auth.controller;
 
 import com.gaji.app.auth.service.KakaoOAuth2Handler;
 import com.gaji.app.auth.service.OAuth2Handler;
+import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -34,8 +36,9 @@ public class loginController {
         return "login/login";
     }
 
+
     @GetMapping("/login/kakao")
-    public String TakaoAuthorization(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) {
+    public String kakaoAuthorization(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) {
         System.out.println(code);
         String accessToken = kakaoOAuth2Handler.getAccessToken(code);
         //UserInfo userinfo =  kakaoOAuth2Handler.getUserInfo(accessToken);
