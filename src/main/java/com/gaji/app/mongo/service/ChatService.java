@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gaji.app.auth.dto.MemberUserDetail;
+import com.gaji.app.mongo.dto.ChatRoomInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,24 +38,41 @@ public class ChatService {
     	this.messageRepository = messageRepository;
     }
 
+	public ResponseEntity<String> findChatRoom(Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
+		
+		// 채팅방을 찾기 위한 조건 설정
+	    List<ChatRoom> chatRooms = chatRoomRepository.findBySellerMemberSeqAndBuyerMemberSeqAndProductSeq(sellerMemberSeq, buyerMemberSeq, productSeq);
+
+	    // 채팅방이 존재하는지 확인
+	    if (!chatRooms.isEmpty()) {
+	        // 첫 번째 채팅방의 ID를 반환
+	        String roomId = chatRooms.get(0).get_id();
+	        return ResponseEntity.ok(roomId);
+	    }
+
+		// 구매자가 채팅하기 눌렀을 때
+		if(chatRooms.isEmpty()){
+
+			chatRooms = chatRoomRepository.findBySellerMemberSeqAndProductSeq(sellerMemberSeq, productSeq);
+			String roomId = chatRooms.get(0).get_id();
+			System.out.println("확인용 roomId " + roomId);
+			return ResponseEntity.ok(roomId);
+
+		}
+
+	    // 채팅방이 없으면 null 반환
+	    return ResponseEntity.ok(null);
+	}
+	
 	public ResponseEntity<String> createChatRoom(HttpServletRequest request, HttpServletResponse response,
 												 Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
-
-		System.out.println("확인용 샐러 " + sellerMemberSeq);
-		System.out.println("확인용 바이어 " + buyerMemberSeq);
 
 		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
 		Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
-		long sellmemberseq =  sellerChatRoom.get().getMemberSeq();
-		System.out.println("확인용 sellmemberseq " + sellmemberseq);
-		long buymemberseq =  buyerChatRoom.get().getMemberSeq();
-		System.out.println("확인용 buymemberseq " + buymemberseq);
-
 		if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
 
-
-			ChatRoom chatRoom = new ChatRoom(sellerMemberSeq.toString(), buyerMemberSeq.toString(), productSeq);
+			ChatRoom chatRoom = new ChatRoom(sellerMemberSeq, buyerMemberSeq, productSeq);
 			ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
 			if (savedChatRoom.get_id() != null) {
@@ -71,18 +89,18 @@ public class ChatService {
 	public ModelAndView getChatPage(@AuthenticationPrincipal MemberUserDetail userDetail, HttpServletRequest request, Long sellerMemberSeq, Long buyerMemberSeq,
 									String roomId, ModelAndView mav) {
 
-		System.out.println("확인용 샐러 " + sellerMemberSeq);
-		System.out.println("확인용 바이어 " + buyerMemberSeq);
-
 		Optional<Member> sellerChatRoom = memberRepository.findByMemberSeq(sellerMemberSeq);
 	    Optional<Member> buyerChatRoom = memberRepository.findByMemberSeq(buyerMemberSeq);
 
 		long loginUserSeq = userDetail.getMemberSeq();
-
+		Optional<Member> loginUser = memberRepository.findByMemberSeq(loginUserSeq);
+		String loginUserNickname = loginUser.get().getNickname();
+		
 	    if (sellerChatRoom.isPresent() && buyerChatRoom.isPresent()) {
 	       mav.addObject("sellerMemberSeq", sellerChatRoom.get().getMemberSeq());
 	       mav.addObject("buyerMemberSeq", buyerChatRoom.get().getMemberSeq());
 		   mav.addObject("loginUserSeq", loginUserSeq);
+		   mav.addObject("loginUserNickname", loginUserNickname);
 	    } 
 		
 	    mav.addObject("roomId", roomId); 
@@ -91,11 +109,11 @@ public class ChatService {
 		return mav;
 	}
 
-	public ResponseEntity<List<ChatRoomWithMessages>> showChatRoom(HttpServletRequest request, HttpServletResponse response, String userId) {
+	public ResponseEntity<List<ChatRoomWithMessages>> showChatRoom(HttpServletRequest request, HttpServletResponse response, Long memberSeq) {
 	    
 		// 채팅방 리스트 가져오기
-	    List<ChatRoom> roomList = chatRoomRepository.findBySellerIdOrBuyerId(userId);
-
+	    List<ChatRoom> roomList = chatRoomRepository.findBySellerMemberSeqOrBuyerMemberSeq(memberSeq);
+	    
 	    // 각 채팅방의 roomId를 사용하여 이전 메시지 가져오기
 	    List<ChatRoomWithMessages> chatRoomsWithMessages = new ArrayList<>();
 	    for (ChatRoom room : roomList) {
@@ -106,4 +124,19 @@ public class ChatService {
 	    return ResponseEntity.ok().body(chatRoomsWithMessages);
 	}
 
+	public ChatRoomInfo getChatRoomInfo(Long roomId) {
+
+		Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(String.valueOf(roomId));
+
+		if (chatRoomOptional.isPresent()) {
+			ChatRoom chatRoom = chatRoomOptional.get();
+			Long sellerId = chatRoom.getSellerMemberSeq();
+			Long buyerId = chatRoom.getBuyerMemberSeq();
+
+			return new ChatRoomInfo(sellerId, buyerId);
+		}
+
+		// 채팅방을 찾지 못한 경우 처리
+		return null; // 또는 예외 던지기
+	}
 }

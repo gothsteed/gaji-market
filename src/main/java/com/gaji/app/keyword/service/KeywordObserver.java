@@ -5,11 +5,12 @@ import com.gaji.app.keyword.domain.KeywordRegister;
 import com.gaji.app.keyword.repository.KeywordAlertRepository;
 import com.gaji.app.product.domain.Product;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class KeywordObserver implements AlertObserver<Product>{
-    private KeywordRegister keywordRegister;
-    private KeywordAlertRepository keywordAlertRepository;
+    private final KeywordRegister keywordRegister;
+    private final KeywordAlertRepository keywordAlertRepository;
 
     public KeywordObserver(KeywordRegister keywordRegister, KeywordAlertRepository keywordAlertRepository) {
         this.keywordRegister = keywordRegister;
@@ -18,7 +19,7 @@ public class KeywordObserver implements AlertObserver<Product>{
 
     @Override
     public void alert(Product product) {
-        keywordAlertRepository.save(new KeywordAlert(product.getProductseq(), keywordRegister.getWord(), keywordRegister.getMemberSeq()));
+        keywordAlertRepository.save(new KeywordAlert(product.getProductseq(), keywordRegister.getWord(), keywordRegister.getMemberSeq(), LocalDateTime.now()));
     }
 
     @Override
