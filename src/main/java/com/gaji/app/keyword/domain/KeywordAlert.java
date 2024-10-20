@@ -19,15 +19,15 @@ public class KeywordAlert {
 	
     @Id
 	private String _id;
-	
-	private String word;
+
 	private Long memberSeq;
+	private String word;
 	private Long productSeq;
 	private LocalDateTime currentTime;
 	
-	public KeywordAlert(String word, Long memberSeq, Long productSeq, LocalDateTime currentTime) {
-		this.word = word;
+	public KeywordAlert(Long memberSeq, String word, Long productSeq, LocalDateTime currentTime) {
 		this.memberSeq = memberSeq;
+		this.word = word;
 		this.productSeq = productSeq;
 		this.currentTime = currentTime;
 	}
