@@ -14,15 +14,15 @@ public class ChatRoom {
 	@Id
 	private String _id;
 	
-	private String sellerId;
-	private String buyerId;
+	private Long sellerMemberSeq;
+	private Long buyerMemberSeq;
 	private Long productSeq;
 	
 	public ChatRoom() {}
 	
-	public ChatRoom(String sellerId, String buyerId, Long productSeq) {
-		this.sellerId = sellerId;
-		this.buyerId = buyerId;
+	public ChatRoom(Long sellerMemberSeq, Long buyerMemberSeq, Long productSeq) {
+		this.sellerMemberSeq = sellerMemberSeq;
+		this.buyerMemberSeq = buyerMemberSeq;
 		this.productSeq = productSeq;
 	}
 	

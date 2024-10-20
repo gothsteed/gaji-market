@@ -71,7 +71,7 @@
     </style>
 </head>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -83,6 +83,9 @@
  
 
 <script>
+	
+	let file_arr = []; // 첨부되어진 파일 정보를 담아둘 배열 
+	
     $(document).ready(function() {
 		
 		
@@ -150,7 +153,7 @@
             $('#titlecharCount').text(charCount + '/40');
         });
 		
-		let file_arr = []; // 첨부되어진 파일 정보를 담아둘 배열 
+		
 		
 		// == 파일 Drag & Drop 만들기 == //
 		$("div#imgDrop").on("dragenter", function(e){ /* "dragenter" 이벤트는 드롭대상인 박스 안에 Drag 한 파일이 최초로 들어왔을 때 */ 
@@ -170,7 +173,7 @@
 		}).on("drop", function(e){      /* "drop" 이벤트는 드롭대상인 박스 안에서 Drag 한것을 Drop(Drag 한 파일(객체)을 놓는것) 했을 때. 필수이벤트이다. */
 			e.preventDefault();
 			$("span#imgInfo").css("display", "none");
-			var files = e.originalEvent.dataTransfer.files;  
+			var files = e.originalEvent.dataTransfer.files;  // drag 한 파일을 읽어온다.
 /*
 					 
 
@@ -193,46 +196,45 @@
 		           	if( !(f.type == 'image/jpeg' || f.type == 'image/png') ) {
 		               alert("jpg 또는 png 파일만 가능합니다.");
 					   isValid = false; // 파일이 유효하지 않음
-					   break; // 반복문 종료
+					   return; // 종료
 		           	}
 		          	if(fileSize >= 10) {
 		              	alert("10MB 이상인 파일은 업로드할 수 없습니다.!!");
 						isValid = false; // 파일이 유효하지 않음
-						break; // 반복문 종료
+						return; // 종료
 		          	}
-					else{
-						file_arr.push(f);
-						const fileName = f.name; // 파일명
-						fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
-						// fileSize 가 1MB 보다 작으면 소수부는 반올림하여 소수점 3자리까지 나타내며, 
-						// fileSize 가 1MB 이상이면 소수부는 반올림하여 소수점 1자리까지 나타낸다. 만약에 소수부가 없으면 소수점은 0 으로 표시한다.
-						
-						html += "<div class='oneFileInfo'><span class='fileName'>"+fileName+"</span>" +
-							    "<span class='fileSize'>("+fileSize+" MB)</span>" +
-							    "<span class='delete'><i class='far fa-minus-square'></i></span>" +
-							    "<span class='clear'></span></div>";
-						   
-						
-						const fileReader = new FileReader();
-						fileReader.readAsDataURL(f); // FileReader.readAsDataURL() --> 파일을 읽고, result속성에 파일을 나타내는 URL을 저장 시켜준다. 
-						fileReader.onload = function() { // FileReader.onload --> 파일 읽기 완료 성공시에만 작동하도록 하는 것임. 
-							$("#previewImg").append("<div class='imgWrapper'><img src='" + event.target.result + "' alt='" + fileName + "' class='imgPreview' style='width:150px; height:150px;' /></div>");
-						};     
-					}	
+					
+					file_arr.push(f);
+					const fileName = f.name; // 파일명
+					fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
+					// fileSize 가 1MB 보다 작으면 소수부는 반올림하여 소수점 3자리까지 나타내며, 
+					// fileSize 가 1MB 이상이면 소수부는 반올림하여 소수점 1자리까지 나타낸다. 만약에 소수부가 없으면 소수점은 0 으로 표시한다.
+					
+					html += "<div class='oneFileInfo'><span class='fileName'>"+fileName+"</span>" +
+						    "<span class='fileSize'>("+fileSize+" MB)</span>" +
+						    "<span class='delete'><i class='far fa-minus-square'></i></span>" +
+						    "<span class='clear'></span></div>";
+					   
+					
+					const fileReader = new FileReader();
+					fileReader.readAsDataURL(f); // FileReader.readAsDataURL() --> 파일을 읽고, result속성에 파일을 나타내는 URL을 저장 시켜준다. 
+					fileReader.onload = function() { // FileReader.onload --> 파일 읽기 완료 성공시에만 작동하도록 하는 것임. 
+						$("#previewImg").append("<div class='imgWrapper'><img src='" + event.target.result + "' alt='" + fileName + "' class='imgPreview' style='width:150px; height:150px;' /></div>");
+					};   
 				}// end of for----------------------
 				
+				  				
 				
 				if (!isValid) {
 				// 파일이 유효하지 않으면 입력 필드를 리셋
 					document.getElementById('imageUpload').value = ''; // 파일 입력 필드 리셋
 					return; // 함수 종료
 				}
-				$(this).append(html);    
-				
-			}// end of if----------------
-			
+				$(this).append(html);  
+			}// end of if(files !=null && files != undefined && files.length > 0)-----------
+		
 			$(this).css("background-color", "#fff");
-		});	
+		});	// end of $("div#imgDrop").on("dragenter", function(e)-----------
 		
 		
 		
@@ -363,16 +365,25 @@
 		
 		console.log("btnSubmit 호출됨"); // 로그 추가
 		
+		var keyword = $("#keyword").val().trim(); // 공백 제거
+		
 		var title = $("input:text[id='title']").val().trim();
 		var salesType = $('#salesType').val();
 		var category = $('#category').val();
 		var description = $("textarea[id='description']").val().trim();
 		var address = $("input:text[id='address']").val().trim();
 		var detailaddress = $("input:text[id='detailAddress']").val().trim();
+		var price = $("input[id='price']").val().trim();
 		let b_requiredInfo = true;
 		
 		if(title == ""){
 			alert("제목을 입력해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}
+
+		if(category == ""){
+			alert("판매 카테고리를 선택해 주세요.");
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
@@ -382,16 +393,22 @@
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
-				
 		
-		if(category == ""){
-			alert("판매 카테고리를 선택해 주세요.");
+		if(price == ""){
+			alert("가격을 입력해 주세요.");
+		    b_requiredInfo = false;
+		    return false; // break; 라는 뜻이다.
+		}	
+		
+		
+		if(description == ""){
+			alert("상품 설명을 입력해 주세요.");
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
 		
-		if(description == ""){
-			alert("상품 설명을 입력해 주세요.");
+		if(keyword == ""){
+			alert("키워드를 입력해 주세요.");
 		    b_requiredInfo = false;
 		    return false; // break; 라는 뜻이다.
 		}
@@ -402,10 +419,54 @@
 		    return false; // break; 라는 뜻이다.
 		}
 		
-		const frm = document.registerFrm;
-		frm.action = "http://localhost:8080/gaji/productRegister/end";
-		frm.method = "post";
-		frm.submit();
+		
+		// FormData 생성
+		var formData = new FormData($("form[name='registerFrm']").get(0)); // 폼에 작성된 모든 데이터 보내기 
+       	//const formData = new FormData(document.getElementById('registerFrm'));
+	   
+	   	if(file_arr.length > 0) { // 파일첨부가 있을 경우   	    	
+      	// 첨부한 파일의 총합의 크기가 10MB 이상 이라면 메일 전송을 하지 못하게 막는다.
+     		let sum_file_size = 0;
+          	for(let i=0; i<file_arr.length; i++) {
+            	sum_file_size += file_arr[i].size;
+          	}// end of for---------------
+    		
+          	if( sum_file_size >= 10*1024*1024 ) { // 첨부한 파일의 총합의 크기가 10MB 이상 이라면 
+	        	alert("첨부한 파일의 총합의 크기가 10MB 이상이라서 파일을 업로드할 수 없습니다.!!");
+	    	  	return; // 종료
+      		}
+      		else { // formData 속에 첨부파일 넣어주기
+    			file_arr.forEach(function(item){
+            		formData.append("file_arr", item);  // 첨부파일 추가하기.  "file_arr" 이 키값이고  item 이 밸류값인데 file_arr 배열속에 저장되어진 배열요소인 파일첨부되어진 파일이 되어진다.    
+                                                  // 같은 key를 가진 값을 여러 개 넣을 수 있다.(덮어씌워지지 않고 추가가 된다.)
+          		});
+			}
+		}
+		
+		$.ajax({ 
+        	url: "http://localhost:8080/gaji/productRegister/end",
+        	type: "post",
+        	data: formData,     // 이것은 객체이다. 객체 속에 보내야 할 데이터가 포함되어 있다.
+        	processData: false, // 파일 전송 시 설정 => 파일이 있다면 꼭 넣어주어야 한다. default 는 true 이다. 
+        	contentType: false, // 파일 전송 시 설정 => 파일이 있다면 꼭 넣어주어야 한다. default 는 true 이다.
+        	dataType: "json",
+        	success: function(json){
+        	//	console.log("~~~ 확인용 : " + JSON.stringify(json));
+            	
+            	if(json.result == 1) { // insert 가 성공되어진 경우
+            		alert("글 등록이 성공했습니다.");
+            		location.href="http://localhost:8080/gaji/productList";
+            	}
+            	else{
+            		alert("글 등록이 실패했습니다.");
+            	}
+        	},
+        	error: function(request, status, error){
+        		alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+      		}
+        
+		});
+
 		
 	}
 	
@@ -419,7 +480,7 @@
         <div class="container mt-5" style="width: 80%;">
             <h1 class="mb-4">내 물건 팔기</h1>
             <hr style="border: solid 1px;">
-           	<form name="registerFrm" enctype="multipart/form-data">
+           	<form name="registerFrm" id="registerFrm" enctype="multipart/form-data">
                 <!-- 이미지 첨부 -->
                 <div class="form-group">
                     <label for="imgDrop">상품 이미지</label>
@@ -474,8 +535,8 @@
                     <span for="price" style="width: 20%; display: inline-flex; align-items: center;">가격</span>
                     <div style="width: 70%;">
                         <input type="number" class="form-control" id="price" name="price" placeholder="가격을 입력하세요">
-                        <input type="checkbox" id="negostatus" value="true">
-                        <label class="form-check-label" for="negostatus">
+                        <input type="checkbox" id="negoStatus" value="true">
+                        <label class="form-check-label" for="negoStatus">
                             가격 제안 받기
                         </label>
                     </div>
@@ -517,7 +578,7 @@
 				
 				<!-- 카카오 지도 표시 -->
 				<div id="map" style="height: 400px; width: 90%; margin-bottom: 10px;"></div>
-               
+				<input type="hidden" name="fkMemberSeq" th:value="${memberSeq}" />
             </form>
 			
 			<div style="text-align:right; margin-right:10%; padding-bottom : 5%;">	

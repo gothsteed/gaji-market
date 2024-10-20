@@ -1,6 +1,12 @@
 spring:
   profiles: #실행환경(local(로컬),dev(개발),real(운영))  https://bepoz-study-diary.tistory.com/371 참조
     active: local
+  jpa:
+    show-sql: false          # SQL 출력 끄기
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
 #  security:
 #    oauth2:
 #      client:
@@ -53,4 +59,5 @@ logging:
   level:  # Set the default log level to DEBUG
     # Example of setting specific package to DEBUG level
     org.springframework.security: DEBUG
-    root: trace
+    root: INFO
+    org.hibernate.SQL: ERROR  # SQL 로그를 ERROR 레벨로 설정

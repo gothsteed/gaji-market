@@ -2,8 +2,10 @@ package com.gaji.app.product.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "tbl_product_image")
 @SequenceGenerator(

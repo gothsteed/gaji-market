@@ -41,7 +41,6 @@ public class loginController {
     public String kakaoAuthorization(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) {
         System.out.println(code);
         String accessToken = kakaoOAuth2Handler.getAccessToken(code);
-        //UserInfo userinfo =  kakaoOAuth2Handler.getUserInfo(accessToken);
         String email  = kakaoOAuth2Handler.getEmail(accessToken);
 
         Authentication authentication = kakaoOAuth2Handler.loginByEmail(email);
