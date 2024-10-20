@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(collection = "keywordAlert") 
+@Document(collection = "keywordAlert")
 public class KeywordAlert {
 	
     @Id
